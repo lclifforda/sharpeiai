@@ -1,6 +1,6 @@
 const SharpeiOrb = () => {
   return (
-    <div className="relative w-40 h-40 mx-auto mb-8 animate-float">
+    <div className="relative w-32 h-32 mx-auto mb-12 animate-float">
       {/* Outer glow rings */}
       <div className="absolute inset-0 rounded-full gradient-sharpei opacity-20 blur-3xl animate-pulse-glow" />
       <div className="absolute inset-4 rounded-full gradient-sharpei opacity-30 blur-2xl animate-pulse-glow" style={{ animationDelay: '1s' }} />
@@ -15,7 +15,7 @@ const SharpeiOrb = () => {
       </div>
       
       {/* Pulsing dot indicator */}
-      <div className="absolute -bottom-10 right-12 flex items-center gap-2">
+      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2">
         <div className="w-2 h-2 rounded-full bg-gradient-start animate-pulse" />
         <div className="w-2 h-2 rounded-full bg-gradient-pink animate-pulse" style={{ animationDelay: '0.2s' }} />
         <div className="w-2 h-2 rounded-full bg-gradient-coral animate-pulse" style={{ animationDelay: '0.4s' }} />
