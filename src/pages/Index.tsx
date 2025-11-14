@@ -1,43 +1,11 @@
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, Send, Paperclip, Sparkles, FileText, Calculator, FolderKanban } from "lucide-react";
+import { Send, Paperclip, Sparkles, FileText, Calculator, FolderKanban } from "lucide-react";
 import SharpeiOrb from "@/components/SharpeiOrb";
 import QuickActionCard from "@/components/QuickActionCard";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <header className="border-b border-border bg-white/80 backdrop-blur-lg sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            {/* Logo */}
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg gradient-sharpei flex items-center justify-center shadow-float">
-                <span className="text-white font-bold text-lg">S</span>
-              </div>
-              <span className="font-semibold text-foreground">Sharpei AI</span>
-            </div>
-            
-            {/* Model selector */}
-            <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border hover:bg-muted/50 transition-colors">
-              <span className="text-sm text-foreground">AI Model</span>
-              <ChevronDown className="w-4 h-4 text-muted-foreground" />
-            </button>
-            
-            {/* Private session tag */}
-            <div className="px-3 py-1.5 rounded-full bg-muted/50 border border-border">
-              <span className="text-xs text-muted-foreground font-medium">Private session</span>
-            </div>
-          </div>
-          
-          {/* Contact button */}
-          <Button className="rounded-full px-6 gradient-sharpei text-white hover:opacity-90 transition-opacity shadow-float">
-            Contact Sharpei Expert →
-          </Button>
-        </div>
-      </header>
-
       {/* Main Content */}
       <main className="flex-1 flex flex-col items-center justify-center px-6 py-12">
         <div className="w-full max-w-4xl mx-auto space-y-12">
