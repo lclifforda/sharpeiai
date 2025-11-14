@@ -15,7 +15,7 @@ const SharpeiOrb = () => {
       </div>
       
       {/* Pulsing dot indicator */}
-      <div className="absolute -bottom-2 right-12 flex items-center gap-2">
+      <div className="absolute -bottom-10 right-12 flex items-center gap-2">
         <div className="w-2 h-2 rounded-full bg-gradient-start animate-pulse" />
         <div className="w-2 h-2 rounded-full bg-gradient-pink animate-pulse" style={{ animationDelay: '0.2s' }} />
         <div className="w-2 h-2 rounded-full bg-gradient-coral animate-pulse" style={{ animationDelay: '0.4s' }} />
