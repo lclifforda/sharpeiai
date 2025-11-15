@@ -53,7 +53,6 @@ export default {
           purple: "hsl(var(--gradient-purple))",
           end: "hsl(var(--gradient-end))",
         },
-        "accent-red": "hsl(var(--accent-red))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

@@ -60,12 +60,12 @@ const Companies = () => {
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <Building2 className="w-8 h-8 text-accent-red" />
+                <Building2 className="w-8 h-8 text-primary" />
                 <h1 className="text-3xl font-semibold text-foreground">Companies</h1>
               </div>
               <p className="text-muted-foreground">Manage your clients and their representatives</p>
             </div>
-            <Button className="bg-accent-red text-white hover:bg-accent-red/90 shadow-sm">
+            <Button className="gradient-sharpei text-white hover:opacity-90 shadow-float">
               <Plus className="w-4 h-4 mr-2" />
               Add Company
             </Button>
@@ -85,7 +85,7 @@ const Companies = () => {
             />
           </div>
           <div className="flex gap-2">
-            <Button variant="default" size="icon" className="bg-accent-red text-white hover:bg-accent-red/90">
+            <Button variant="default" size="icon" className="gradient-sharpei text-white hover:opacity-90">
               <List className="w-5 h-5" />
             </Button>
             <Button variant="outline" size="icon">
@@ -95,7 +95,7 @@ const Companies = () => {
         </div>
 
         {/* Companies Table */}
-        <div className="bg-white rounded-2xl border border-accent-red overflow-hidden">
+        <div className="bg-white rounded-2xl border border-border overflow-hidden shadow-float">
           {/* Table Header */}
           <div className="grid grid-cols-[2fr_1.5fr_2fr_1.5fr_1.5fr_1.5fr_1fr] gap-4 px-6 py-4 border-b border-border bg-background/50">
             <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Company</div>
@@ -112,10 +112,10 @@ const Companies = () => {
             {companies.map((company) => (
               <div 
                 key={company.name} 
-                className="grid grid-cols-[2fr_1.5fr_2fr_1.5fr_1.5fr_1.5fr_1fr] gap-4 px-6 py-5 hover:bg-muted/30 transition-colors cursor-pointer"
+                className="grid grid-cols-[2fr_1.5fr_2fr_1.5fr_1.5fr_1.5fr_1fr] gap-4 px-6 py-5 hover:bg-gradient-to-r hover:from-gradient-start/5 hover:to-gradient-purple/5 transition-colors cursor-pointer"
               >
                 <div>
-                  <p className="font-semibold text-accent-red text-base">{company.name}</p>
+                  <p className="font-semibold gradient-sharpei-text text-base">{company.name}</p>
                 </div>
                 <div>
                   <p className="text-foreground">{company.industry}</p>
@@ -132,7 +132,7 @@ const Companies = () => {
                   <p className="text-foreground">{company.activeContracts}</p>
                 </div>
                 <div>
-                  <p className="font-semibold text-accent-red">{company.revenue}</p>
+                  <p className="font-semibold gradient-sharpei-text">{company.revenue}</p>
                 </div>
                 <div>
                   <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-0 capitalize">
