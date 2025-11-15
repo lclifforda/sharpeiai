@@ -49,8 +49,8 @@ export default {
         },
         gradient: {
           start: "hsl(var(--gradient-start))",
-          pink: "hsl(var(--gradient-pink))",
-          coral: "hsl(var(--gradient-coral))",
+          blue: "hsl(var(--gradient-blue))",
+          purple: "hsl(var(--gradient-purple))",
           end: "hsl(var(--gradient-end))",
         },
         sidebar: {

@@ -32,12 +32,12 @@ const Index = () => {
               description="for existing leases and end-of-term options"
             />
             <QuickActionCard
-              icon={<FileSearch className="w-6 h-6 text-gradient-pink" />}
+              icon={<FileSearch className="w-6 h-6 text-gradient-blue" />}
               title="Review a lease contract"
               description="analyze terms, conditions, and obligations"
             />
             <QuickActionCard
-              icon={<History className="w-6 h-6 text-gradient-coral" />}
+              icon={<History className="w-6 h-6 text-gradient-purple" />}
               title="Search asset history"
               description="track equipment lifecycle and maintenance"
             />
