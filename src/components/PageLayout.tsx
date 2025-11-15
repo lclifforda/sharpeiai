@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
-import Sidebar from "./Sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
 
 interface PageLayoutProps {
   children: ReactNode;
@@ -7,12 +8,19 @@ interface PageLayoutProps {
 
 const PageLayout = ({ children }: PageLayoutProps) => {
   return (
-    <div className="flex min-h-screen w-full bg-background">
-      <Sidebar />
-      <main className="flex-1 overflow-auto">
-        {children}
-      </main>
-    </div>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-background">
+        <AppSidebar />
+        <div className="flex-1 flex flex-col w-full">
+          <header className="h-14 flex items-center border-b border-border bg-white sticky top-0 z-10">
+            <SidebarTrigger className="ml-4" />
+          </header>
+          <main className="flex-1 overflow-auto">
+            {children}
+          </main>
+        </div>
+      </div>
+    </SidebarProvider>
   );
 };
 
