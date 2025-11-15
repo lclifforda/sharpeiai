@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import { Send, Paperclip, Sparkles, FileText, Calculator, FolderKanban } from "lucide-react";
+import { Send, Paperclip, RefreshCw, FileSearch, History, FilePlus } from "lucide-react";
 import SharpeiOrb from "@/components/SharpeiOrb";
 import QuickActionCard from "@/components/QuickActionCard";
 
@@ -27,22 +27,22 @@ const Index = () => {
           {/* Quick Actions */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <QuickActionCard
-              icon={<Sparkles className="w-6 h-6 text-gradient-start" />}
+              icon={<RefreshCw className="w-6 h-6 text-gradient-start" />}
               title="Generate a renewal / EoT quote"
               description="for existing leases and end-of-term options"
             />
             <QuickActionCard
-              icon={<FileText className="w-6 h-6 text-gradient-pink" />}
+              icon={<FileSearch className="w-6 h-6 text-gradient-pink" />}
               title="Review a lease contract"
               description="analyze terms, conditions, and obligations"
             />
             <QuickActionCard
-              icon={<Calculator className="w-6 h-6 text-gradient-coral" />}
+              icon={<History className="w-6 h-6 text-gradient-coral" />}
               title="Search asset history"
               description="track equipment lifecycle and maintenance"
             />
             <QuickActionCard
-              icon={<FolderKanban className="w-6 h-6 text-gradient-end" />}
+              icon={<FilePlus className="w-6 h-6 text-gradient-end" />}
               title="Generate a new lease quote"
               description="for any equipment within seconds"
             />
