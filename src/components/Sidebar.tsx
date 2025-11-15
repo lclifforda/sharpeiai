@@ -18,11 +18,11 @@ const Sidebar = () => {
       {/* Logo Section */}
       <div className="p-6 flex items-center justify-between border-b border-border">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl gradient-sharpei flex items-center justify-center shadow-float p-1.5">
+          <div className="w-10 h-10 rounded-xl gradient-sharpei flex items-center justify-center shadow-float overflow-hidden">
             <img 
               src={sharpeiLogo} 
               alt="Sharpei AI" 
-              className="w-full h-full object-contain"
+              className="w-full h-full object-cover"
             />
           </div>
           <span className="font-semibold text-foreground text-xl">Sharpei AI</span>
