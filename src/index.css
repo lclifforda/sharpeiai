@@ -21,6 +21,9 @@ All colors MUST be HSL.
     --primary: 250 85% 60%; /* Blue-Purple */
     --primary-foreground: 0 0% 100%;
     
+    /* Red accent for primary actions */
+    --accent-red: 355 85% 50%; /* Bright Red */
+    
     --gradient-start: 185 85% 50%; /* Cyan */
     --gradient-blue: 220 90% 55%; /* Blue */
     --gradient-purple: 260 85% 60%; /* Purple */
@@ -73,6 +76,9 @@ All colors MUST be HSL.
 
     --primary: 250 85% 60%;
     --primary-foreground: 0 0% 100%;
+    
+    /* Red accent for primary actions */
+    --accent-red: 355 85% 50%;
     
     --gradient-start: 185 85% 50%;
     --gradient-blue: 220 90% 55%;

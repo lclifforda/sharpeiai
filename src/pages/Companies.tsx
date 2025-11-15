@@ -1,30 +1,71 @@
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Building2, Search, Plus, MoreVertical } from "lucide-react";
+import { Building2, Search, Plus, List, LayoutGrid, MapPin, Users } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const Companies = () => {
   const companies = [
-    { name: "TechCorp Industries", type: "Technology", leases: 23, value: "$1.2M", status: "Active" },
-    { name: "MedEquip Solutions", type: "Healthcare", leases: 15, value: "$890K", status: "Active" },
-    { name: "BuildPro Construction", type: "Construction", leases: 31, value: "$2.1M", status: "Active" },
-    { name: "AgriTech Farms", type: "Agriculture", leases: 8, value: "$450K", status: "Pending" },
+    { 
+      name: "TechCorp Industries", 
+      industry: "Manufacturing", 
+      location: "San Francisco, CA",
+      representatives: 2,
+      activeContracts: 3,
+      revenue: "$45,000",
+      status: "active" 
+    },
+    { 
+      name: "DataFlow Systems", 
+      industry: "Logistics", 
+      location: "Austin, TX",
+      representatives: 1,
+      activeContracts: 2,
+      revenue: "$28,500",
+      status: "active" 
+    },
+    { 
+      name: "SmartFactory Inc", 
+      industry: "Manufacturing", 
+      location: "Detroit, MI",
+      representatives: 3,
+      activeContracts: 4,
+      revenue: "$62,000",
+      status: "active" 
+    },
+    { 
+      name: "AutoMotive Solutions", 
+      industry: "Automotive", 
+      location: "Chicago, IL",
+      representatives: 1,
+      activeContracts: 1,
+      revenue: "$18,000",
+      status: "active" 
+    },
+    { 
+      name: "AgriTech Farms", 
+      industry: "Agriculture", 
+      location: "Des Moines, IA",
+      representatives: 2,
+      activeContracts: 2,
+      revenue: "$35,000",
+      status: "active" 
+    },
   ];
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="border-b border-border bg-white/80 backdrop-blur-lg sticky top-0 z-10">
+      <div className="border-b border-border bg-white">
         <div className="px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <Building2 className="w-8 h-8 text-primary" />
+                <Building2 className="w-8 h-8 text-accent-red" />
                 <h1 className="text-3xl font-semibold text-foreground">Companies</h1>
               </div>
-              <p className="text-muted-foreground">Manage your client companies and their leases</p>
+              <p className="text-muted-foreground">Manage your clients and their representatives</p>
             </div>
-            <Button className="gradient-sharpei text-white hover:opacity-90 shadow-float">
+            <Button className="bg-accent-red text-white hover:bg-accent-red/90 shadow-sm">
               <Plus className="w-4 h-4 mr-2" />
               Add Company
             </Button>
@@ -34,56 +75,73 @@ const Companies = () => {
 
       {/* Content */}
       <div className="p-8 space-y-6">
-        {/* Search */}
-        <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-          <Input 
-            placeholder="Search companies..." 
-            className="pl-10 bg-white border-border"
-          />
+        {/* Search & Filters */}
+        <div className="flex items-center gap-4">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <Input 
+              placeholder="Search companies..." 
+              className="pl-10 bg-white border-border"
+            />
+          </div>
+          <div className="flex gap-2">
+            <Button variant="default" size="icon" className="bg-accent-red text-white hover:bg-accent-red/90">
+              <List className="w-5 h-5" />
+            </Button>
+            <Button variant="outline" size="icon">
+              <LayoutGrid className="w-5 h-5" />
+            </Button>
+          </div>
         </div>
 
-        {/* Companies List */}
-        <div className="grid gap-4">
-          {companies.map((company) => (
-            <Card key={company.name} className="p-6 hover:shadow-float transition-all duration-300 border-border">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-6 flex-1">
-                  <div className="w-12 h-12 rounded-xl gradient-sharpei flex items-center justify-center shadow-float">
-                    <Building2 className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="flex-1 grid grid-cols-4 gap-6">
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-1">Company</p>
-                      <p className="font-semibold text-foreground">{company.name}</p>
-                      <p className="text-xs text-muted-foreground">{company.type}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-1">Active Leases</p>
-                      <p className="text-2xl font-bold text-foreground">{company.leases}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-1">Total Value</p>
-                      <p className="text-2xl font-bold text-foreground">{company.value}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-1">Status</p>
-                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
-                        company.status === "Active" 
-                          ? "bg-gradient-start/10 text-gradient-start" 
-                          : "bg-muted text-muted-foreground"
-                      }`}>
-                        {company.status}
-                      </span>
-                    </div>
-                  </div>
+        {/* Companies Table */}
+        <div className="bg-white rounded-2xl border border-accent-red overflow-hidden">
+          {/* Table Header */}
+          <div className="grid grid-cols-[2fr_1.5fr_2fr_1.5fr_1.5fr_1.5fr_1fr] gap-4 px-6 py-4 border-b border-border bg-background/50">
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Company</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Industry</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Location</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Representatives</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Active Contracts</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Revenue</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</div>
+          </div>
+
+          {/* Table Body */}
+          <div className="divide-y divide-border">
+            {companies.map((company) => (
+              <div 
+                key={company.name} 
+                className="grid grid-cols-[2fr_1.5fr_2fr_1.5fr_1.5fr_1.5fr_1fr] gap-4 px-6 py-5 hover:bg-muted/30 transition-colors cursor-pointer"
+              >
+                <div>
+                  <p className="font-semibold text-accent-red text-base">{company.name}</p>
                 </div>
-                <button className="p-2 hover:bg-muted rounded-lg transition-colors">
-                  <MoreVertical className="w-5 h-5 text-muted-foreground" />
-                </button>
+                <div>
+                  <p className="text-foreground">{company.industry}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                  <p className="text-foreground">{company.location}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Users className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                  <p className="text-foreground">{company.representatives}</p>
+                </div>
+                <div>
+                  <p className="text-foreground">{company.activeContracts}</p>
+                </div>
+                <div>
+                  <p className="font-semibold text-accent-red">{company.revenue}</p>
+                </div>
+                <div>
+                  <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-0 capitalize">
+                    {company.status}
+                  </Badge>
+                </div>
               </div>
-            </Card>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>
