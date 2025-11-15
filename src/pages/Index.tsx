@@ -28,23 +28,23 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <QuickActionCard
               icon={<Sparkles className="w-6 h-6 text-gradient-start" />}
-              title="Generate a lease quote"
-              description="for any product within seconds"
+              title="Generate a renewal / EoT quote"
+              description="for existing leases and end-of-term options"
             />
             <QuickActionCard
               icon={<FileText className="w-6 h-6 text-gradient-pink" />}
-              title="Run underwriting"
-              description="document extraction + credit analysis"
+              title="Review a lease contract"
+              description="analyze terms, conditions, and obligations"
             />
             <QuickActionCard
               icon={<Calculator className="w-6 h-6 text-gradient-coral" />}
-              title="Calculate asset value"
-              description="depreciation, residual value, lifecycle"
+              title="Search asset history"
+              description="track equipment lifecycle and maintenance"
             />
             <QuickActionCard
               icon={<FolderKanban className="w-6 h-6 text-gradient-end" />}
-              title="Manage applications"
-              description="upload docs, verify assets, check status"
+              title="Generate a new lease quote"
+              description="for any equipment within seconds"
             />
           </div>
 
