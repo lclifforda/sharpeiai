@@ -1,6 +1,6 @@
 const SharpeiOrb = () => {
   return (
-    <div className="relative w-40 h-40 mx-auto mb-12 animate-float">
+    <div className="relative w-32 h-32 mx-auto mb-12 animate-float">
       {/* Outer glow rings */}
       <div className="absolute inset-0 rounded-full gradient-sharpei opacity-20 blur-3xl animate-pulse-glow" />
       <div className="absolute inset-4 rounded-full gradient-sharpei opacity-30 blur-2xl animate-pulse-glow" style={{ animationDelay: '1s' }} />
