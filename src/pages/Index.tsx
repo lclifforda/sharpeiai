@@ -1,9 +1,13 @@
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Send, Paperclip, RefreshCw, FileSearch, History, FilePlus } from "lucide-react";
 import SharpeiOrb from "@/components/SharpeiOrb";
 import QuickActionCard from "@/components/QuickActionCard";
+import LeaseQuoteDialog from "@/components/LeaseQuoteDialog";
 
 const Index = () => {
+  const [isLeaseQuoteOpen, setIsLeaseQuoteOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Main Content */}
@@ -41,11 +45,13 @@ const Index = () => {
               title="Search asset history"
               description="track equipment lifecycle and maintenance"
             />
-            <QuickActionCard
-              icon={<FilePlus className="w-6 h-6 text-gradient-end" />}
-              title="Generate a new lease quote"
-              description="for any equipment within seconds"
-            />
+            <div onClick={() => setIsLeaseQuoteOpen(true)}>
+              <QuickActionCard
+                icon={<FilePlus className="w-6 h-6 text-gradient-end" />}
+                title="Generate a new lease quote"
+                description="for any equipment within seconds"
+              />
+            </div>
           </div>
 
           {/* Universal Chat Input */}
@@ -67,6 +73,8 @@ const Index = () => {
           </div>
         </div>
       </main>
+
+      <LeaseQuoteDialog open={isLeaseQuoteOpen} onOpenChange={setIsLeaseQuoteOpen} />
 
       {/* Footer */}
       <footer className="border-t border-border bg-white/50 backdrop-blur-sm">
