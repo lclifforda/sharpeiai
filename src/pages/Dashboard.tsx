@@ -17,15 +17,15 @@ const Dashboard = () => {
   ];
 
   const delinquencyData = [
-    { name: "0-30 days", value: 2.1, color: "#171717" },
-    { name: "31-60 days", value: 1.2, color: "#525252" },
-    { name: "60+ days", value: 0.8, color: "#a3a3a3" },
+    { name: "0-30 days", value: 2.1, color: "#3b82f6" },
+    { name: "31-60 days", value: 1.2, color: "#8b5cf6" },
+    { name: "60+ days", value: 0.8, color: "#ef4444" },
   ];
 
   const creditRiskData = [
-    { risk: "Low", count: 124, color: "#171717" },
-    { risk: "Medium", count: 48, color: "#525252" },
-    { risk: "High", count: 12, color: "#a3a3a3" },
+    { risk: "Low", count: 124, color: "#10b981" },
+    { risk: "Medium", count: 48, color: "#f59e0b" },
+    { risk: "High", count: 12, color: "#ef4444" },
   ];
 
   const underwritingFunnel = [
@@ -129,7 +129,13 @@ const Dashboard = () => {
                   <XAxis dataKey="risk" stroke="hsl(var(--muted-foreground))" style={{ fontSize: '12px' }} />
                   <YAxis stroke="hsl(var(--muted-foreground))" style={{ fontSize: '12px' }} />
                   <Tooltip contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }} />
-                  <Bar dataKey="count" fill="hsl(var(--foreground))" />
+                  <Bar dataKey="count" fill="url(#colorGradient)" radius={[4, 4, 0, 0]} />
+                  <defs>
+                    <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.8} />
+                      <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0.8} />
+                    </linearGradient>
+                  </defs>
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -169,8 +175,8 @@ const Dashboard = () => {
                   <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" style={{ fontSize: '12px' }} />
                   <YAxis stroke="hsl(var(--muted-foreground))" style={{ fontSize: '12px' }} />
                   <Tooltip contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }} />
-                  <Line type="monotone" dataKey="vintage2023" stroke="hsl(var(--foreground))" strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="vintage2024" stroke="hsl(var(--muted-foreground))" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="vintage2023" stroke="#3b82f6" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="vintage2024" stroke="#8b5cf6" strokeWidth={2} dot={false} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -242,8 +248,18 @@ const Dashboard = () => {
                     <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" style={{ fontSize: '12px' }} />
                     <YAxis stroke="hsl(var(--muted-foreground))" style={{ fontSize: '12px' }} />
                     <Tooltip contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }} />
-                    <Area type="monotone" dataKey="expected" stackId="1" stroke="hsl(var(--muted-foreground))" fill="hsl(var(--muted))" />
-                    <Area type="monotone" dataKey="actual" stackId="2" stroke="hsl(var(--foreground))" fill="hsl(var(--accent))" />
+                    <defs>
+                      <linearGradient id="colorExpected" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#94a3b8" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#94a3b8" stopOpacity={0}/>
+                      </linearGradient>
+                      <linearGradient id="colorActual" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.4}/>
+                        <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0.1}/>
+                      </linearGradient>
+                    </defs>
+                    <Area type="monotone" dataKey="expected" stroke="#94a3b8" fill="url(#colorExpected)" />
+                    <Area type="monotone" dataKey="actual" stroke="#3b82f6" fill="url(#colorActual)" strokeWidth={2} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -265,8 +281,11 @@ const Dashboard = () => {
                     </div>
                     <div className="w-full bg-muted rounded-full h-1.5">
                       <div 
-                        className="bg-foreground h-1.5 rounded-full" 
-                        style={{ width: `${(item.value / item.total) * 100}%` }}
+                        className="h-1.5 rounded-full" 
+                        style={{ 
+                          width: `${(item.value / item.total) * 100}%`,
+                          background: 'linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%)'
+                        }}
                       />
                     </div>
                   </div>
@@ -288,8 +307,14 @@ const Dashboard = () => {
                   <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" style={{ fontSize: '12px' }} />
                   <YAxis stroke="hsl(var(--muted-foreground))" style={{ fontSize: '12px' }} />
                   <Tooltip contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }} />
-                  <Bar dataKey="scheduled" fill="hsl(var(--muted))" />
-                  <Bar dataKey="actual" fill="hsl(var(--foreground))" />
+                  <Bar dataKey="scheduled" fill="#e2e8f0" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="actual" fill="url(#cashflowGradient)" radius={[4, 4, 0, 0]} />
+                  <defs>
+                    <linearGradient id="cashflowGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#10b981" stopOpacity={0.8} />
+                      <stop offset="100%" stopColor="#059669" stopOpacity={0.8} />
+                    </linearGradient>
+                  </defs>
                 </BarChart>
               </ResponsiveContainer>
             </div>
