@@ -1,10 +1,10 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Store, Search, Plus, TrendingUp, Shield, Calendar } from "lucide-react";
+import { Store, Search, TrendingUp, Shield, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import TableFilters from "@/components/TableFilters";
+import { EnrollMerchantDialog } from "@/components/EnrollMerchantDialog";
 
 const Merchants = () => {
   const navigate = useNavigate();
@@ -227,10 +227,7 @@ const Merchants = () => {
               <h1 className="text-2xl font-semibold text-foreground">Merchants</h1>
               <p className="text-sm text-muted-foreground mt-1">Manage enrolled merchants and their banking accounts</p>
             </div>
-            <Button className="gap-2">
-              <Plus className="h-4 w-4" />
-              Enroll Merchant
-            </Button>
+            <EnrollMerchantDialog />
           </div>
         </div>
       </div>
