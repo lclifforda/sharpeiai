@@ -34,11 +34,11 @@ export function AppSidebar() {
         <div className="flex items-center justify-between px-3 py-4">
           <div className="flex items-center gap-3">
             <div className="w-7 h-7 rounded-md bg-primary/90 flex items-center justify-center flex-shrink-0 p-1 overflow-visible">
-              <img 
-                src={sharpeiLogo} 
-                alt="Sharpei AI" 
-                className="block w-full h-full object-contain"
-              />
+            <img 
+              src={sharpeiLogo} 
+              alt="Sharpei AI" 
+              className="block w-full h-full object-cover"
+            />
             </div>
             {open && <span className="font-medium text-foreground">Sharpei AI</span>}
           </div>
