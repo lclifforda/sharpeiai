@@ -287,56 +287,70 @@ const Merchants = () => {
         <div className="flex items-center gap-4 mb-6">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Search merchants..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-10" />
+            <Input placeholder="Search merchants..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-10 bg-card border-border" />
           </div>
           <TableFilters filters={filterGroups} onFilterChange={handleFilterChange} onClearAll={handleClearFilters} activeCount={activeFilterCount} />
         </div>
 
-        {/* Table */}
-        <div className="border rounded-lg bg-card overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-muted/50">
-                <tr className="border-b">
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Merchant Name</th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Legal Name</th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Category</th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Website</th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Account Number</th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Enrolled Date</th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Monthly Volume</th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Status</th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Risk Level</th>
-                </tr>
-              </thead>
-              <tbody>
-                {merchants.length === 0 ? <tr>
-                    <td colSpan={9} className="p-8 text-center text-muted-foreground">
-                      No merchants found
-                    </td>
-                  </tr> : merchants.map((merchant, index) => <tr key={index} className="border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer" onClick={() => navigate(`/merchants/${merchant.id}`)}>
-                      <td className="p-4">
-                        <div className="flex items-center gap-3">
-                          
-                          <div className="font-medium text-foreground">{merchant.name}</div>
-                        </div>
-                      </td>
-                      <td className="p-4 text-sm text-foreground">{merchant.legalName}</td>
-                      <td className="p-4 text-sm text-foreground">{merchant.category}</td>
-                      <td className="p-4 text-sm text-muted-foreground">{merchant.website}</td>
-                      <td className="p-4 text-sm text-muted-foreground font-mono">{merchant.accountNumber}</td>
-                      <td className="p-4 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-2">
-                          <Calendar className="w-3.5 h-3.5" />
-                          {merchant.enrolledDate}
-                        </div>
-                      </td>
-                      <td className="p-4 text-sm font-medium text-foreground">{merchant.monthlyVolume}</td>
-                      <td className="p-4">{getStatusBadge(merchant.status)}</td>
-                      <td className="p-4">{getRiskBadge(merchant.riskLevel)}</td>
-                    </tr>)}
-              </tbody>
-            </table>
+        {/* Merchants Table */}
+        <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-float">
+          {/* Table Header */}
+          <div className="grid grid-cols-[1.8fr_1.8fr_1fr_1.5fr_1.2fr_1fr_1fr_0.8fr_0.8fr] gap-6 px-6 py-4 border-b border-border bg-muted/50">
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Merchant Name</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Legal Name</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Category</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Website</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Account</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Enrolled</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Volume</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Risk</div>
+          </div>
+
+          {/* Table Body */}
+          <div className="divide-y divide-border">
+            {merchants.length === 0 ? (
+              <div className="p-8 text-center text-muted-foreground">
+                No merchants found
+              </div>
+            ) : (
+              merchants.map((merchant) => (
+                <div 
+                  key={merchant.id} 
+                  className="grid grid-cols-[1.8fr_1.8fr_1fr_1.5fr_1.2fr_1fr_1fr_0.8fr_0.8fr] gap-6 px-6 py-5 hover:bg-gradient-to-r hover:from-gradient-start/5 hover:to-gradient-purple/5 transition-colors cursor-pointer"
+                  onClick={() => navigate(`/merchants/${merchant.id}`)}
+                >
+                  <div>
+                    <p className="font-semibold gradient-sharpei-text text-base">{merchant.name}</p>
+                  </div>
+                  <div>
+                    <p className="text-foreground text-sm">{merchant.legalName}</p>
+                  </div>
+                  <div>
+                    <p className="text-foreground text-sm">{merchant.category}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground text-sm">{merchant.website}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground text-sm font-mono">{merchant.accountNumber}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+                    <p className="text-muted-foreground text-sm">{merchant.enrolledDate}</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold gradient-sharpei-text text-sm">{merchant.monthlyVolume}</p>
+                  </div>
+                  <div>
+                    {getStatusBadge(merchant.status)}
+                  </div>
+                  <div>
+                    {getRiskBadge(merchant.riskLevel)}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
