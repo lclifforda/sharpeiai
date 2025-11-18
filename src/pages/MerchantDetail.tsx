@@ -102,20 +102,14 @@ const MerchantDetail = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/merchants")}
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Merchant Details</h1>
-            <p className="text-muted-foreground">Complete merchant profile and engagement data</p>
-          </div>
-        </div>
+      <div className="flex items-center">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate("/merchants")}
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
       </div>
 
       {/* Sidebar Card */}
