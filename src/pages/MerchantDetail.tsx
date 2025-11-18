@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
+import techcorpLogo from "@/assets/techcorp-logo.png";
 
 const MerchantDetail = () => {
   const { id } = useParams();
@@ -35,7 +36,7 @@ const MerchantDetail = () => {
     legalName: "TechCorp Solutions LLC",
     category: "Technology",
     website: "www.techcorp.com",
-    logo: "https://via.placeholder.com/80",
+    logo: techcorpLogo,
     status: "active",
     
     // Section 1: Contact Data
