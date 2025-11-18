@@ -108,17 +108,14 @@ const Companies = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="border-b border-border bg-white">
-        <div className="px-8 py-6">
+      <div className="border-b bg-background">
+        <div className="px-6 py-5">
           <div className="flex items-center justify-between">
             <div>
-              <div className="flex items-center gap-3 mb-2">
-                <Building2 className="w-8 h-8 text-primary" />
-                <h1 className="text-3xl font-semibold text-foreground">Companies</h1>
-              </div>
-              <p className="text-muted-foreground">Manage your clients and their representatives</p>
+              <h1 className="text-2xl font-semibold text-foreground">Companies</h1>
+              <p className="text-sm text-muted-foreground mt-1">Manage your clients and their representatives</p>
             </div>
-            <Button className="gradient-sharpei text-white hover:opacity-90 shadow-float">
+            <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
               <Plus className="w-4 h-4 mr-2" />
               Add Company
             </Button>
@@ -127,7 +124,7 @@ const Companies = () => {
       </div>
 
       {/* Content */}
-      <div className="p-8 space-y-6">
+      <div className="p-6 space-y-4">
         {/* Search & Filters */}
         <div className="flex items-center gap-4 flex-wrap">
           <div className="relative flex-1 max-w-md">

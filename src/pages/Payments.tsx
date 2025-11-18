@@ -71,13 +71,10 @@ const Payments = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="border-b border-border bg-white">
-        <div className="px-8 py-6">
-          <div className="flex items-center gap-3 mb-2">
-            <CreditCard className="w-8 h-8 text-primary" />
-            <h1 className="text-3xl font-semibold text-foreground">Payments</h1>
-          </div>
-          <p className="text-muted-foreground">Track lease payments and financial transactions</p>
+      <div className="border-b bg-background">
+        <div className="px-6 py-5">
+          <h1 className="text-2xl font-semibold text-foreground">Payments</h1>
+          <p className="text-sm text-muted-foreground mt-1">Track lease payments and financial transactions</p>
         </div>
       </div>
 
