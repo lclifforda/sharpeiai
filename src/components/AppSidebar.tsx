@@ -33,7 +33,7 @@ export function AppSidebar() {
       <SidebarHeader>
         <div className="flex items-center justify-between px-3 py-4">
           <div className="flex items-center gap-3">
-            <div className="w-7 h-7 rounded-md bg-primary/90 flex items-center justify-center flex-shrink-0 p-1 overflow-visible">
+            <div className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden">
             <img 
               src={sharpeiLogo} 
               alt="Sharpei AI" 
