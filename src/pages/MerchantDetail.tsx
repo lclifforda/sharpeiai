@@ -5,6 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 const MerchantDetail = () => {
   const { id } = useParams();
@@ -102,7 +110,7 @@ const MerchantDetail = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center">
+      <div className="flex items-center gap-4">
         <Button
           variant="ghost"
           size="icon"
@@ -110,6 +118,22 @@ const MerchantDetail = () => {
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink 
+                onClick={() => navigate("/merchants")}
+                className="cursor-pointer"
+              >
+                Merchants
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage className="font-semibold">{merchant.name}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
       </div>
 
       {/* Sidebar Card */}
