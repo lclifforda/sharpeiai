@@ -3,13 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Package, FileText, Shield, DollarSign, MapPin, Calendar, Hash, Building2, AlertCircle, Repeat, TrendingUp, CheckCircle } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { ArrowLeft, Package, FileText, Shield, DollarSign, MapPin, Calendar, Hash, Building2, AlertCircle } from "lucide-react";
 
 const AssetDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { toast } = useToast();
 
   // Mock data - in a real app, this would come from an API/database
   const assets = [
@@ -32,42 +30,6 @@ const AssetDetail = () => {
       lastMaintenance: "2024-10-15",
       nextMaintenance: "2025-01-15",
       description: "High-precision CNC milling machine with 5-axis capability, suitable for complex manufacturing operations.",
-      leaseStatus: "returned",
-      returnDate: "2024-11-10",
-      leasedTo: "Advanced Manufacturing Co.",
-      images: [
-        "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=800&q=80",
-        "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=800&q=80",
-      ],
-      resellerOffers: [
-        {
-          id: "offer-1",
-          partner: "TechEquip Solutions",
-          offerAmount: "$108,000",
-          offerDate: "2024-11-12",
-          validUntil: "2024-11-25",
-          terms: "Cash payment, 5-day pickup",
-          status: "pending"
-        },
-        {
-          id: "offer-2",
-          partner: "Industrial Assets Group",
-          offerAmount: "$112,500",
-          offerDate: "2024-11-13",
-          validUntil: "2024-11-27",
-          terms: "Bank transfer, 7-day pickup",
-          status: "pending"
-        },
-        {
-          id: "offer-3",
-          partner: "Global Equipment Trading",
-          offerAmount: "$105,000",
-          offerDate: "2024-11-11",
-          validUntil: "2024-11-22",
-          terms: "Cash payment, immediate pickup",
-          status: "pending"
-        }
-      ]
     },
     {
       id: "mri-scanner",
@@ -88,10 +50,6 @@ const AssetDetail = () => {
       lastMaintenance: "2024-09-01",
       nextMaintenance: "2024-12-01",
       description: "1.5 Tesla MRI scanner with advanced imaging capabilities for diagnostic purposes.",
-      leaseStatus: "active",
-      images: [
-        "https://images.unsplash.com/photo-1516549655169-df83a0774514?w=800&q=80",
-      ],
     },
     {
       id: "excavator-cat-320",
@@ -112,10 +70,6 @@ const AssetDetail = () => {
       lastMaintenance: "2024-10-20",
       nextMaintenance: "2025-02-20",
       description: "CAT 320 excavator with 20-ton operating weight, ideal for medium to large construction projects.",
-      leaseStatus: "available",
-      images: [
-        "https://images.unsplash.com/photo-1581094271901-8022df4466f9?w=800&q=80",
-      ],
     },
     {
       id: "server-rack-dell",
@@ -136,10 +90,6 @@ const AssetDetail = () => {
       lastMaintenance: "2024-11-01",
       nextMaintenance: "2025-02-01",
       description: "Dell PowerEdge server rack with 42U capacity, redundant power supplies, and advanced cooling system.",
-      leaseStatus: "available",
-      images: [
-        "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&q=80",
-      ],
     },
   ];
 
@@ -176,26 +126,6 @@ const AssetDetail = () => {
     }
   };
 
-  const getLeaseStatusBadge = (status: string) => {
-    switch (status) {
-      case "returned":
-        return <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-100">Returned from Lease</Badge>;
-      case "active":
-        return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">Currently Leased</Badge>;
-      case "available":
-        return <Badge className="bg-green-100 text-green-700 hover:bg-green-100">Available</Badge>;
-      default:
-        return null;
-    }
-  };
-
-  const handleAcceptOffer = (offerId: string, partnerName: string, amount: string) => {
-    toast({
-      title: "Offer Accepted",
-      description: `Successfully accepted ${amount} offer from ${partnerName}. Contract processing initiated.`,
-    });
-  };
-
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -223,109 +153,6 @@ const AssetDetail = () => {
 
       {/* Content */}
       <div className="p-6 space-y-6">
-        {/* Product Images */}
-        {asset.images && asset.images.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Product Images</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {asset.images.map((image, index) => (
-                  <div key={index} className="aspect-video rounded-lg overflow-hidden border border-border">
-                    <img 
-                      src={image} 
-                      alt={`${asset.name} - Image ${index + 1}`}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Lease Status & Return Info */}
-        {asset.leaseStatus === "returned" && (
-          <Card className="border-orange-200 bg-orange-50/50">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-orange-800">
-                <Repeat className="w-5 h-5" />
-                Returned from Lease
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Leased To</span>
-                <span className="font-medium text-sm">{asset.leasedTo}</span>
-              </div>
-              <Separator />
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Return Date</span>
-                <span className="font-medium text-sm">{new Date(asset.returnDate!).toLocaleDateString()}</span>
-              </div>
-              <Separator />
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Current Condition</span>
-                <Badge className={getConditionColor(asset.condition)}>{asset.condition}</Badge>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Reseller Partner Offers */}
-        {asset.resellerOffers && asset.resellerOffers.length > 0 && (
-          <Card className="border-primary/20">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="w-5 h-5" />
-                Reseller Partner Offers
-              </CardTitle>
-              <p className="text-sm text-muted-foreground mt-1">
-                Active offers from verified reseller partners for this returned asset
-              </p>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {asset.resellerOffers.map((offer) => (
-                  <Card key={offer.id} className="border-border">
-                    <CardContent className="pt-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div>
-                          <h3 className="font-semibold text-lg">{offer.partner}</h3>
-                          <p className="text-2xl font-bold text-primary mt-1">{offer.offerAmount}</p>
-                        </div>
-                        <Button 
-                          onClick={() => handleAcceptOffer(offer.id, offer.partner, offer.offerAmount)}
-                          className="bg-green-600 hover:bg-green-700"
-                        >
-                          <CheckCircle className="w-4 h-4 mr-2" />
-                          Accept Offer
-                        </Button>
-                      </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                        <div>
-                          <span className="text-muted-foreground block mb-1">Offer Date</span>
-                          <span className="font-medium">{new Date(offer.offerDate).toLocaleDateString()}</span>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground block mb-1">Valid Until</span>
-                          <span className="font-medium">{new Date(offer.validUntil).toLocaleDateString()}</span>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground block mb-1">Terms</span>
-                          <span className="font-medium">{offer.terms}</span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
         {/* Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card>
