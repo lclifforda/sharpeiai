@@ -1,5 +1,5 @@
 import { NavLink } from "@/components/NavLink";
-import { MessageSquare, LayoutDashboard, Building2, ShoppingCart, FileText, CreditCard, Package } from "lucide-react";
+import { MessageSquare, LayoutDashboard, Building2, ShoppingCart, FileText, CreditCard, Package, Settings, LogOut } from "lucide-react";
 import sharpeiLogo from "@/assets/sharpei-logo.png";
 import {
   Sidebar,
@@ -70,15 +70,29 @@ export function AppSidebar() {
 
       <SidebarFooter>
         <div className="px-3 py-4 border-t">
-          <div className="flex items-center gap-3 py-2 cursor-pointer">
+          <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
               <span className="text-foreground font-medium text-xs">LC</span>
             </div>
             {open && (
-              <div className="flex-1 min-w-0">
-                <div className="text-foreground font-medium text-xs truncate">Lucia Clifford</div>
-                <div className="text-muted-foreground text-xs truncate">Administrator</div>
-              </div>
+              <>
+                <div className="flex-1 min-w-0">
+                  <div className="text-foreground font-medium text-xs truncate">Lucia Clifford</div>
+                  <div className="text-muted-foreground text-xs truncate">Administrator</div>
+                </div>
+                <button 
+                  className="p-1.5 rounded-lg hover:bg-accent transition-colors"
+                  title="Settings"
+                >
+                  <Settings className="w-4 h-4 text-muted-foreground" />
+                </button>
+                <button 
+                  className="p-1.5 rounded-lg hover:bg-accent transition-colors"
+                  title="Logout"
+                >
+                  <LogOut className="w-4 h-4 text-muted-foreground" />
+                </button>
+              </>
             )}
           </div>
         </div>
