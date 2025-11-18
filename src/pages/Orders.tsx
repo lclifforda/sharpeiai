@@ -1,6 +1,7 @@
-import { Card } from "@/components/ui/card";
-import { ShoppingCart, Filter } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { ShoppingCart, Search, Plus } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const Orders = () => {
   const orders = [
@@ -12,9 +13,9 @@ const Orders = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "Approved": return "bg-gradient-start/10 text-gradient-start";
-      case "Processing": return "bg-gradient-coral/10 text-gradient-coral";
-      case "Delivered": return "bg-gradient-pink/10 text-gradient-pink";
+      case "Approved": return "bg-green-100 text-green-700";
+      case "Processing": return "bg-blue-100 text-blue-700";
+      case "Delivered": return "bg-purple-100 text-purple-700";
       default: return "bg-muted text-muted-foreground";
     }
   };
@@ -22,7 +23,7 @@ const Orders = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="border-b border-border bg-white/80 backdrop-blur-lg sticky top-0 z-10">
+      <div className="border-b border-border bg-white">
         <div className="px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
@@ -32,46 +33,67 @@ const Orders = () => {
               </div>
               <p className="text-muted-foreground">Track equipment orders and lease applications</p>
             </div>
-            <Button variant="outline" className="border-border">
-              <Filter className="w-4 h-4 mr-2" />
-              Filter
+            <Button className="gradient-sharpei text-white hover:opacity-90 shadow-float">
+              <Plus className="w-4 h-4 mr-2" />
+              New Order
             </Button>
           </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-8">
-        <div className="space-y-4">
-          {orders.map((order) => (
-            <Card key={order.id} className="p-6 hover:shadow-float transition-all duration-300 border-border">
-              <div className="grid grid-cols-6 gap-6 items-center">
+      <div className="p-8 space-y-6">
+        {/* Search */}
+        <div className="relative max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+          <Input 
+            placeholder="Search orders..." 
+            className="pl-10 bg-white border-border"
+          />
+        </div>
+
+        {/* Orders Table */}
+        <div className="bg-white rounded-2xl border border-border overflow-hidden shadow-float">
+          {/* Table Header */}
+          <div className="grid grid-cols-[1fr_2fr_2fr_1.2fr_1fr_1fr] gap-6 px-6 py-4 border-b border-border bg-background/50">
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Order ID</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Company</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Equipment</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Amount</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Date</div>
+          </div>
+
+          {/* Table Body */}
+          <div className="divide-y divide-border">
+            {orders.map((order) => (
+              <div 
+                key={order.id} 
+                className="grid grid-cols-[1fr_2fr_2fr_1.2fr_1fr_1fr] gap-6 px-6 py-5 hover:bg-gradient-to-r hover:from-gradient-start/5 hover:to-gradient-purple/5 transition-colors cursor-pointer"
+              >
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Order ID</p>
-                  <p className="font-mono font-semibold text-foreground">{order.id}</p>
-                </div>
-                <div className="col-span-2">
-                  <p className="text-sm text-muted-foreground mb-1">Company & Equipment</p>
-                  <p className="font-semibold text-foreground">{order.company}</p>
-                  <p className="text-sm text-muted-foreground">{order.equipment}</p>
+                  <p className="font-mono font-semibold gradient-sharpei-text text-sm">{order.id}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Amount</p>
-                  <p className="text-xl font-bold text-foreground">{order.amount}</p>
+                  <p className="font-semibold text-foreground text-sm">{order.company}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Status</p>
-                  <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                  <p className="text-foreground text-sm">{order.equipment}</p>
+                </div>
+                <div>
+                  <p className="font-semibold gradient-sharpei-text text-sm">{order.amount}</p>
+                </div>
+                <div>
+                  <Badge className={`${getStatusColor(order.status)} hover:${getStatusColor(order.status)} border-0 text-xs`}>
                     {order.status}
-                  </span>
+                  </Badge>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Date</p>
-                  <p className="text-foreground">{order.date}</p>
+                  <p className="text-foreground text-sm">{order.date}</p>
                 </div>
               </div>
-            </Card>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>
