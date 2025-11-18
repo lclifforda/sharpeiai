@@ -14,10 +14,10 @@ interface RenewalOfferDialogProps {
 }
 
 const mockCustomers = [
-  { name: "TechCorp Solutions", riskScore: 92, currentLease: "Laptop Dell XPS 15", leaseValue: 45000, remainingMonths: 6 },
-  { name: "Innovation Labs", riskScore: 78, currentLease: "MacBook Pro 16", leaseValue: 62000, remainingMonths: 12 },
-  { name: "Global Industries", riskScore: 85, currentLease: "HP Workstation Z8", leaseValue: 89000, remainingMonths: 8 },
-  { name: "Startup Ventures", riskScore: 65, currentLease: "Surface Laptop 5", leaseValue: 28000, remainingMonths: 4 },
+  { name: "TechCorp Solutions", riskScore: 92, currentLease: "Laptop Dell XPS 15", leaseValue: 45000, remainingMonths: 6, currentUnits: 15 },
+  { name: "Innovation Labs", riskScore: 78, currentLease: "MacBook Pro 16", leaseValue: 62000, remainingMonths: 12, currentUnits: 8 },
+  { name: "Global Industries", riskScore: 85, currentLease: "HP Workstation Z8", leaseValue: 89000, remainingMonths: 8, currentUnits: 25 },
+  { name: "Startup Ventures", riskScore: 65, currentLease: "Surface Laptop 5", leaseValue: 28000, remainingMonths: 4, currentUnits: 5 },
 ];
 
 const newEquipmentOptions = [
@@ -31,6 +31,7 @@ const RenewalOfferDialog = ({ open, onOpenChange }: RenewalOfferDialogProps) => 
   const [step, setStep] = useState(1);
   const [customerName, setCustomerName] = useState("");
   const [newEquipment, setNewEquipment] = useState("");
+  const [newUnits, setNewUnits] = useState("");
   const [leaseTerm, setLeaseTerm] = useState("36");
   const [includeInsurance, setIncludeInsurance] = useState("yes");
   const [includeMaintenance, setIncludeMaintenance] = useState("comprehensive");
@@ -45,10 +46,12 @@ const RenewalOfferDialog = ({ open, onOpenChange }: RenewalOfferDialogProps) => 
   };
 
   const calculateRenewalOffer = () => {
-    if (!customerData || !newEquipmentData) return null;
+    if (!customerData || !newEquipmentData || !newUnits) return null;
 
+    const units = parseInt(newUnits);
     const tradeInValue = calculateTradeInValue();
-    const netEquipmentCost = newEquipmentData.value - tradeInValue;
+    const totalNewEquipmentCost = newEquipmentData.value * units;
+    const netEquipmentCost = totalNewEquipmentCost - tradeInValue;
     const monthlyBase = netEquipmentCost / parseInt(leaseTerm);
     
     const insuranceCost = includeInsurance === "yes" ? monthlyBase * 0.03 : 0;
@@ -64,6 +67,8 @@ const RenewalOfferDialog = ({ open, onOpenChange }: RenewalOfferDialogProps) => 
     const finalMonthly = monthlyTotal - loyaltyDiscount;
 
     return {
+      units,
+      totalNewEquipmentCost,
       tradeInValue,
       netEquipmentCost,
       monthlyBase: Math.round(monthlyBase),
@@ -88,6 +93,7 @@ const RenewalOfferDialog = ({ open, onOpenChange }: RenewalOfferDialogProps) => 
     setStep(1);
     setCustomerName("");
     setNewEquipment("");
+    setNewUnits("");
     setLeaseTerm("36");
     setIncludeInsurance("yes");
     setIncludeMaintenance("comprehensive");
@@ -107,15 +113,15 @@ const RenewalOfferDialog = ({ open, onOpenChange }: RenewalOfferDialogProps) => 
           <div className="space-y-6">
             <div className="space-y-4">
               <div>
-                <Label htmlFor="customer">Select Existing Customer</Label>
+                <Label htmlFor="customer" className="mb-3 block">Select Existing Customer</Label>
                 <Select value={customerName} onValueChange={setCustomerName}>
                   <SelectTrigger>
                     <SelectValue placeholder="Choose customer with active lease" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-background z-50">
                     {mockCustomers.map((customer) => (
                       <SelectItem key={customer.name} value={customer.name}>
-                        {customer.name} - {customer.currentLease}
+                        {customer.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -131,6 +137,10 @@ const RenewalOfferDialog = ({ open, onOpenChange }: RenewalOfferDialogProps) => 
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Equipment:</span>
                       <span className="font-medium">{customerData.currentLease}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Current Units:</span>
+                      <span className="font-medium">{customerData.currentUnits} units</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Current Lease Value:</span>
@@ -160,7 +170,7 @@ const RenewalOfferDialog = ({ open, onOpenChange }: RenewalOfferDialogProps) => 
                   <SelectTrigger>
                     <SelectValue placeholder="Select new equipment" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-background z-50">
                     {newEquipmentOptions.map((equipment) => (
                       <SelectItem key={equipment.name} value={equipment.name}>
                         {equipment.name} - ${equipment.value.toLocaleString()}
@@ -171,12 +181,24 @@ const RenewalOfferDialog = ({ open, onOpenChange }: RenewalOfferDialogProps) => 
               </div>
 
               <div>
+                <Label htmlFor="newUnits">Number of Units</Label>
+                <Input
+                  id="newUnits"
+                  type="number"
+                  min="1"
+                  placeholder="Enter number of units"
+                  value={newUnits}
+                  onChange={(e) => setNewUnits(e.target.value)}
+                />
+              </div>
+
+              <div>
                 <Label htmlFor="leaseTerm">New Lease Term (months)</Label>
                 <Select value={leaseTerm} onValueChange={setLeaseTerm}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-background z-50">
                     <SelectItem value="24">24 months</SelectItem>
                     <SelectItem value="36">36 months</SelectItem>
                     <SelectItem value="48">48 months</SelectItem>
@@ -192,7 +214,7 @@ const RenewalOfferDialog = ({ open, onOpenChange }: RenewalOfferDialogProps) => 
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-background z-50">
                       <SelectItem value="yes">Yes (+3%)</SelectItem>
                       <SelectItem value="no">No</SelectItem>
                     </SelectContent>
@@ -205,7 +227,7 @@ const RenewalOfferDialog = ({ open, onOpenChange }: RenewalOfferDialogProps) => 
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-background z-50">
                       <SelectItem value="comprehensive">Comprehensive (+5%)</SelectItem>
                       <SelectItem value="basic">Basic (+2%)</SelectItem>
                       <SelectItem value="no">None</SelectItem>
@@ -218,7 +240,7 @@ const RenewalOfferDialog = ({ open, onOpenChange }: RenewalOfferDialogProps) => 
             <Button 
               onClick={handleGenerateOffer} 
               className="w-full"
-              disabled={!customerName || !newEquipment}
+              disabled={!customerName || !newEquipment || !newUnits}
             >
               Generate Renewal Offer
             </Button>
@@ -237,13 +259,15 @@ const RenewalOfferDialog = ({ open, onOpenChange }: RenewalOfferDialogProps) => 
                   <div className="text-center flex-1">
                     <p className="text-sm text-muted-foreground mb-1">Current</p>
                     <p className="font-medium">{customerData?.currentLease}</p>
-                    <p className="text-xs text-muted-foreground mt-1">${customerData?.leaseValue.toLocaleString()}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{customerData?.currentUnits} units</p>
+                    <p className="text-xs text-muted-foreground">${customerData?.leaseValue.toLocaleString()}</p>
                   </div>
                   <ArrowRight className="w-6 h-6 text-gradient-start" />
                   <div className="text-center flex-1">
                     <p className="text-sm text-muted-foreground mb-1">Upgrade To</p>
                     <p className="font-medium">{newEquipment}</p>
-                    <p className="text-xs text-muted-foreground mt-1">${newEquipmentData?.value.toLocaleString()}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{offer?.units} units</p>
+                    <p className="text-xs text-muted-foreground">${newEquipmentData?.value.toLocaleString()} per unit</p>
                   </div>
                 </div>
               </CardContent>
@@ -255,8 +279,8 @@ const RenewalOfferDialog = ({ open, onOpenChange }: RenewalOfferDialogProps) => 
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">New Equipment Value:</span>
-                  <span>${newEquipmentData?.value.toLocaleString()}</span>
+                  <span className="text-muted-foreground">New Equipment ({offer?.units} units × ${newEquipmentData?.value.toLocaleString()}):</span>
+                  <span>${offer?.totalNewEquipmentCost.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-sm text-gradient-start font-medium">
                   <span>Trade-In Credit:</span>
