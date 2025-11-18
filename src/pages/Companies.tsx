@@ -1,10 +1,17 @@
+import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Building2, Search, Plus, List, LayoutGrid, MapPin, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import TableFilters from "@/components/TableFilters";
 
 const Companies = () => {
-  const companies = [
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filters, setFilters] = useState({
+    industry: [] as string[],
+    status: [] as string[],
+  });
+  const allCompanies = [
     { 
       name: "TechCorp Industries", 
       industry: "Manufacturing", 
@@ -39,7 +46,7 @@ const Companies = () => {
       representatives: 1,
       activeContracts: 1,
       revenue: "$18,000",
-      status: "active" 
+      status: "inactive" 
     },
     { 
       name: "AgriTech Farms", 
@@ -51,6 +58,52 @@ const Companies = () => {
       status: "active" 
     },
   ];
+
+  const filterGroups = [
+    {
+      label: "Industry",
+      options: [
+        { label: "Manufacturing", value: "Manufacturing", checked: filters.industry.includes("Manufacturing") },
+        { label: "Logistics", value: "Logistics", checked: filters.industry.includes("Logistics") },
+        { label: "Automotive", value: "Automotive", checked: filters.industry.includes("Automotive") },
+        { label: "Agriculture", value: "Agriculture", checked: filters.industry.includes("Agriculture") },
+      ]
+    },
+    {
+      label: "Status",
+      options: [
+        { label: "Active", value: "active", checked: filters.status.includes("active") },
+        { label: "Inactive", value: "inactive", checked: filters.status.includes("inactive") },
+      ]
+    }
+  ];
+
+  const handleFilterChange = (groupLabel: string, value: string, checked: boolean) => {
+    const key = groupLabel.toLowerCase() as keyof typeof filters;
+    setFilters(prev => ({
+      ...prev,
+      [key]: checked 
+        ? [...prev[key], value]
+        : prev[key].filter(v => v !== value)
+    }));
+  };
+
+  const handleClearFilters = () => {
+    setFilters({ industry: [], status: [] });
+  };
+
+  const activeFilterCount = filters.industry.length + filters.status.length;
+
+  const companies = useMemo(() => {
+    return allCompanies.filter(company => {
+      const matchesSearch = company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           company.location.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesIndustry = filters.industry.length === 0 || filters.industry.includes(company.industry);
+      const matchesStatus = filters.status.length === 0 || filters.status.includes(company.status);
+      
+      return matchesSearch && matchesIndustry && matchesStatus;
+    });
+  }, [searchQuery, filters]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -76,15 +129,25 @@ const Companies = () => {
       {/* Content */}
       <div className="p-8 space-y-6">
         {/* Search & Filters */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-wrap">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <Input 
               placeholder="Search companies..." 
               className="pl-10 bg-white border-border"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <div className="flex gap-2">
+          
+          <TableFilters 
+            filters={filterGroups}
+            onFilterChange={handleFilterChange}
+            onClearAll={handleClearFilters}
+            activeCount={activeFilterCount}
+          />
+          
+          <div className="flex gap-2 ml-auto">
             <Button variant="default" size="icon" className="gradient-sharpei text-white hover:opacity-90">
               <List className="w-5 h-5" />
             </Button>

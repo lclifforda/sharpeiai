@@ -1,13 +1,54 @@
+import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FileText, Search, Plus, Download } from "lucide-react";
+import TableFilters from "@/components/TableFilters";
 
 const Contracts = () => {
-  const contracts = [
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filters, setFilters] = useState({
+    type: [] as string[],
+  });
+  const allContracts = [
     { id: "CNT-2025-001", company: "TechCorp Industries", type: "Equipment Lease", term: "36 months", value: "$1.2M", signed: "2025-10-15", expires: "2028-10-15" },
     { id: "CNT-2025-002", company: "MedEquip Solutions", type: "Finance Agreement", term: "48 months", value: "$890K", signed: "2025-09-20", expires: "2029-09-20" },
     { id: "CNT-2025-003", company: "BuildPro Construction", type: "Equipment Lease", term: "24 months", value: "$2.1M", signed: "2025-08-10", expires: "2027-08-10" },
   ];
+
+  const filterGroups = [
+    {
+      label: "Type",
+      options: [
+        { label: "Equipment Lease", value: "Equipment Lease", checked: filters.type.includes("Equipment Lease") },
+        { label: "Finance Agreement", value: "Finance Agreement", checked: filters.type.includes("Finance Agreement") },
+      ]
+    }
+  ];
+
+  const handleFilterChange = (groupLabel: string, value: string, checked: boolean) => {
+    setFilters(prev => ({
+      ...prev,
+      type: checked 
+        ? [...prev.type, value]
+        : prev.type.filter(v => v !== value)
+    }));
+  };
+
+  const handleClearFilters = () => {
+    setFilters({ type: [] });
+  };
+
+  const activeFilterCount = filters.type.length;
+
+  const contracts = useMemo(() => {
+    return allContracts.filter(contract => {
+      const matchesSearch = contract.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           contract.id.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesType = filters.type.length === 0 || filters.type.includes(contract.type);
+      
+      return matchesSearch && matchesType;
+    });
+  }, [searchQuery, filters]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -32,12 +73,23 @@ const Contracts = () => {
 
       {/* Content */}
       <div className="p-8 space-y-6">
-        {/* Search */}
-        <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-          <Input 
-            placeholder="Search contracts..." 
-            className="pl-10 bg-white border-border"
+        {/* Search & Filters */}
+        <div className="flex items-center gap-4 flex-wrap">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <Input 
+              placeholder="Search contracts..." 
+              className="pl-10 bg-white border-border"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          
+          <TableFilters 
+            filters={filterGroups}
+            onFilterChange={handleFilterChange}
+            onClearAll={handleClearFilters}
+            activeCount={activeFilterCount}
           />
         </div>
 

@@ -1,15 +1,59 @@
+import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Search, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import TableFilters from "@/components/TableFilters";
 
 const Orders = () => {
-  const orders = [
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filters, setFilters] = useState({
+    status: [] as string[],
+  });
+  const allOrders = [
     { id: "ORD-1234", company: "TechCorp Industries", equipment: "CNC Machine", amount: "$125,000", status: "Processing", date: "2025-11-10" },
     { id: "ORD-1235", company: "MedEquip Solutions", equipment: "MRI Scanner", amount: "$890,000", status: "Approved", date: "2025-11-09" },
     { id: "ORD-1236", company: "BuildPro Construction", equipment: "Excavator", amount: "$75,000", status: "Delivered", date: "2025-11-08" },
     { id: "ORD-1237", company: "AgriTech Farms", equipment: "Tractor Fleet", amount: "$450,000", status: "Pending", date: "2025-11-07" },
   ];
+
+  const filterGroups = [
+    {
+      label: "Status",
+      options: [
+        { label: "Processing", value: "Processing", checked: filters.status.includes("Processing") },
+        { label: "Approved", value: "Approved", checked: filters.status.includes("Approved") },
+        { label: "Delivered", value: "Delivered", checked: filters.status.includes("Delivered") },
+        { label: "Pending", value: "Pending", checked: filters.status.includes("Pending") },
+      ]
+    }
+  ];
+
+  const handleFilterChange = (groupLabel: string, value: string, checked: boolean) => {
+    setFilters(prev => ({
+      ...prev,
+      status: checked 
+        ? [...prev.status, value]
+        : prev.status.filter(v => v !== value)
+    }));
+  };
+
+  const handleClearFilters = () => {
+    setFilters({ status: [] });
+  };
+
+  const activeFilterCount = filters.status.length;
+
+  const orders = useMemo(() => {
+    return allOrders.filter(order => {
+      const matchesSearch = order.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           order.equipment.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           order.id.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesStatus = filters.status.length === 0 || filters.status.includes(order.status);
+      
+      return matchesSearch && matchesStatus;
+    });
+  }, [searchQuery, filters]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -43,12 +87,23 @@ const Orders = () => {
 
       {/* Content */}
       <div className="p-8 space-y-6">
-        {/* Search */}
-        <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-          <Input 
-            placeholder="Search orders..." 
-            className="pl-10 bg-white border-border"
+        {/* Search & Filters */}
+        <div className="flex items-center gap-4 flex-wrap">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <Input 
+              placeholder="Search orders..." 
+              className="pl-10 bg-white border-border"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          
+          <TableFilters 
+            filters={filterGroups}
+            onFilterChange={handleFilterChange}
+            onClearAll={handleClearFilters}
+            activeCount={activeFilterCount}
           />
         </div>
 

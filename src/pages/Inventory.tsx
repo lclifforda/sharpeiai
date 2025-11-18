@@ -1,15 +1,77 @@
+import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Package, Search, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import TableFilters from "@/components/TableFilters";
 
 const Inventory = () => {
-  const equipment = [
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filters, setFilters] = useState({
+    category: [] as string[],
+    availability: [] as string[],
+  });
+  const allEquipment = [
     { name: "CNC Milling Machine", category: "Manufacturing", quantity: 5, available: 3, value: "$125K/unit", location: "Warehouse A" },
     { name: "MRI Scanner", category: "Medical", quantity: 2, available: 1, value: "$890K/unit", location: "Medical Depot" },
     { name: "Excavator CAT 320", category: "Construction", quantity: 8, available: 6, value: "$75K/unit", location: "Warehouse B" },
     { name: "Server Rack Dell", category: "IT Hardware", quantity: 15, available: 12, value: "$25K/unit", location: "Tech Center" },
   ];
+
+  const filterGroups = [
+    {
+      label: "Category",
+      options: [
+        { label: "Manufacturing", value: "Manufacturing", checked: filters.category.includes("Manufacturing") },
+        { label: "Medical", value: "Medical", checked: filters.category.includes("Medical") },
+        { label: "Construction", value: "Construction", checked: filters.category.includes("Construction") },
+        { label: "IT Hardware", value: "IT Hardware", checked: filters.category.includes("IT Hardware") },
+      ]
+    },
+    {
+      label: "Availability",
+      options: [
+        { label: "In Stock", value: "in_stock", checked: filters.availability.includes("in_stock") },
+        { label: "Low Stock", value: "low_stock", checked: filters.availability.includes("low_stock") },
+      ]
+    }
+  ];
+
+  const handleFilterChange = (groupLabel: string, value: string, checked: boolean) => {
+    const key = groupLabel.toLowerCase() as keyof typeof filters;
+    setFilters(prev => ({
+      ...prev,
+      [key]: checked 
+        ? [...prev[key], value]
+        : prev[key].filter(v => v !== value)
+    }));
+  };
+
+  const handleClearFilters = () => {
+    setFilters({ category: [], availability: [] });
+  };
+
+  const activeFilterCount = filters.category.length + filters.availability.length;
+
+  const equipment = useMemo(() => {
+    return allEquipment.filter(item => {
+      const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           item.location.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = filters.category.length === 0 || filters.category.includes(item.category);
+      
+      let matchesAvailability = true;
+      if (filters.availability.length > 0) {
+        const isLowStock = item.available <= 2;
+        matchesAvailability = filters.availability.some(filter => {
+          if (filter === "in_stock") return item.available > 2;
+          if (filter === "low_stock") return isLowStock;
+          return true;
+        });
+      }
+      
+      return matchesSearch && matchesCategory && matchesAvailability;
+    });
+  }, [searchQuery, filters]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -34,12 +96,23 @@ const Inventory = () => {
 
       {/* Content */}
       <div className="p-8 space-y-6">
-        {/* Search */}
-        <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-          <Input 
-            placeholder="Search equipment..." 
-            className="pl-10 bg-white border-border"
+        {/* Search & Filters */}
+        <div className="flex items-center gap-4 flex-wrap">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <Input 
+              placeholder="Search equipment..." 
+              className="pl-10 bg-white border-border"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          
+          <TableFilters 
+            filters={filterGroups}
+            onFilterChange={handleFilterChange}
+            onClearAll={handleClearFilters}
+            activeCount={activeFilterCount}
           />
         </div>
 

@@ -1,15 +1,66 @@
+import { useState, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { CreditCard, Search, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import TableFilters from "@/components/TableFilters";
 
 const Payments = () => {
-  const transactions = [
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filters, setFilters] = useState({
+    type: [] as string[],
+    status: [] as string[],
+  });
+  const allTransactions = [
     { id: "PAY-5678", company: "TechCorp Industries", type: "Incoming", amount: "$12,500", status: "Completed", date: "2025-11-13" },
     { id: "PAY-5679", company: "MedEquip Solutions", type: "Incoming", amount: "$18,900", status: "Completed", date: "2025-11-12" },
     { id: "PAY-5680", company: "BuildPro Construction", type: "Incoming", amount: "$35,000", status: "Pending", date: "2025-11-11" },
     { id: "PAY-5681", company: "Equipment Vendor", type: "Outgoing", amount: "$8,500", status: "Completed", date: "2025-11-10" },
   ];
+
+  const filterGroups = [
+    {
+      label: "Type",
+      options: [
+        { label: "Incoming", value: "Incoming", checked: filters.type.includes("Incoming") },
+        { label: "Outgoing", value: "Outgoing", checked: filters.type.includes("Outgoing") },
+      ]
+    },
+    {
+      label: "Status",
+      options: [
+        { label: "Completed", value: "Completed", checked: filters.status.includes("Completed") },
+        { label: "Pending", value: "Pending", checked: filters.status.includes("Pending") },
+      ]
+    }
+  ];
+
+  const handleFilterChange = (groupLabel: string, value: string, checked: boolean) => {
+    const key = groupLabel.toLowerCase() as keyof typeof filters;
+    setFilters(prev => ({
+      ...prev,
+      [key]: checked 
+        ? [...prev[key], value]
+        : prev[key].filter(v => v !== value)
+    }));
+  };
+
+  const handleClearFilters = () => {
+    setFilters({ type: [], status: [] });
+  };
+
+  const activeFilterCount = filters.type.length + filters.status.length;
+
+  const transactions = useMemo(() => {
+    return allTransactions.filter(transaction => {
+      const matchesSearch = transaction.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           transaction.id.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesType = filters.type.length === 0 || filters.type.includes(transaction.type);
+      const matchesStatus = filters.status.length === 0 || filters.status.includes(transaction.status);
+      
+      return matchesSearch && matchesType && matchesStatus;
+    });
+  }, [searchQuery, filters]);
 
   const getStatusColor = (status: string) => {
     return status === "Completed" 
@@ -51,12 +102,23 @@ const Payments = () => {
           </Card>
         </div>
 
-        {/* Search */}
-        <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-          <Input 
-            placeholder="Search transactions..." 
-            className="pl-10 bg-white border-border"
+        {/* Search & Filters */}
+        <div className="flex items-center gap-4 flex-wrap">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <Input 
+              placeholder="Search transactions..." 
+              className="pl-10 bg-white border-border"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          
+          <TableFilters 
+            filters={filterGroups}
+            onFilterChange={handleFilterChange}
+            onClearAll={handleClearFilters}
+            activeCount={activeFilterCount}
           />
         </div>
 
