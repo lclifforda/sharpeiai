@@ -5,229 +5,227 @@ import { Store, Search, TrendingUp, Shield, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import TableFilters from "@/components/TableFilters";
 import { EnrollMerchantDialog } from "@/components/EnrollMerchantDialog";
-
 const Merchants = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
     businessType: [] as string[],
     status: [] as string[],
-    riskLevel: [] as string[],
+    riskLevel: [] as string[]
   });
-
-  const allMerchants = [
-    {
-      id: "M001",
-      name: "TechMart Electronics",
-      legalName: "TechMart Electronics LLC",
-      category: "Retail",
-      website: "www.techmart.com",
-      accountNumber: "ACC-2024-001",
-      enrolledDate: "Jan 15, 2024",
-      status: "active",
-      monthlyVolume: "$125,000",
-      riskLevel: "low"
-    },
-    {
-      id: "M002",
-      name: "Green Valley Grocers",
-      legalName: "Green Valley Grocers Inc",
-      category: "Grocery",
-      website: "www.greenvalley.com",
-      accountNumber: "ACC-2024-002",
-      enrolledDate: "Feb 3, 2024",
-      status: "active",
-      monthlyVolume: "$89,500",
-      riskLevel: "low"
-    },
-    {
-      id: "M003",
-      name: "Urban Fashion Hub",
-      legalName: "Urban Fashion Hub Ltd",
-      category: "Fashion",
-      website: "www.urbanfashion.com",
-      accountNumber: "ACC-2024-003",
-      enrolledDate: "Feb 20, 2024",
-      status: "active",
-      monthlyVolume: "$210,000",
-      riskLevel: "medium"
-    },
-    {
-      id: "M004",
-      name: "HomeFix Hardware",
-      legalName: "HomeFix Hardware Corp",
-      category: "Hardware",
-      website: "www.homefix.com",
-      accountNumber: "ACC-2024-004",
-      enrolledDate: "Mar 8, 2024",
-      status: "pending",
-      monthlyVolume: "$45,000",
-      riskLevel: "low"
-    },
-    {
-      id: "M005",
-      name: "Digital Services Pro",
-      legalName: "Digital Services Pro Inc",
-      category: "Services",
-      website: "www.digitalpro.com",
-      accountNumber: "ACC-2024-005",
-      enrolledDate: "Mar 15, 2024",
-      status: "active",
-      monthlyVolume: "$178,000",
-      riskLevel: "medium"
-    },
-    {
-      id: "M006",
-      name: "QuickBite Restaurants",
-      legalName: "QuickBite Restaurants LLC",
-      category: "Food & Beverage",
-      website: "www.quickbite.com",
-      accountNumber: "ACC-2024-006",
-      enrolledDate: "Apr 2, 2024",
-      status: "active",
-      monthlyVolume: "$95,000",
-      riskLevel: "low"
-    },
-    {
-      id: "M007",
-      name: "Luxury Auto Dealers",
-      legalName: "Luxury Auto Dealers Corp",
-      category: "Automotive",
-      website: "www.luxuryauto.com",
-      accountNumber: "ACC-2024-007",
-      enrolledDate: "Apr 18, 2024",
-      status: "inactive",
-      monthlyVolume: "$0",
-      riskLevel: "high"
-    },
-    {
-      id: "M008",
-      name: "FitZone Wellness",
-      legalName: "FitZone Wellness Inc",
-      category: "Health & Fitness",
-      website: "www.fitzone.com",
-      accountNumber: "ACC-2024-008",
-      enrolledDate: "May 5, 2024",
-      status: "active",
-      monthlyVolume: "$62,000",
-      riskLevel: "low"
-    },
-  ];
-
-  const filterGroups = [
-    {
-      label: "Category",
-      options: [
-        { label: "Retail", value: "Retail", checked: filters.businessType.includes("Retail") },
-        { label: "Grocery", value: "Grocery", checked: filters.businessType.includes("Grocery") },
-        { label: "Fashion", value: "Fashion", checked: filters.businessType.includes("Fashion") },
-        { label: "Hardware", value: "Hardware", checked: filters.businessType.includes("Hardware") },
-        { label: "Services", value: "Services", checked: filters.businessType.includes("Services") },
-        { label: "Food & Beverage", value: "Food & Beverage", checked: filters.businessType.includes("Food & Beverage") },
-        { label: "Automotive", value: "Automotive", checked: filters.businessType.includes("Automotive") },
-        { label: "Health & Fitness", value: "Health & Fitness", checked: filters.businessType.includes("Health & Fitness") },
-      ]
-    },
-    {
-      label: "Status",
-      options: [
-        { label: "Active", value: "active", checked: filters.status.includes("active") },
-        { label: "Pending", value: "pending", checked: filters.status.includes("pending") },
-        { label: "Inactive", value: "inactive", checked: filters.status.includes("inactive") },
-      ]
-    },
-    {
-      label: "RiskLevel",
-      options: [
-        { label: "Low", value: "low", checked: filters.riskLevel.includes("low") },
-        { label: "Medium", value: "medium", checked: filters.riskLevel.includes("medium") },
-        { label: "High", value: "high", checked: filters.riskLevel.includes("high") },
-      ]
-    }
-  ];
-
+  const allMerchants = [{
+    id: "M001",
+    name: "TechMart Electronics",
+    legalName: "TechMart Electronics LLC",
+    category: "Retail",
+    website: "www.techmart.com",
+    accountNumber: "ACC-2024-001",
+    enrolledDate: "Jan 15, 2024",
+    status: "active",
+    monthlyVolume: "$125,000",
+    riskLevel: "low"
+  }, {
+    id: "M002",
+    name: "Green Valley Grocers",
+    legalName: "Green Valley Grocers Inc",
+    category: "Grocery",
+    website: "www.greenvalley.com",
+    accountNumber: "ACC-2024-002",
+    enrolledDate: "Feb 3, 2024",
+    status: "active",
+    monthlyVolume: "$89,500",
+    riskLevel: "low"
+  }, {
+    id: "M003",
+    name: "Urban Fashion Hub",
+    legalName: "Urban Fashion Hub Ltd",
+    category: "Fashion",
+    website: "www.urbanfashion.com",
+    accountNumber: "ACC-2024-003",
+    enrolledDate: "Feb 20, 2024",
+    status: "active",
+    monthlyVolume: "$210,000",
+    riskLevel: "medium"
+  }, {
+    id: "M004",
+    name: "HomeFix Hardware",
+    legalName: "HomeFix Hardware Corp",
+    category: "Hardware",
+    website: "www.homefix.com",
+    accountNumber: "ACC-2024-004",
+    enrolledDate: "Mar 8, 2024",
+    status: "pending",
+    monthlyVolume: "$45,000",
+    riskLevel: "low"
+  }, {
+    id: "M005",
+    name: "Digital Services Pro",
+    legalName: "Digital Services Pro Inc",
+    category: "Services",
+    website: "www.digitalpro.com",
+    accountNumber: "ACC-2024-005",
+    enrolledDate: "Mar 15, 2024",
+    status: "active",
+    monthlyVolume: "$178,000",
+    riskLevel: "medium"
+  }, {
+    id: "M006",
+    name: "QuickBite Restaurants",
+    legalName: "QuickBite Restaurants LLC",
+    category: "Food & Beverage",
+    website: "www.quickbite.com",
+    accountNumber: "ACC-2024-006",
+    enrolledDate: "Apr 2, 2024",
+    status: "active",
+    monthlyVolume: "$95,000",
+    riskLevel: "low"
+  }, {
+    id: "M007",
+    name: "Luxury Auto Dealers",
+    legalName: "Luxury Auto Dealers Corp",
+    category: "Automotive",
+    website: "www.luxuryauto.com",
+    accountNumber: "ACC-2024-007",
+    enrolledDate: "Apr 18, 2024",
+    status: "inactive",
+    monthlyVolume: "$0",
+    riskLevel: "high"
+  }, {
+    id: "M008",
+    name: "FitZone Wellness",
+    legalName: "FitZone Wellness Inc",
+    category: "Health & Fitness",
+    website: "www.fitzone.com",
+    accountNumber: "ACC-2024-008",
+    enrolledDate: "May 5, 2024",
+    status: "active",
+    monthlyVolume: "$62,000",
+    riskLevel: "low"
+  }];
+  const filterGroups = [{
+    label: "Category",
+    options: [{
+      label: "Retail",
+      value: "Retail",
+      checked: filters.businessType.includes("Retail")
+    }, {
+      label: "Grocery",
+      value: "Grocery",
+      checked: filters.businessType.includes("Grocery")
+    }, {
+      label: "Fashion",
+      value: "Fashion",
+      checked: filters.businessType.includes("Fashion")
+    }, {
+      label: "Hardware",
+      value: "Hardware",
+      checked: filters.businessType.includes("Hardware")
+    }, {
+      label: "Services",
+      value: "Services",
+      checked: filters.businessType.includes("Services")
+    }, {
+      label: "Food & Beverage",
+      value: "Food & Beverage",
+      checked: filters.businessType.includes("Food & Beverage")
+    }, {
+      label: "Automotive",
+      value: "Automotive",
+      checked: filters.businessType.includes("Automotive")
+    }, {
+      label: "Health & Fitness",
+      value: "Health & Fitness",
+      checked: filters.businessType.includes("Health & Fitness")
+    }]
+  }, {
+    label: "Status",
+    options: [{
+      label: "Active",
+      value: "active",
+      checked: filters.status.includes("active")
+    }, {
+      label: "Pending",
+      value: "pending",
+      checked: filters.status.includes("pending")
+    }, {
+      label: "Inactive",
+      value: "inactive",
+      checked: filters.status.includes("inactive")
+    }]
+  }, {
+    label: "RiskLevel",
+    options: [{
+      label: "Low",
+      value: "low",
+      checked: filters.riskLevel.includes("low")
+    }, {
+      label: "Medium",
+      value: "medium",
+      checked: filters.riskLevel.includes("medium")
+    }, {
+      label: "High",
+      value: "high",
+      checked: filters.riskLevel.includes("high")
+    }]
+  }];
   const handleFilterChange = (groupLabel: string, value: string, checked: boolean) => {
     const key = groupLabel.toLowerCase().replace(/\s+/g, '') as keyof typeof filters;
     setFilters(prev => ({
       ...prev,
-      [key]: checked 
-        ? [...prev[key], value]
-        : prev[key].filter(v => v !== value)
+      [key]: checked ? [...prev[key], value] : prev[key].filter(v => v !== value)
     }));
   };
-
   const handleClearFilters = () => {
-    setFilters({ businessType: [], status: [], riskLevel: [] });
+    setFilters({
+      businessType: [],
+      status: [],
+      riskLevel: []
+    });
   };
-
   const activeFilterCount = filters.businessType.length + filters.status.length + filters.riskLevel.length;
-
   const merchants = useMemo(() => {
     return allMerchants.filter(merchant => {
-      const matchesSearch = merchant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           merchant.accountNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           merchant.website.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = merchant.name.toLowerCase().includes(searchQuery.toLowerCase()) || merchant.accountNumber.toLowerCase().includes(searchQuery.toLowerCase()) || merchant.website.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesBusinessType = filters.businessType.length === 0 || filters.businessType.includes(merchant.category);
       const matchesStatus = filters.status.length === 0 || filters.status.includes(merchant.status);
       const matchesRiskLevel = filters.riskLevel.length === 0 || filters.riskLevel.includes(merchant.riskLevel);
-      
       return matchesSearch && matchesBusinessType && matchesStatus && matchesRiskLevel;
     });
   }, [searchQuery, filters]);
-
   const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(word => word[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
+    return name.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
   };
-
   const getStatusBadge = (status: string) => {
     if (status === "active") {
-      return (
-        <Badge className="bg-success text-success-foreground hover:bg-success/90">
+      return <Badge className="bg-success text-success-foreground hover:bg-success/90">
           Active
-        </Badge>
-      );
+        </Badge>;
     }
     if (status === "pending") {
-      return (
-        <Badge className="bg-warning text-warning-foreground hover:bg-warning/90">
+      return <Badge className="bg-warning text-warning-foreground hover:bg-warning/90">
           Pending
-        </Badge>
-      );
+        </Badge>;
     }
     if (status === "inactive") {
-      return (
-        <Badge className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+      return <Badge className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
           Inactive
-        </Badge>
-      );
+        </Badge>;
     }
-    return (
-      <Badge variant="outline">
+    return <Badge variant="outline">
         {status.charAt(0).toUpperCase() + status.slice(1)}
-      </Badge>
-    );
+      </Badge>;
   };
-
   const getRiskBadge = (risk: string) => {
     const variants: Record<string, "default" | "secondary" | "destructive"> = {
       low: "default",
       medium: "secondary",
       high: "destructive"
     };
-    return (
-      <Badge variant={variants[risk] || "outline"}>
+    return <Badge variant={variants[risk] || "outline"}>
         {risk.charAt(0).toUpperCase() + risk.slice(1)}
-      </Badge>
-    );
+      </Badge>;
   };
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="border-b bg-background">
         <div className="px-6 py-5">
@@ -289,19 +287,9 @@ const Merchants = () => {
         <div className="flex items-center gap-4 mb-6">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search merchants..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
+            <Input placeholder="Search merchants..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-10" />
           </div>
-          <TableFilters
-            filters={filterGroups}
-            onFilterChange={handleFilterChange}
-            onClearAll={handleClearFilters}
-            activeCount={activeFilterCount}
-          />
+          <TableFilters filters={filterGroups} onFilterChange={handleFilterChange} onClearAll={handleClearFilters} activeCount={activeFilterCount} />
         </div>
 
         {/* Table */}
@@ -322,24 +310,14 @@ const Merchants = () => {
                 </tr>
               </thead>
               <tbody>
-                {merchants.length === 0 ? (
-                  <tr>
+                {merchants.length === 0 ? <tr>
                     <td colSpan={9} className="p-8 text-center text-muted-foreground">
                       No merchants found
                     </td>
-                  </tr>
-                ) : (
-                  merchants.map((merchant, index) => (
-                    <tr 
-                      key={index} 
-                      className="border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer"
-                      onClick={() => navigate(`/merchants/${merchant.id}`)}
-                    >
+                  </tr> : merchants.map((merchant, index) => <tr key={index} className="border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer" onClick={() => navigate(`/merchants/${merchant.id}`)}>
                       <td className="p-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <span className="text-sm font-semibold text-primary">{getInitials(merchant.name)}</span>
-                          </div>
+                          
                           <div className="font-medium text-foreground">{merchant.name}</div>
                         </div>
                       </td>
@@ -356,16 +334,12 @@ const Merchants = () => {
                       <td className="p-4 text-sm font-medium text-foreground">{merchant.monthlyVolume}</td>
                       <td className="p-4">{getStatusBadge(merchant.status)}</td>
                       <td className="p-4">{getRiskBadge(merchant.riskLevel)}</td>
-                    </tr>
-                  ))
-                )}
+                    </tr>)}
               </tbody>
             </table>
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Merchants;
