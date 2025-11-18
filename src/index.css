@@ -43,6 +43,9 @@ All colors MUST be HSL.
     --success: 142 76% 36%;
     --success-foreground: 0 0% 98%;
 
+    --warning: 45 93% 47%;
+    --warning-foreground: 0 0% 98%;
+
     --border: 0 0% 90%;
     --input: 0 0% 90%;
     --ring: 0 0% 20%;
@@ -93,6 +96,9 @@ All colors MUST be HSL.
 
     --success: 142 76% 36%;
     --success-foreground: 0 0% 98%;
+
+    --warning: 45 93% 47%;
+    --warning-foreground: 0 0% 9%;
 
     --border: 0 0% 18%;
     --input: 0 0% 18%;

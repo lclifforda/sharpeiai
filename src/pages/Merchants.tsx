@@ -165,12 +165,22 @@ const Merchants = () => {
         </Badge>
       );
     }
-    const variants: Record<string, "secondary" | "destructive" | "outline"> = {
-      pending: "secondary",
-      inactive: "destructive"
-    };
+    if (status === "pending") {
+      return (
+        <Badge className="bg-warning text-warning-foreground hover:bg-warning/90">
+          Pending
+        </Badge>
+      );
+    }
+    if (status === "inactive") {
+      return (
+        <Badge className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+          Inactive
+        </Badge>
+      );
+    }
     return (
-      <Badge variant={variants[status] || "outline"}>
+      <Badge variant="outline">
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </Badge>
     );

@@ -137,7 +137,7 @@ const Inventory = () => {
                   <p className="text-foreground text-sm font-semibold">{item.quantity}</p>
                 </div>
                 <div>
-                  <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-0 text-xs">
+                  <Badge className="bg-success text-success-foreground hover:bg-success/90 border-0 text-xs">
                     {item.available}
                   </Badge>
                 </div>

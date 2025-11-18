@@ -195,7 +195,11 @@ const Companies = () => {
                   <p className="font-semibold gradient-sharpei-text text-sm">{company.revenue}</p>
                 </div>
                 <div>
-                  <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-0 capitalize text-xs">
+                  <Badge className={
+                    company.status === "active" 
+                      ? "bg-success text-success-foreground hover:bg-success/90 border-0 capitalize text-xs"
+                      : "bg-destructive text-destructive-foreground hover:bg-destructive/90 border-0 capitalize text-xs"
+                  }>
                     {company.status}
                   </Badge>
                 </div>
