@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import FloatingAIChat from "@/components/FloatingAIChat";
 
 interface PageLayoutProps {
   children: ReactNode;
@@ -19,6 +20,7 @@ const PageLayout = ({ children }: PageLayoutProps) => {
             {children}
           </main>
         </div>
+        <FloatingAIChat />
       </div>
     </SidebarProvider>
   );
