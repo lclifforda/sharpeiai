@@ -13,6 +13,16 @@ interface LeaseQuoteDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
+// Mock customer database with risk profiles
+const mockCustomers = {
+  "": { creditScore: 0, yearsInBusiness: 0, annualRevenue: 0, riskScore: 0 },
+  "TechCorp Solutions": { creditScore: 780, yearsInBusiness: 12, annualRevenue: 8500000, riskScore: 95 },
+  "Green Valley Industries": { creditScore: 720, yearsInBusiness: 8, annualRevenue: 2300000, riskScore: 80 },
+  "Metro Construction LLC": { creditScore: 690, yearsInBusiness: 5, annualRevenue: 950000, riskScore: 65 },
+  "Sunrise Cafe Group": { creditScore: 640, yearsInBusiness: 3, annualRevenue: 420000, riskScore: 48 },
+  "Startup Innovations Inc": { creditScore: 610, yearsInBusiness: 1, annualRevenue: 180000, riskScore: 35 }
+};
+
 const LeaseQuoteDialog = ({ open, onOpenChange }: LeaseQuoteDialogProps) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [showResult, setShowResult] = useState(false);
@@ -25,39 +35,12 @@ const LeaseQuoteDialog = ({ open, onOpenChange }: LeaseQuoteDialogProps) => {
     customerName: "",
     additionalNotes: "",
     includeInsurance: "yes",
-    includeMaintenance: "no",
-    creditScore: "",
-    yearsInBusiness: "",
-    annualRevenue: ""
+    includeMaintenance: "no"
   });
+  
+  // Get customer risk data
+  const customerData = mockCustomers[formData.customerName as keyof typeof mockCustomers] || mockCustomers[""];
 
-  // Calculate risk score based on customer data
-  const calculateRiskScore = () => {
-    let score = 0;
-    const creditScore = parseInt(formData.creditScore);
-    const years = parseInt(formData.yearsInBusiness);
-    const revenue = parseInt(formData.annualRevenue);
-    
-    // Credit score assessment (40% weight)
-    if (creditScore >= 750) score += 40;
-    else if (creditScore >= 700) score += 30;
-    else if (creditScore >= 650) score += 20;
-    else score += 10;
-    
-    // Business history (30% weight)
-    if (years >= 10) score += 30;
-    else if (years >= 5) score += 20;
-    else if (years >= 2) score += 10;
-    else score += 5;
-    
-    // Revenue (30% weight)
-    if (revenue >= 5000000) score += 30;
-    else if (revenue >= 1000000) score += 20;
-    else if (revenue >= 500000) score += 10;
-    else score += 5;
-    
-    return score;
-  };
 
   const getRiskLevel = (score: number) => {
     if (score >= 80) return { level: "Low", color: "text-green-600", bgColor: "bg-green-50" };
@@ -87,10 +70,7 @@ const LeaseQuoteDialog = ({ open, onOpenChange }: LeaseQuoteDialogProps) => {
       customerName: "",
       additionalNotes: "",
       includeInsurance: "yes",
-      includeMaintenance: "no",
-      creditScore: "",
-      yearsInBusiness: "",
-      annualRevenue: ""
+      includeMaintenance: "no"
     });
   };
 
@@ -214,46 +194,6 @@ const LeaseQuoteDialog = ({ open, onOpenChange }: LeaseQuoteDialogProps) => {
                 </div>
               </div>
 
-              <div className="border-t pt-4 mt-4">
-                <h3 className="font-semibold mb-3">Customer Risk Assessment</h3>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="creditScore">Credit Score</Label>
-                    <Input
-                      id="creditScore"
-                      type="number"
-                      placeholder="720"
-                      value={formData.creditScore}
-                      onChange={(e) => setFormData(prev => ({ ...prev, creditScore: e.target.value }))}
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="yearsInBusiness">Years in Business</Label>
-                    <Input
-                      id="yearsInBusiness"
-                      type="number"
-                      placeholder="5"
-                      value={formData.yearsInBusiness}
-                      onChange={(e) => setFormData(prev => ({ ...prev, yearsInBusiness: e.target.value }))}
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="annualRevenue">Annual Revenue ($)</Label>
-                    <Input
-                      id="annualRevenue"
-                      type="number"
-                      placeholder="2500000"
-                      value={formData.annualRevenue}
-                      onChange={(e) => setFormData(prev => ({ ...prev, annualRevenue: e.target.value }))}
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
 
               <div className="space-y-2">
                 <Label htmlFor="additionalNotes">Additional Notes (Optional)</Label>
@@ -369,54 +309,8 @@ const LeaseQuoteDialog = ({ open, onOpenChange }: LeaseQuoteDialogProps) => {
               </CardContent>
             </Card>
 
-            {/* Risk Assessment Card */}
-            <Card className={`border-2 ${getRiskLevel(calculateRiskScore()).bgColor}`}>
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <span>Customer Risk Assessment</span>
-                  <span className={`text-lg font-bold ${getRiskLevel(calculateRiskScore()).color}`}>
-                    {getRiskLevel(calculateRiskScore()).level} Risk
-                  </span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="text-muted-foreground">Credit Score:</span>
-                    <span className="font-semibold ml-2">{formData.creditScore}</span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Years in Business:</span>
-                    <span className="font-semibold ml-2">{formData.yearsInBusiness}</span>
-                  </div>
-                  <div className="col-span-2">
-                    <span className="text-muted-foreground">Annual Revenue:</span>
-                    <span className="font-semibold ml-2">${parseInt(formData.annualRevenue).toLocaleString()}</span>
-                  </div>
-                </div>
-                <div className="border-t pt-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">Risk Score</span>
-                    <span className={`text-2xl font-bold ${getRiskLevel(calculateRiskScore()).color}`}>
-                      {calculateRiskScore()}/100
-                    </span>
-                  </div>
-                </div>
-                <div className="bg-background/50 p-3 rounded text-sm">
-                  <p className="font-medium mb-1">Bank Recommendation:</p>
-                  <p className="text-muted-foreground">
-                    {calculateRiskScore() >= 80 
-                      ? "✅ Approve with special offers - Low risk customer with excellent creditworthiness."
-                      : calculateRiskScore() >= 60
-                      ? "⚠️ Approve with standard terms - Medium risk, monitor payment history."
-                      : "❌ Requires additional review - High risk profile, consider higher interest rate or collateral."}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-
             {/* Special Offer Section - Only for Low Risk */}
-            {calculateRiskScore() >= 80 && (
+            {customerData.riskScore >= 80 && (
               <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center gap-2">
@@ -445,11 +339,11 @@ const LeaseQuoteDialog = ({ open, onOpenChange }: LeaseQuoteDialogProps) => {
             )}
 
             {/* Alternative Message for Medium/High Risk */}
-            {calculateRiskScore() < 80 && (
+            {customerData.riskScore < 80 && (
               <Card className="border-muted">
                 <CardContent className="py-4">
                   <p className="text-sm text-muted-foreground text-center">
-                    {calculateRiskScore() >= 60 
+                    {customerData.riskScore >= 60
                       ? "Standard terms apply. Special offers are available for customers with risk scores above 80."
                       : "This application requires additional review. Please contact our risk management team for further evaluation."}
                   </p>
@@ -489,7 +383,7 @@ const LeaseQuoteDialog = ({ open, onOpenChange }: LeaseQuoteDialogProps) => {
                       <div className="space-y-2">
                         <Label>Subject:</Label>
                         <Input 
-                          value={calculateRiskScore() >= 80 
+                          value={customerData.riskScore >= 80 
                             ? `Exclusive Lease Offer for ${formData.equipmentType} - Limited Time Special`
                             : `Lease Quote for ${formData.equipmentType} - ${formData.customerName}`
                           } 
@@ -502,7 +396,7 @@ const LeaseQuoteDialog = ({ open, onOpenChange }: LeaseQuoteDialogProps) => {
                         <Textarea 
                           readOnly 
                           className="bg-muted/50 min-h-[320px] font-mono text-sm"
-                          value={calculateRiskScore() >= 80 ? `Dear ${formData.customerName},
+                          value={customerData.riskScore >= 80 ? `Dear ${formData.customerName},
 
 I'm excited to share an exclusive lease opportunity tailored specifically for you.
 
@@ -548,7 +442,7 @@ ${formData.includeMaintenance !== "no" ? `• ${formData.includeMaintenance === 
 • Lease Term: ${formData.leaseTerm} months
 • Interest Rate: 5.5% APR
 
-This quote has been prepared based on your business profile and current market conditions. ${calculateRiskScore() >= 60 ? "We're pleased to offer you standard terms with competitive rates." : "Please note that additional documentation and review will be required to finalize this lease."}
+This quote has been prepared based on your business profile and current market conditions. ${customerData.riskScore >= 60 ? "We're pleased to offer you standard terms with competitive rates." : "Please note that additional documentation and review will be required to finalize this lease."}
 
 To proceed with this application, please reply to this email or call us at (555) 123-4567. Our team will be happy to discuss the next steps and answer any questions.
 
