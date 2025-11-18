@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Store, Search, Plus, TrendingUp, Shield, Calendar } from "lucide-react";
@@ -6,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import TableFilters from "@/components/TableFilters";
 
 const Merchants = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
     businessType: [] as string[],
@@ -15,90 +17,106 @@ const Merchants = () => {
 
   const allMerchants = [
     {
+      id: "M001",
       name: "TechMart Electronics",
-      businessType: "Retail",
+      legalName: "TechMart Electronics LLC",
+      category: "Retail",
+      website: "www.techmart.com",
       accountNumber: "ACC-2024-001",
       enrolledDate: "Jan 15, 2024",
       status: "active",
       monthlyVolume: "$125,000",
-      riskLevel: "low",
-      contactEmail: "contact@techmart.com"
+      riskLevel: "low"
     },
     {
+      id: "M002",
       name: "Green Valley Grocers",
-      businessType: "Grocery",
+      legalName: "Green Valley Grocers Inc",
+      category: "Grocery",
+      website: "www.greenvalley.com",
       accountNumber: "ACC-2024-002",
       enrolledDate: "Feb 3, 2024",
       status: "active",
       monthlyVolume: "$89,500",
-      riskLevel: "low",
-      contactEmail: "info@greenvalley.com"
+      riskLevel: "low"
     },
     {
+      id: "M003",
       name: "Urban Fashion Hub",
-      businessType: "Fashion",
+      legalName: "Urban Fashion Hub Ltd",
+      category: "Fashion",
+      website: "www.urbanfashion.com",
       accountNumber: "ACC-2024-003",
       enrolledDate: "Feb 20, 2024",
       status: "active",
       monthlyVolume: "$210,000",
-      riskLevel: "medium",
-      contactEmail: "sales@urbanfashion.com"
+      riskLevel: "medium"
     },
     {
+      id: "M004",
       name: "HomeFix Hardware",
-      businessType: "Hardware",
+      legalName: "HomeFix Hardware Corp",
+      category: "Hardware",
+      website: "www.homefix.com",
       accountNumber: "ACC-2024-004",
       enrolledDate: "Mar 8, 2024",
       status: "pending",
       monthlyVolume: "$45,000",
-      riskLevel: "low",
-      contactEmail: "admin@homefix.com"
+      riskLevel: "low"
     },
     {
+      id: "M005",
       name: "Digital Services Pro",
-      businessType: "Services",
+      legalName: "Digital Services Pro Inc",
+      category: "Services",
+      website: "www.digitalpro.com",
       accountNumber: "ACC-2024-005",
       enrolledDate: "Mar 15, 2024",
       status: "active",
       monthlyVolume: "$178,000",
-      riskLevel: "medium",
-      contactEmail: "contact@digitalpro.com"
+      riskLevel: "medium"
     },
     {
+      id: "M006",
       name: "QuickBite Restaurants",
-      businessType: "Food & Beverage",
+      legalName: "QuickBite Restaurants LLC",
+      category: "Food & Beverage",
+      website: "www.quickbite.com",
       accountNumber: "ACC-2024-006",
       enrolledDate: "Apr 2, 2024",
       status: "active",
       monthlyVolume: "$95,000",
-      riskLevel: "low",
-      contactEmail: "info@quickbite.com"
+      riskLevel: "low"
     },
     {
+      id: "M007",
       name: "Luxury Auto Dealers",
-      businessType: "Automotive",
+      legalName: "Luxury Auto Dealers Corp",
+      category: "Automotive",
+      website: "www.luxuryauto.com",
       accountNumber: "ACC-2024-007",
       enrolledDate: "Apr 18, 2024",
       status: "inactive",
       monthlyVolume: "$0",
-      riskLevel: "high",
-      contactEmail: "sales@luxuryauto.com"
+      riskLevel: "high"
     },
     {
+      id: "M008",
       name: "FitZone Wellness",
-      businessType: "Health & Fitness",
+      legalName: "FitZone Wellness Inc",
+      category: "Health & Fitness",
+      website: "www.fitzone.com",
       accountNumber: "ACC-2024-008",
       enrolledDate: "May 5, 2024",
       status: "active",
       monthlyVolume: "$62,000",
-      riskLevel: "low",
-      contactEmail: "hello@fitzone.com"
+      riskLevel: "low"
     },
   ];
 
   const filterGroups = [
     {
-      label: "BusinessType",
+      label: "Category",
       options: [
         { label: "Retail", value: "Retail", checked: filters.businessType.includes("Retail") },
         { label: "Grocery", value: "Grocery", checked: filters.businessType.includes("Grocery") },
@@ -148,8 +166,8 @@ const Merchants = () => {
     return allMerchants.filter(merchant => {
       const matchesSearch = merchant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                            merchant.accountNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           merchant.contactEmail.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesBusinessType = filters.businessType.length === 0 || filters.businessType.includes(merchant.businessType);
+                           merchant.website.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesBusinessType = filters.businessType.length === 0 || filters.businessType.includes(merchant.category);
       const matchesStatus = filters.status.length === 0 || filters.status.includes(merchant.status);
       const matchesRiskLevel = filters.riskLevel.length === 0 || filters.riskLevel.includes(merchant.riskLevel);
       
@@ -287,7 +305,9 @@ const Merchants = () => {
               <thead className="bg-muted/50">
                 <tr className="border-b">
                   <th className="text-left p-4 text-sm font-medium text-muted-foreground">Merchant Name</th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Business Type</th>
+                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Legal Name</th>
+                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Category</th>
+                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Website</th>
                   <th className="text-left p-4 text-sm font-medium text-muted-foreground">Account Number</th>
                   <th className="text-left p-4 text-sm font-medium text-muted-foreground">Enrolled Date</th>
                   <th className="text-left p-4 text-sm font-medium text-muted-foreground">Monthly Volume</th>
@@ -298,7 +318,7 @@ const Merchants = () => {
               <tbody>
                 {merchants.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="p-8 text-center text-muted-foreground">
+                    <td colSpan={9} className="p-8 text-center text-muted-foreground">
                       No merchants found
                     </td>
                   </tr>
@@ -307,19 +327,19 @@ const Merchants = () => {
                     <tr 
                       key={index} 
                       className="border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer"
+                      onClick={() => navigate(`/merchants/${merchant.id}`)}
                     >
                       <td className="p-4">
                         <div className="flex items-center gap-3">
                           <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                             <Store className="w-4 h-4 text-primary" />
                           </div>
-                          <div>
-                            <div className="font-medium text-foreground">{merchant.name}</div>
-                            <div className="text-sm text-muted-foreground">{merchant.contactEmail}</div>
-                          </div>
+                          <div className="font-medium text-foreground">{merchant.name}</div>
                         </div>
                       </td>
-                      <td className="p-4 text-sm text-foreground">{merchant.businessType}</td>
+                      <td className="p-4 text-sm text-foreground">{merchant.legalName}</td>
+                      <td className="p-4 text-sm text-foreground">{merchant.category}</td>
+                      <td className="p-4 text-sm text-muted-foreground">{merchant.website}</td>
                       <td className="p-4 text-sm text-muted-foreground font-mono">{merchant.accountNumber}</td>
                       <td className="p-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-2">
