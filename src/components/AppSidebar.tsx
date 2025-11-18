@@ -1,5 +1,5 @@
 import { NavLink } from "@/components/NavLink";
-import { MessageSquare, LayoutDashboard, Building2, ShoppingCart, FileText, CreditCard, Package, Settings, LogOut } from "lucide-react";
+import { MessageSquare, LayoutDashboard, Building2, ShoppingCart, FileText, CreditCard, Package, Settings, LogOut, Headphones } from "lucide-react";
 import sharpeiLogo from "@/assets/sharpei-logo.png";
 import {
   Sidebar,
@@ -69,6 +69,28 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter>
+        {open && (
+          <div className="mx-3 mb-4">
+            <div className="relative overflow-hidden rounded-2xl p-4 gradient-sharpei">
+              <div className="relative z-10 flex items-start gap-3">
+                <div className="p-2 rounded-lg bg-white/20 backdrop-blur-sm flex-shrink-0">
+                  <Headphones className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-white font-semibold text-sm mb-1">Need Help?</h3>
+                  <p className="text-white/90 text-xs mb-3 leading-relaxed">
+                    Our team is ready to assist you
+                  </p>
+                  <button className="w-full bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white text-xs font-medium py-2 px-3 rounded-lg transition-all duration-200 hover:scale-105">
+                    Contact Support
+                  </button>
+                </div>
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
+            </div>
+          </div>
+        )}
+        
         <div className="px-3 py-4 border-t">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
