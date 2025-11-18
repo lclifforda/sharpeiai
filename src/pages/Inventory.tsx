@@ -93,7 +93,7 @@ const Inventory = () => {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <Input 
               placeholder="Search equipment..." 
-              className="pl-10 bg-white border-border"
+              className="pl-10 bg-card border-border"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -108,9 +108,9 @@ const Inventory = () => {
         </div>
 
         {/* Inventory Table */}
-        <div className="bg-white rounded-2xl border border-border overflow-hidden shadow-float">
+        <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-float">
           {/* Table Header */}
-          <div className="grid grid-cols-[2.5fr_1.5fr_1fr_1fr_1.2fr_1.5fr] gap-6 px-6 py-4 border-b border-border bg-background/50">
+          <div className="grid grid-cols-[2.5fr_1.5fr_1fr_1fr_1.2fr_1.5fr] gap-6 px-6 py-4 border-b border-border bg-muted/50">
             <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Equipment</div>
             <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Category</div>
             <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total</div>
