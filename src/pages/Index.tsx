@@ -4,9 +4,11 @@ import { Send, Paperclip, RefreshCw, FileSearch, History, FilePlus } from "lucid
 import SharpeiOrb from "@/components/SharpeiOrb";
 import QuickActionCard from "@/components/QuickActionCard";
 import LeaseQuoteDialog from "@/components/LeaseQuoteDialog";
+import RenewalOfferDialog from "@/components/RenewalOfferDialog";
 
 const Index = () => {
   const [isLeaseQuoteOpen, setIsLeaseQuoteOpen] = useState(false);
+  const [isRenewalOfferOpen, setIsRenewalOfferOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -30,11 +32,13 @@ const Index = () => {
 
           {/* Quick Actions */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <QuickActionCard
-              icon={<RefreshCw className="w-6 h-6 text-gradient-start" />}
-              title="Generate a renewal / EoT quote"
-              description="for existing leases and end-of-term options"
-            />
+            <div onClick={() => setIsRenewalOfferOpen(true)}>
+              <QuickActionCard
+                icon={<RefreshCw className="w-6 h-6 text-gradient-start" />}
+                title="Generate a renewal / EoT quote"
+                description="for existing leases and end-of-term options"
+              />
+            </div>
             <QuickActionCard
               icon={<FileSearch className="w-6 h-6 text-gradient-blue" />}
               title="Review a lease contract"
@@ -75,6 +79,7 @@ const Index = () => {
       </main>
 
       <LeaseQuoteDialog open={isLeaseQuoteOpen} onOpenChange={setIsLeaseQuoteOpen} />
+      <RenewalOfferDialog open={isRenewalOfferOpen} onOpenChange={setIsRenewalOfferOpen} />
 
       {/* Footer */}
       <footer className="border-t border-border bg-white/50 backdrop-blur-sm">
