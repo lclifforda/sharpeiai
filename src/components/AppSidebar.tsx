@@ -1,5 +1,5 @@
 import { NavLink } from "@/components/NavLink";
-import { MessageSquare, LayoutDashboard, Building2, ShoppingCart, FileText, CreditCard, Package, Layers, Settings, LogOut } from "lucide-react";
+import { MessageSquare, LayoutDashboard, Building2, ShoppingCart, FileText, CreditCard, Layers, Settings, LogOut } from "lucide-react";
 import sharpeiLogo from "@/assets/sharpei-logo.png";
 import {
   Sidebar,
@@ -21,7 +21,6 @@ const navigationItems = [
   { name: "Orders", path: "/orders", icon: ShoppingCart },
   { name: "Contracts", path: "/contracts", icon: FileText },
   { name: "Payments", path: "/payments", icon: CreditCard },
-  { name: "Inventory", path: "/inventory", icon: Package },
   { name: "Assets", path: "/assets", icon: Layers },
 ];
 
