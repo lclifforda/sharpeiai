@@ -175,6 +175,15 @@ const Merchants = () => {
     });
   }, [searchQuery, filters]);
 
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
   const getStatusBadge = (status: string) => {
     if (status === "active") {
       return (
@@ -329,7 +338,7 @@ const Merchants = () => {
                       <td className="p-4">
                         <div className="flex items-center gap-3">
                           <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <Store className="w-4 h-4 text-primary" />
+                            <span className="text-sm font-semibold text-primary">{getInitials(merchant.name)}</span>
                           </div>
                           <div className="font-medium text-foreground">{merchant.name}</div>
                         </div>
