@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 import techcorpLogo from "@/assets/techcorp-logo.png";
+import { GenerateLeaseQuoteDialog } from "@/components/GenerateLeaseQuoteDialog";
 
 const MerchantDetail = () => {
   const { id } = useParams();
@@ -203,6 +204,11 @@ const MerchantDetail = () => {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+      </div>
+
+      {/* Quick Action Bar */}
+      <div className="flex gap-3">
+        <GenerateLeaseQuoteDialog merchantName={merchant.name} />
       </div>
 
       {/* Sidebar Card */}
