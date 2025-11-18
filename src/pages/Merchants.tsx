@@ -158,8 +158,14 @@ const Merchants = () => {
   }, [searchQuery, filters]);
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-      active: "default",
+    if (status === "active") {
+      return (
+        <Badge className="bg-success text-success-foreground hover:bg-success/90">
+          Active
+        </Badge>
+      );
+    }
+    const variants: Record<string, "secondary" | "destructive" | "outline"> = {
       pending: "secondary",
       inactive: "destructive"
     };
