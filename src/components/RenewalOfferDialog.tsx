@@ -6,7 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, TrendingUp, RefreshCw } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { ArrowRight, TrendingUp, RefreshCw, Mail, Send } from "lucide-react";
 
 interface RenewalOfferDialogProps {
   open: boolean;
@@ -35,6 +36,7 @@ const RenewalOfferDialog = ({ open, onOpenChange }: RenewalOfferDialogProps) => 
   const [leaseTerm, setLeaseTerm] = useState("36");
   const [includeInsurance, setIncludeInsurance] = useState("yes");
   const [includeMaintenance, setIncludeMaintenance] = useState("comprehensive");
+  const [emailDraft, setEmailDraft] = useState("");
 
   const customerData = mockCustomers.find(c => c.name === customerName);
   const newEquipmentData = newEquipmentOptions.find(e => e.name === newEquipment);
@@ -89,6 +91,53 @@ const RenewalOfferDialog = ({ open, onOpenChange }: RenewalOfferDialogProps) => 
     setStep(2);
   };
 
+  const generateEmailDraft = () => {
+    if (!customerData || !offer || !newEquipment) return "";
+    
+    return `Subject: Exciting Equipment Upgrade Opportunity - Renewal Offer for ${customerData.name}
+
+Dear ${customerData.name} Team,
+
+We're pleased to present an exclusive renewal and upgrade offer tailored specifically for your business needs.
+
+CURRENT LEASE SUMMARY
+Equipment: ${customerData.currentLease} (${customerData.currentUnits} units)
+Remaining Term: ${customerData.remainingMonths} months
+Trade-In Value: $${calculateTradeInValue().toLocaleString()}
+
+UPGRADE PROPOSAL
+New Equipment: ${newEquipment} (${offer.units} units)
+Lease Term: ${leaseTerm} months
+${includeInsurance === "yes" ? "Insurance Coverage: Included\n" : ""}${includeMaintenance !== "no" ? `Maintenance Plan: ${includeMaintenance.charAt(0).toUpperCase() + includeMaintenance.slice(1)}\n` : ""}
+PRICING BREAKDOWN
+Equipment Cost: $${offer.totalNewEquipmentCost.toLocaleString()}
+Trade-In Credit: -$${offer.tradeInValue.toLocaleString()}
+Base Monthly Payment: $${offer.monthlyBase.toLocaleString()}/month
+${offer.insuranceCost > 0 ? `Insurance: +$${offer.insuranceCost.toLocaleString()}/month\n` : ""}${offer.maintenanceCost > 0 ? `Maintenance: +$${offer.maintenanceCost.toLocaleString()}/month\n` : ""}${offer.loyaltyDiscount > 0 ? `Loyalty Discount: -$${offer.loyaltyDiscount.toLocaleString()}/month\n` : ""}
+FINAL MONTHLY PAYMENT: $${offer.finalMonthly.toLocaleString()}/month
+Total Investment: $${offer.totalCost.toLocaleString()} over ${leaseTerm} months
+
+${customerData.riskScore >= 80 ? "🎉 SPECIAL OFFER: As a valued customer with excellent payment history, you qualify for our expedited approval process and enhanced loyalty benefits!\n\n" : ""}This offer is valid for 30 days and includes our standard warranty and support services. We're confident this upgrade will enhance your operational efficiency and provide excellent value for your investment.
+
+Please let us know if you have any questions or would like to discuss this proposal further. We're here to support your business growth.
+
+Best regards,
+Sharpei AI Leasing Team`;
+  };
+
+  const handlePrepareEmail = () => {
+    const draft = generateEmailDraft();
+    setEmailDraft(draft);
+    setStep(3);
+  };
+
+  const handleSendEmail = () => {
+    // Mock send - in real implementation would call backend
+    alert("Email sent successfully!");
+    handleReset();
+    onOpenChange(false);
+  };
+
   const handleReset = () => {
     setStep(1);
     setCustomerName("");
@@ -97,6 +146,7 @@ const RenewalOfferDialog = ({ open, onOpenChange }: RenewalOfferDialogProps) => 
     setLeaseTerm("36");
     setIncludeInsurance("yes");
     setIncludeMaintenance("comprehensive");
+    setEmailDraft("");
   };
 
   return (
@@ -245,7 +295,7 @@ const RenewalOfferDialog = ({ open, onOpenChange }: RenewalOfferDialogProps) => 
               Generate Renewal Offer
             </Button>
           </div>
-        ) : (
+        ) : step === 2 ? (
           <div className="space-y-6">
             <Card className="border-gradient-start/20">
               <CardHeader>
@@ -355,12 +405,62 @@ const RenewalOfferDialog = ({ open, onOpenChange }: RenewalOfferDialogProps) => 
               <Button onClick={handleReset} variant="outline" className="flex-1">
                 Generate Another
               </Button>
-              <Button className="flex-1">
-                Send Renewal Offer
+              <Button onClick={handlePrepareEmail} className="flex-1">
+                <Mail className="w-4 h-4 mr-2" />
+                Draft Email
               </Button>
             </div>
           </div>
-        )}
+        ) : step === 3 ? (
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Mail className="w-5 h-5 text-gradient-start" />
+                  Email Draft - Renewal Offer
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="recipient" className="mb-2 block">To:</Label>
+                  <Input 
+                    id="recipient" 
+                    value={`${customerData?.name} <contact@${customerData?.name.toLowerCase().replace(/\s+/g, '')}.com>`}
+                    readOnly
+                    className="bg-muted"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="emailBody" className="mb-2 block">Message:</Label>
+                  <Textarea 
+                    id="emailBody"
+                    value={emailDraft}
+                    onChange={(e) => setEmailDraft(e.target.value)}
+                    className="min-h-[400px] font-mono text-sm"
+                  />
+                </div>
+
+                <div className="bg-muted/50 p-4 rounded-lg text-sm text-muted-foreground">
+                  <p className="flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4" />
+                    <span>This email includes the complete renewal offer with pricing breakdown and customer-specific benefits.</span>
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="flex gap-3">
+              <Button onClick={() => setStep(2)} variant="outline" className="flex-1">
+                Back to Offer
+              </Button>
+              <Button onClick={handleSendEmail} className="flex-1">
+                <Send className="w-4 h-4 mr-2" />
+                Send Email
+              </Button>
+            </div>
+          </div>
+        ) : null}
       </DialogContent>
     </Dialog>
   );
