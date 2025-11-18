@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { MessageCircle, X, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,11 +11,17 @@ interface Message {
 }
 
 const FloatingAIChat = () => {
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     { role: "assistant", content: "Hi! I'm your AI assistant. How can I help you today?" }
   ]);
   const [input, setInput] = useState("");
+
+  // Don't show on AI Assistant page
+  if (location.pathname === "/") {
+    return null;
+  }
 
   const handleSend = () => {
     if (!input.trim()) return;
