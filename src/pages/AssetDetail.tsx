@@ -113,17 +113,17 @@ const AssetDetail = () => {
     );
   }
 
-  const getConditionColor = (condition: string) => {
-    switch (condition) {
-      case "Excellent":
-        return "bg-green-100 text-green-700 hover:bg-green-100";
-      case "Good":
-        return "bg-blue-100 text-blue-700 hover:bg-blue-100";
-      case "Fair":
-        return "bg-yellow-100 text-yellow-700 hover:bg-yellow-100";
-      default:
-        return "bg-muted text-muted-foreground";
+  const getConditionBadge = (condition: string) => {
+    if (condition === "Excellent") {
+      return <Badge className="bg-success text-success-foreground hover:bg-success/90">Excellent</Badge>;
     }
+    if (condition === "Good") {
+      return <Badge className="bg-success text-success-foreground hover:bg-success/90">Good</Badge>;
+    }
+    if (condition === "Fair") {
+      return <Badge className="bg-warning text-warning-foreground hover:bg-warning/90">Fair</Badge>;
+    }
+    return <Badge variant="outline">{condition}</Badge>;
   };
 
   return (
@@ -144,9 +144,7 @@ const AssetDetail = () => {
               <h1 className="text-2xl font-semibold text-foreground">{asset.name}</h1>
               <p className="text-sm text-muted-foreground mt-1">Complete asset information and tracking</p>
             </div>
-            <Badge className={getConditionColor(asset.condition)}>
-              {asset.condition}
-            </Badge>
+            {getConditionBadge(asset.condition)}
           </div>
         </div>
       </div>
@@ -169,7 +167,7 @@ const AssetDetail = () => {
               <CardTitle className="text-sm font-medium text-muted-foreground">Available</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">{asset.available}</div>
+              <div className="text-2xl font-bold text-success">{asset.available}</div>
             </CardContent>
           </Card>
           
@@ -178,7 +176,7 @@ const AssetDetail = () => {
               <CardTitle className="text-sm font-medium text-muted-foreground">In Use</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{asset.quantity - asset.available}</div>
+              <div className="text-2xl font-bold text-primary">{asset.quantity - asset.available}</div>
             </CardContent>
           </Card>
           

@@ -62,10 +62,14 @@ const Payments = () => {
     });
   }, [searchQuery, filters]);
 
-  const getStatusColor = (status: string) => {
-    return status === "Completed" 
-      ? "bg-green-100 text-green-700" 
-      : "bg-yellow-100 text-yellow-700";
+  const getStatusBadge = (status: string) => {
+    if (status === "Completed") {
+      return <Badge className="bg-success text-success-foreground hover:bg-success/90">Completed</Badge>;
+    }
+    if (status === "Pending") {
+      return <Badge className="bg-warning text-warning-foreground hover:bg-warning/90">Pending</Badge>;
+    }
+    return <Badge variant="outline">{status}</Badge>;
   };
 
   return (
@@ -140,12 +144,12 @@ const Payments = () => {
               >
                 <div>
                   {transaction.type === "Incoming" ? (
-                    <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
-                      <ArrowDownRight className="w-4 h-4 text-green-700" />
+                    <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
+                      <ArrowDownRight className="w-4 h-4 text-success" />
                     </div>
                   ) : (
-                    <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
-                      <ArrowUpRight className="w-4 h-4 text-red-700" />
+                    <div className="w-8 h-8 rounded-lg bg-destructive/10 flex items-center justify-center">
+                      <ArrowUpRight className="w-4 h-4 text-destructive" />
                     </div>
                   )}
                 </div>
@@ -159,9 +163,7 @@ const Payments = () => {
                   <p className="font-semibold gradient-sharpei-text text-sm">{transaction.amount}</p>
                 </div>
                 <div>
-                  <Badge className={`${getStatusColor(transaction.status)} hover:${getStatusColor(transaction.status)} border-0 text-xs`}>
-                    {transaction.status}
-                  </Badge>
+                  {getStatusBadge(transaction.status)}
                 </div>
                 <div>
                   <p className="text-foreground text-sm">{transaction.date}</p>

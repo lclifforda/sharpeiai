@@ -55,13 +55,14 @@ const Orders = () => {
     });
   }, [searchQuery, filters]);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Approved": return "bg-green-100 text-green-700";
-      case "Processing": return "bg-blue-100 text-blue-700";
-      case "Delivered": return "bg-purple-100 text-purple-700";
-      default: return "bg-muted text-muted-foreground";
+  const getStatusBadge = (status: string) => {
+    if (status === "Approved" || status === "Delivered") {
+      return <Badge className="bg-success text-success-foreground hover:bg-success/90">{status}</Badge>;
     }
+    if (status === "Pending" || status === "Processing") {
+      return <Badge className="bg-warning text-warning-foreground hover:bg-warning/90">{status}</Badge>;
+    }
+    return <Badge variant="outline">{status}</Badge>;
   };
 
   return (
@@ -136,9 +137,7 @@ const Orders = () => {
                   <p className="font-semibold gradient-sharpei-text text-sm">{order.amount}</p>
                 </div>
                 <div>
-                  <Badge className={`${getStatusColor(order.status)} hover:${getStatusColor(order.status)} border-0 text-xs`}>
-                    {order.status}
-                  </Badge>
+                  {getStatusBadge(order.status)}
                 </div>
                 <div>
                   <p className="text-foreground text-sm">{order.date}</p>
