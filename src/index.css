@@ -22,6 +22,12 @@ All colors MUST be HSL.
     --primary: 0 0% 9%;
     --primary-foreground: 0 0% 98%;
     
+    /* AI Assistant gradient colors - keeping the blue orb */
+    --gradient-start: 185 85% 50%;
+    --gradient-blue: 220 90% 55%;
+    --gradient-purple: 260 85% 60%;
+    --gradient-end: 275 80% 65%;
+    
     --secondary: 0 0% 96%;
     --secondary-foreground: 0 0% 15%;
 
@@ -64,6 +70,12 @@ All colors MUST be HSL.
     --primary: 0 0% 98%;
     --primary-foreground: 0 0% 9%;
     
+    /* AI Assistant gradient colors - keeping the blue orb */
+    --gradient-start: 185 85% 50%;
+    --gradient-blue: 220 90% 55%;
+    --gradient-purple: 260 85% 60%;
+    --gradient-end: 275 80% 65%;
+    
     --secondary: 0 0% 14%;
     --secondary-foreground: 0 0% 98%;
 
@@ -102,6 +114,15 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
+  /* Gradient for AI Assistant orb */
+  .gradient-sharpei {
+    background: linear-gradient(135deg, 
+      hsl(var(--gradient-start)) 0%, 
+      hsl(var(--gradient-blue)) 33%, 
+      hsl(var(--gradient-purple)) 66%, 
+      hsl(var(--gradient-end)) 100%);
+  }
+  
   .shadow-subtle {
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   }
@@ -109,4 +130,40 @@ All colors MUST be HSL.
   .shadow-minimal {
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
   }
+  
+  .shadow-elegant {
+    box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.3);
+  }
+  
+  .shadow-glow {
+    box-shadow: 0 0 40px rgba(59, 130, 246, 0.4);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }
