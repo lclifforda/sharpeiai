@@ -1,5 +1,7 @@
 import { Card } from "@/components/ui/card";
-import { CreditCard, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { CreditCard, Search, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const Payments = () => {
   const transactions = [
@@ -9,10 +11,16 @@ const Payments = () => {
     { id: "PAY-5681", company: "Equipment Vendor", type: "Outgoing", amount: "$8,500", status: "Completed", date: "2025-11-10" },
   ];
 
+  const getStatusColor = (status: string) => {
+    return status === "Completed" 
+      ? "bg-green-100 text-green-700" 
+      : "bg-yellow-100 text-yellow-700";
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="border-b border-border bg-white/80 backdrop-blur-lg sticky top-0 z-10">
+      <div className="border-b border-border bg-white">
         <div className="px-8 py-6">
           <div className="flex items-center gap-3 mb-2">
             <CreditCard className="w-8 h-8 text-primary" />
@@ -43,53 +51,65 @@ const Payments = () => {
           </Card>
         </div>
 
-        {/* Transactions List */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-foreground">Recent Transactions</h2>
-          {transactions.map((transaction) => (
-            <Card key={transaction.id} className="p-6 hover:shadow-float transition-all duration-300 border-border">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-6 flex-1">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                    transaction.type === "Incoming" 
-                      ? "bg-gradient-start/10" 
-                      : "bg-gradient-coral/10"
-                  }`}>
-                    {transaction.type === "Incoming" ? (
-                      <ArrowDownRight className="w-6 h-6 text-gradient-start" />
-                    ) : (
-                      <ArrowUpRight className="w-6 h-6 text-gradient-coral" />
-                    )}
-                  </div>
-                  <div className="grid grid-cols-4 gap-6 flex-1">
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-1">Transaction ID</p>
-                      <p className="font-mono font-semibold text-foreground">{transaction.id}</p>
+        {/* Search */}
+        <div className="relative max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+          <Input 
+            placeholder="Search transactions..." 
+            className="pl-10 bg-white border-border"
+          />
+        </div>
+
+        {/* Transactions Table */}
+        <div className="bg-white rounded-2xl border border-border overflow-hidden shadow-float">
+          {/* Table Header */}
+          <div className="grid grid-cols-[0.6fr_1fr_2fr_1fr_1fr_1fr] gap-6 px-6 py-4 border-b border-border bg-background/50">
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Type</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">ID</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Company</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Amount</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Date</div>
+          </div>
+
+          {/* Table Body */}
+          <div className="divide-y divide-border">
+            {transactions.map((transaction) => (
+              <div 
+                key={transaction.id} 
+                className="grid grid-cols-[0.6fr_1fr_2fr_1fr_1fr_1fr] gap-6 px-6 py-5 hover:bg-gradient-to-r hover:from-gradient-start/5 hover:to-gradient-purple/5 transition-colors cursor-pointer"
+              >
+                <div>
+                  {transaction.type === "Incoming" ? (
+                    <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
+                      <ArrowDownRight className="w-4 h-4 text-green-700" />
                     </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-1">{transaction.type === "Incoming" ? "From" : "To"}</p>
-                      <p className="font-semibold text-foreground">{transaction.company}</p>
+                  ) : (
+                    <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
+                      <ArrowUpRight className="w-4 h-4 text-red-700" />
                     </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-1">Amount</p>
-                      <p className="text-xl font-bold text-foreground">{transaction.amount}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-1">Status</p>
-                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
-                        transaction.status === "Completed" 
-                          ? "bg-gradient-start/10 text-gradient-start" 
-                          : "bg-muted text-muted-foreground"
-                      }`}>
-                        {transaction.status}
-                      </span>
-                    </div>
-                  </div>
+                  )}
                 </div>
-                <p className="text-sm text-muted-foreground">{transaction.date}</p>
+                <div>
+                  <p className="font-mono font-semibold gradient-sharpei-text text-sm">{transaction.id}</p>
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground text-sm">{transaction.company}</p>
+                </div>
+                <div>
+                  <p className="font-semibold gradient-sharpei-text text-sm">{transaction.amount}</p>
+                </div>
+                <div>
+                  <Badge className={`${getStatusColor(transaction.status)} hover:${getStatusColor(transaction.status)} border-0 text-xs`}>
+                    {transaction.status}
+                  </Badge>
+                </div>
+                <div>
+                  <p className="text-foreground text-sm">{transaction.date}</p>
+                </div>
               </div>
-            </Card>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>

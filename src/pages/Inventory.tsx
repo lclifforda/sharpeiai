@@ -1,6 +1,7 @@
-import { Card } from "@/components/ui/card";
-import { Package, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Package, Search, Plus } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const Inventory = () => {
   const equipment = [
@@ -13,13 +14,21 @@ const Inventory = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="border-b border-border bg-white/80 backdrop-blur-lg sticky top-0 z-10">
+      <div className="border-b border-border bg-white">
         <div className="px-8 py-6">
-          <div className="flex items-center gap-3 mb-2">
-            <Package className="w-8 h-8 text-primary" />
-            <h1 className="text-3xl font-semibold text-foreground">Inventory</h1>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <Package className="w-8 h-8 text-primary" />
+                <h1 className="text-3xl font-semibold text-foreground">Inventory</h1>
+              </div>
+              <p className="text-muted-foreground">Track equipment availability and asset management</p>
+            </div>
+            <Button className="gradient-sharpei text-white hover:opacity-90 shadow-float">
+              <Plus className="w-4 h-4 mr-2" />
+              Add Equipment
+            </Button>
           </div>
-          <p className="text-muted-foreground">Track equipment availability and asset management</p>
         </div>
       </div>
 
@@ -34,51 +43,48 @@ const Inventory = () => {
           />
         </div>
 
-        {/* Equipment List */}
-        <div className="space-y-4">
-          {equipment.map((item) => (
-            <Card key={item.name} className="p-6 hover:shadow-float transition-all duration-300 border-border">
-              <div className="flex items-center gap-6">
-                <div className="w-16 h-16 rounded-xl gradient-sharpei flex items-center justify-center shadow-float">
-                  <Package className="w-8 h-8 text-white" />
+        {/* Inventory Table */}
+        <div className="bg-white rounded-2xl border border-border overflow-hidden shadow-float">
+          {/* Table Header */}
+          <div className="grid grid-cols-[2.5fr_1.5fr_1fr_1fr_1.2fr_1.5fr] gap-6 px-6 py-4 border-b border-border bg-background/50">
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Equipment</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Category</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Available</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Unit Value</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Location</div>
+          </div>
+
+          {/* Table Body */}
+          <div className="divide-y divide-border">
+            {equipment.map((item) => (
+              <div 
+                key={item.name} 
+                className="grid grid-cols-[2.5fr_1.5fr_1fr_1fr_1.2fr_1.5fr] gap-6 px-6 py-5 hover:bg-gradient-to-r hover:from-gradient-start/5 hover:to-gradient-purple/5 transition-colors cursor-pointer"
+              >
+                <div>
+                  <p className="font-semibold gradient-sharpei-text text-base">{item.name}</p>
                 </div>
-                <div className="grid grid-cols-5 gap-6 flex-1">
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">Equipment</p>
-                    <p className="font-semibold text-foreground">{item.name}</p>
-                    <p className="text-xs text-muted-foreground">{item.category}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">Total / Available</p>
-                    <p className="text-2xl font-bold text-foreground">{item.quantity}</p>
-                    <p className="text-sm text-gradient-start font-medium">{item.available} available</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">Unit Value</p>
-                    <p className="text-xl font-bold gradient-sharpei-text">{item.value}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">Location</p>
-                    <p className="text-foreground">{item.location}</p>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-full space-y-2">
-                      <p className="text-sm text-muted-foreground">Utilization</p>
-                      <div className="h-2 bg-muted rounded-full overflow-hidden">
-                        <div 
-                          className="h-full gradient-sharpei rounded-full"
-                          style={{ width: `${((item.quantity - item.available) / item.quantity) * 100}%` }}
-                        />
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        {Math.round(((item.quantity - item.available) / item.quantity) * 100)}%
-                      </p>
-                    </div>
-                  </div>
+                <div>
+                  <p className="text-foreground text-sm">{item.category}</p>
+                </div>
+                <div>
+                  <p className="text-foreground text-sm font-semibold">{item.quantity}</p>
+                </div>
+                <div>
+                  <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-0 text-xs">
+                    {item.available}
+                  </Badge>
+                </div>
+                <div>
+                  <p className="font-semibold gradient-sharpei-text text-sm">{item.value}</p>
+                </div>
+                <div>
+                  <p className="text-foreground text-sm">{item.location}</p>
                 </div>
               </div>
-            </Card>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>

@@ -97,12 +97,12 @@ const Companies = () => {
         {/* Companies Table */}
         <div className="bg-white rounded-2xl border border-border overflow-hidden shadow-float">
           {/* Table Header */}
-          <div className="grid grid-cols-[2fr_1.5fr_2fr_1.5fr_1.5fr_1.5fr_1fr] gap-4 px-6 py-4 border-b border-border bg-background/50">
+          <div className="grid grid-cols-[2fr_1.2fr_1.8fr_1fr_1.2fr_1fr_0.8fr] gap-6 px-6 py-4 border-b border-border bg-background/50">
             <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Company</div>
             <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Industry</div>
             <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Location</div>
-            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Representatives</div>
-            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Active Contracts</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Reps</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Contracts</div>
             <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Revenue</div>
             <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</div>
           </div>
@@ -112,30 +112,30 @@ const Companies = () => {
             {companies.map((company) => (
               <div 
                 key={company.name} 
-                className="grid grid-cols-[2fr_1.5fr_2fr_1.5fr_1.5fr_1.5fr_1fr] gap-4 px-6 py-5 hover:bg-gradient-to-r hover:from-gradient-start/5 hover:to-gradient-purple/5 transition-colors cursor-pointer"
+                className="grid grid-cols-[2fr_1.2fr_1.8fr_1fr_1.2fr_1fr_0.8fr] gap-6 px-6 py-5 hover:bg-gradient-to-r hover:from-gradient-start/5 hover:to-gradient-purple/5 transition-colors cursor-pointer"
               >
                 <div>
                   <p className="font-semibold gradient-sharpei-text text-base">{company.name}</p>
                 </div>
                 <div>
-                  <p className="text-foreground">{company.industry}</p>
+                  <p className="text-foreground text-sm">{company.industry}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                  <p className="text-foreground">{company.location}</p>
+                  <p className="text-foreground text-sm">{company.location}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                  <p className="text-foreground">{company.representatives}</p>
+                  <p className="text-foreground text-sm">{company.representatives}</p>
                 </div>
                 <div>
-                  <p className="text-foreground">{company.activeContracts}</p>
+                  <p className="text-foreground text-sm">{company.activeContracts}</p>
                 </div>
                 <div>
-                  <p className="font-semibold gradient-sharpei-text">{company.revenue}</p>
+                  <p className="font-semibold gradient-sharpei-text text-sm">{company.revenue}</p>
                 </div>
                 <div>
-                  <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-0 capitalize">
+                  <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-0 capitalize text-xs">
                     {company.status}
                   </Badge>
                 </div>
