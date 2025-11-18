@@ -5,6 +5,7 @@ import { Store, Search, TrendingUp, Shield, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import TableFilters from "@/components/TableFilters";
 import { EnrollMerchantDialog } from "@/components/EnrollMerchantDialog";
+import { ExportButton } from "@/components/ExportButton";
 const Merchants = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
@@ -234,7 +235,14 @@ const Merchants = () => {
               <h1 className="text-2xl font-semibold text-foreground">Merchants</h1>
               <p className="text-sm text-muted-foreground mt-1">Manage enrolled merchants and their banking accounts</p>
             </div>
-            <EnrollMerchantDialog />
+            <div className="flex gap-2">
+              <ExportButton 
+                data={merchants} 
+                filename="merchants" 
+                sheetName="Merchants"
+              />
+              <EnrollMerchantDialog />
+            </div>
           </div>
         </div>
       </div>

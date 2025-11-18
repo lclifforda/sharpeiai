@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart, Search, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import TableFilters from "@/components/TableFilters";
+import { ExportButton } from "@/components/ExportButton";
 
 const Orders = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -75,10 +76,17 @@ const Orders = () => {
               <h1 className="text-2xl font-semibold text-foreground">Orders</h1>
               <p className="text-sm text-muted-foreground mt-1">Track equipment orders and lease applications</p>
             </div>
-            <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
-              <Plus className="w-4 h-4 mr-2" />
-              New Order
-            </Button>
+            <div className="flex gap-2">
+              <ExportButton 
+                data={orders} 
+                filename="orders" 
+                sheetName="Orders"
+              />
+              <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+                <Plus className="w-4 h-4 mr-2" />
+                New Order
+              </Button>
+            </div>
           </div>
         </div>
       </div>

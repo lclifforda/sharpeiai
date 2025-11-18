@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { CreditCard, Search, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import TableFilters from "@/components/TableFilters";
+import { ExportButton } from "@/components/ExportButton";
 
 const Payments = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -77,8 +78,17 @@ const Payments = () => {
       {/* Header */}
       <div className="border-b bg-background">
         <div className="px-6 py-5">
-          <h1 className="text-2xl font-semibold text-foreground">Payments</h1>
-          <p className="text-sm text-muted-foreground mt-1">Track lease payments and financial transactions</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-semibold text-foreground">Payments</h1>
+              <p className="text-sm text-muted-foreground mt-1">Track lease payments and financial transactions</p>
+            </div>
+            <ExportButton 
+              data={transactions} 
+              filename="payments" 
+              sheetName="Payments"
+            />
+          </div>
         </div>
       </div>
 

@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FileText, Search, Plus, Download } from "lucide-react";
 import TableFilters from "@/components/TableFilters";
+import { ExportButton } from "@/components/ExportButton";
 
 const Contracts = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -60,10 +61,17 @@ const Contracts = () => {
               <h1 className="text-2xl font-semibold text-foreground">Contracts</h1>
               <p className="text-sm text-muted-foreground mt-1">Manage lease agreements and financing contracts</p>
             </div>
-            <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
-              <Plus className="w-4 h-4 mr-2" />
-              New Contract
-            </Button>
+            <div className="flex gap-2">
+              <ExportButton 
+                data={contracts} 
+                filename="contracts" 
+                sheetName="Contracts"
+              />
+              <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+                <Plus className="w-4 h-4 mr-2" />
+                New Contract
+              </Button>
+            </div>
           </div>
         </div>
       </div>
