@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ArrowLeft, ExternalLink, MoreVertical, Edit, Download, Mail, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,10 +13,20 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useToast } from "@/hooks/use-toast";
 
 const MerchantDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   // Mock data - in production, fetch from API
   const merchant = {
@@ -107,33 +117,91 @@ const MerchantDetail = () => {
     }
   };
 
+  const handleEditMerchant = () => {
+    toast({
+      title: "Edit Merchant",
+      description: "Opening merchant editor...",
+    });
+  };
+
+  const handleExportData = () => {
+    toast({
+      title: "Export Data",
+      description: "Preparing merchant data export...",
+    });
+  };
+
+  const handleSendMessage = () => {
+    toast({
+      title: "Send Message",
+      description: "Opening message composer...",
+    });
+  };
+
+  const handleViewAnalytics = () => {
+    toast({
+      title: "View Analytics",
+      description: "Loading merchant analytics...",
+    });
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => navigate("/merchants")}
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink 
-                onClick={() => navigate("/merchants")}
-                className="cursor-pointer"
-              >
-                Merchants
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage className="font-semibold">{merchant.name}</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/merchants")}
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink 
+                  onClick={() => navigate("/merchants")}
+                  className="cursor-pointer"
+                >
+                  Merchants
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage className="font-semibold">{merchant.name}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="icon">
+              <MoreVertical className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56 bg-popover z-50">
+            <DropdownMenuLabel>Quick Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleEditMerchant} className="cursor-pointer">
+              <Edit className="mr-2 h-4 w-4" />
+              Edit Merchant
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleExportData} className="cursor-pointer">
+              <Download className="mr-2 h-4 w-4" />
+              Export Data
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleSendMessage} className="cursor-pointer">
+              <Mail className="mr-2 h-4 w-4" />
+              Send Message
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleViewAnalytics} className="cursor-pointer">
+              <BarChart3 className="mr-2 h-4 w-4" />
+              View Analytics
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Sidebar Card */}
