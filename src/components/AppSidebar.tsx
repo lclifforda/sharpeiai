@@ -21,7 +21,7 @@ const navigationItems = [
   { name: "Orders", path: "/orders", icon: ShoppingCart },
   { name: "Contracts", path: "/contracts", icon: FileText },
   { name: "Payments", path: "/payments", icon: CreditCard },
-  { name: "Inventory", path: "/inventory", icon: Package },
+  { name: "Assets", path: "/assets", icon: Package },
 ];
 
 export function AppSidebar() {

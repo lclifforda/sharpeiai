@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Package, Search, Plus } from "lucide-react";
@@ -6,16 +7,17 @@ import { Badge } from "@/components/ui/badge";
 import TableFilters from "@/components/TableFilters";
 
 const Inventory = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
     category: [] as string[],
     availability: [] as string[],
   });
   const allEquipment = [
-    { name: "CNC Milling Machine", category: "Manufacturing", quantity: 5, available: 3, value: "$125K/unit", location: "Warehouse A" },
-    { name: "MRI Scanner", category: "Medical", quantity: 2, available: 1, value: "$890K/unit", location: "Medical Depot" },
-    { name: "Excavator CAT 320", category: "Construction", quantity: 8, available: 6, value: "$75K/unit", location: "Warehouse B" },
-    { name: "Server Rack Dell", category: "IT Hardware", quantity: 15, available: 12, value: "$25K/unit", location: "Tech Center" },
+    { id: "cnc-milling-machine", name: "CNC Milling Machine", category: "Manufacturing", quantity: 5, available: 3, value: "$125K/unit", location: "Warehouse A" },
+    { id: "mri-scanner", name: "MRI Scanner", category: "Medical", quantity: 2, available: 1, value: "$890K/unit", location: "Medical Depot" },
+    { id: "excavator-cat-320", name: "Excavator CAT 320", category: "Construction", quantity: 8, available: 6, value: "$75K/unit", location: "Warehouse B" },
+    { id: "server-rack-dell", name: "Server Rack Dell", category: "IT Hardware", quantity: 15, available: 12, value: "$25K/unit", location: "Tech Center" },
   ];
 
   const filterGroups = [
@@ -78,7 +80,7 @@ const Inventory = () => {
       {/* Header */}
       <div className="border-b bg-background">
         <div className="px-6 py-5">
-          <h1 className="text-2xl font-semibold text-foreground">Inventory</h1>
+          <h1 className="text-2xl font-semibold text-foreground">Assets</h1>
           <p className="text-sm text-muted-foreground mt-1">Track equipment availability and asset management</p>
         </div>
       </div>
@@ -122,6 +124,7 @@ const Inventory = () => {
             {equipment.map((item) => (
               <div 
                 key={item.name} 
+                onClick={() => navigate(`/assets/${item.id}`)}
                 className="grid grid-cols-[2.5fr_1.5fr_1fr_1fr_1.2fr_1.5fr] gap-6 px-6 py-5 hover:bg-gradient-to-r hover:from-gradient-start/5 hover:to-gradient-purple/5 transition-colors cursor-pointer"
               >
                 <div>
