@@ -1,6 +1,6 @@
 import { NavLink } from "@/components/NavLink";
 import { MessageSquare, LayoutDashboard, Building2, ShoppingCart, FileText, CreditCard, Package, Settings, LogOut, Headphones, Store } from "lucide-react";
-import sharpeiLogo from "@/assets/sharpei-logo.png";
+import bbvaLogo from "@/assets/bbva-logo.png";
 import {
   Sidebar,
   SidebarContent,
@@ -35,12 +35,12 @@ export function AppSidebar() {
           <div className="flex items-center gap-3">
             <div className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden">
             <img 
-              src={sharpeiLogo} 
-              alt="Sharpei AI" 
-              className="block w-full h-full object-cover"
+              src={bbvaLogo} 
+              alt="BBVA" 
+              className="block w-full h-full object-contain"
             />
             </div>
-            {open && <span className="font-medium text-foreground">Sharpei AI</span>}
+            {open && <span className="font-medium text-foreground">BBVA</span>}
           </div>
         </div>
       </SidebarHeader>

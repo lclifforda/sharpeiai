@@ -5,6 +5,7 @@ import SharpeiOrb from "@/components/SharpeiOrb";
 import QuickActionCard from "@/components/QuickActionCard";
 import LeaseQuoteDialog from "@/components/LeaseQuoteDialog";
 import RenewalOfferDialog from "@/components/RenewalOfferDialog";
+import sharpeiLogo from "@/assets/sharpei-logo.png";
 const Index = () => {
   const [isLeaseQuoteOpen, setIsLeaseQuoteOpen] = useState(false);
   const [isRenewalOfferOpen, setIsRenewalOfferOpen] = useState(false);
@@ -76,9 +77,13 @@ const Index = () => {
               </button>
             </div>
           </div>
-          <div className="mt-4 text-center">
+          <div className="mt-4 flex items-center justify-center gap-2">
             <p className="text-xs text-muted-foreground/70">
-              Sharpei — AI for Equipment Financing
+              Powered by
+            </p>
+            <img src={sharpeiLogo} alt="Sharpei AI" className="h-4 w-4 object-contain" />
+            <p className="text-xs text-muted-foreground/70 font-medium">
+              Sharpei AI
             </p>
           </div>
         </div>
