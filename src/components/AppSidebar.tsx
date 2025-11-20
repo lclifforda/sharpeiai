@@ -72,7 +72,7 @@ export function AppSidebar() {
         <div className="px-3 py-2 space-y-1 border-b border-border pb-4">
           <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors">
             <BookOpen className="w-4 h-4 flex-shrink-0" />
-            {open && <span>How does Sharpei AI work?</span>}
+            {open && <span>How does Sharpei work?</span>}
           </button>
           <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors">
             <MessageSquare className="w-4 h-4 flex-shrink-0" />
