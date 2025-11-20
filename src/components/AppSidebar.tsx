@@ -41,12 +41,12 @@ export function AppSidebar() {
   } = useSidebar();
   return <Sidebar collapsible="icon">
       <SidebarHeader>
-        <div className="flex items-center justify-between px-3 py-4">
-          <div className="flex items-center gap-3">
-            <div className="w-20 h-20 rounded-md flex items-center justify-center flex-shrink-0 overflow-hidden">
-            <img src={bbvaLogo} alt="BBVA" className="block w-full h-full object-contain" />
+        <div className="flex items-center px-4 py-6">
+          <div className="flex items-center gap-3 w-full">
+            <div className="flex-shrink-0">
+              <img src={bbvaLogo} alt="BBVA" className="h-8 w-auto object-contain" />
             </div>
-            {open}
+            {open && <div className="border-l border-border/50 h-8 ml-1" />}
           </div>
         </div>
       </SidebarHeader>
