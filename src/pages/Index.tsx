@@ -15,7 +15,7 @@ const Index = () => {
       {/* Left Sidebar Menu */}
       <div className="w-64 border-r border-border bg-white flex flex-col">
         <div className="p-4">
-          <Button variant="outline" className="w-full justify-start gap-2">
+          <Button variant="default" className="w-full justify-start gap-2 gradient-sharpei text-white shadow-elegant">
             <Plus className="w-4 h-4" />
             New Chat
           </Button>
