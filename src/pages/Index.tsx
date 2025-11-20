@@ -15,7 +15,7 @@ const Index = () => {
       {/* Left Sidebar Menu */}
       <div className="w-64 border-r border-border bg-white flex flex-col">
         <div className="p-4">
-          <Button variant="outline" className="w-full justify-start gap-2 border-2 border-gradient-start hover:border-gradient-end transition-colors">
+          <Button variant="outline" className="w-full justify-start gap-2 relative border-2 border-transparent bg-gradient-to-r from-gradient-start to-gradient-end bg-clip-padding before:absolute before:inset-0 before:z-[-1] before:bg-background before:m-[2px] before:rounded-[calc(0.5rem-2px)] hover:shadow-glow transition-all">
             <Plus className="w-4 h-4 text-gradient-start" />
             New Chat
           </Button>
