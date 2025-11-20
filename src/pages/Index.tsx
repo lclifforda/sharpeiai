@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Send, Paperclip, RefreshCw, FileSearch, History, FilePlus, Plus, Home, FileText } from "lucide-react";
+import { MessageSquare, Paperclip, RefreshCw, FileSearch, History, FilePlus, Plus, Home, FileText } from "lucide-react";
 import SharpeiOrb from "@/components/SharpeiOrb";
 import QuickActionCard from "@/components/QuickActionCard";
 import LeaseQuoteDialog from "@/components/LeaseQuoteDialog";
@@ -79,7 +79,7 @@ const Index = () => {
                 </button>
                 <Input placeholder="Ask me anything about equipment financing, risk, contracts, or assets…" className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground" />
                 <button className="p-3 rounded-full gradient-sharpei text-white hover:opacity-90 transition-opacity shadow-float">
-                  <Send className="w-5 h-5" />
+                  <MessageSquare className="w-5 h-5" />
                 </button>
               </div>
             </div>
