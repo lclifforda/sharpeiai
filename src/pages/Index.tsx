@@ -63,20 +63,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t border-border bg-white/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6 py-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-muted-foreground text-center md:text-left">
-              Sharpei AI may make mistakes. Always verify financial data. Your conversation stays private.
-            </p>
-            <div className="flex items-center gap-4">
-              <button className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Technical issue
-              </button>
-              <span className="text-muted-foreground">·</span>
-              <button className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Feedback
-              </button>
-            </div>
-          </div>
+          
           <div className="mt-4 flex items-center justify-center gap-2">
             <p className="text-xs text-muted-foreground/70">
               Powered by
