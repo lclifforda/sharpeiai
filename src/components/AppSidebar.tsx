@@ -1,5 +1,5 @@
 import { NavLink } from "@/components/NavLink";
-import { MessageSquare, LayoutDashboard, Building2, ShoppingCart, FileText, CreditCard, Package, Settings, LogOut, Headphones, Store } from "lucide-react";
+import { MessageSquare, LayoutDashboard, Building2, ShoppingCart, FileText, CreditCard, Package, Settings, LogOut, Headphones, Store, BookOpen, HelpCircle, Mail } from "lucide-react";
 import bbvaLogo from "@/assets/bbva-logo.png";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, SidebarHeader, useSidebar } from "@/components/ui/sidebar";
 const navigationItems = [{
@@ -69,22 +69,24 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter>
-        {open && <div className="mx-3 mb-4">
-            <div className="border border-border rounded-xl p-4 bg-muted/30 hover:bg-muted/50 transition-all duration-300 group">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
-                  <Headphones className="w-4 h-4 text-primary-foreground" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-foreground font-semibold text-sm">Need assistance?</h4>
-                  <p className="text-muted-foreground text-xs">We're here to help</p>
-                </div>
-              </div>
-              <button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-medium py-2.5 px-3 rounded-lg transition-all duration-200 group-hover:shadow-minimal">
-                Contact Support
-              </button>
-            </div>
-          </div>}
+        <div className="px-3 py-2 space-y-1 border-b border-border pb-4">
+          <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors">
+            <BookOpen className="w-4 h-4 flex-shrink-0" />
+            {open && <span>How does Sharpei AI work?</span>}
+          </button>
+          <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors">
+            <MessageSquare className="w-4 h-4 flex-shrink-0" />
+            {open && <span>Feedback</span>}
+          </button>
+          <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors">
+            <HelpCircle className="w-4 h-4 flex-shrink-0" />
+            {open && <span>Help & Docs</span>}
+          </button>
+          <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors">
+            <Mail className="w-4 h-4 flex-shrink-0" />
+            {open && <span>Contact Support</span>}
+          </button>
+        </div>
         
         <div className="px-3 py-4 border-t">
           <div className="flex items-center gap-3">
