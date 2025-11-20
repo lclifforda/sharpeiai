@@ -1,7 +1,6 @@
 import { NavLink } from "@/components/NavLink";
 import { MessageSquare, LayoutDashboard, Building2, ShoppingCart, FileText, CreditCard, Package, Settings, LogOut, Headphones, Store, BookOpen, HelpCircle, Mail } from "lucide-react";
 import bbvaLogo from "@/assets/bbva-logo.png";
-import sharpeiLogo from "@/assets/sharpei-logo.png";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, SidebarHeader, useSidebar } from "@/components/ui/sidebar";
 const navigationItems = [{
   name: "AI Assistant",
@@ -108,20 +107,6 @@ export function AppSidebar() {
               </>}
           </div>
         </div>
-
-        {open && (
-          <div className="px-3 py-3 border-t border-border/50">
-            <div className="flex items-center justify-center gap-2">
-              <p className="text-xs text-muted-foreground/70">
-                Powered by
-              </p>
-              <img src={sharpeiLogo} alt="Sharpei AI" className="h-4 w-4 object-contain" />
-              <p className="text-xs text-muted-foreground/70 font-medium">
-                Sharpei AI
-              </p>
-            </div>
-          </div>
-        )}
       </SidebarFooter>
     </Sidebar>;
 }
