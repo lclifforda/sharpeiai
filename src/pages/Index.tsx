@@ -1,16 +1,53 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Send, Paperclip, RefreshCw, FileSearch, History, FilePlus } from "lucide-react";
+import { Send, Paperclip, RefreshCw, FileSearch, History, FilePlus, Plus, Home, FileText } from "lucide-react";
 import SharpeiOrb from "@/components/SharpeiOrb";
 import QuickActionCard from "@/components/QuickActionCard";
 import LeaseQuoteDialog from "@/components/LeaseQuoteDialog";
 import RenewalOfferDialog from "@/components/RenewalOfferDialog";
 import sharpeiLogo from "@/assets/sharpei-logo.png";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 const Index = () => {
   const [isLeaseQuoteOpen, setIsLeaseQuoteOpen] = useState(false);
   const [isRenewalOfferOpen, setIsRenewalOfferOpen] = useState(false);
-  return <div className="min-h-screen bg-background flex flex-col">
+  return <div className="min-h-screen bg-background flex">
+      {/* Left Sidebar Menu */}
+      <div className="w-64 border-r border-border bg-white flex flex-col">
+        <div className="p-4">
+          <Button
+            variant="outline"
+            className="w-full justify-start gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            New Chat
+          </Button>
+        </div>
+        
+        <ScrollArea className="flex-1">
+          <nav className="px-2 space-y-1">
+            <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-foreground hover:bg-accent rounded-lg transition-colors">
+              <Home className="w-4 h-4 flex-shrink-0" />
+              <span>Home</span>
+            </button>
+            <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:bg-accent rounded-lg transition-colors">
+              <FileSearch className="w-4 h-4 flex-shrink-0" />
+              <span>File Search</span>
+            </button>
+            <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:bg-accent rounded-lg transition-colors">
+              <FileText className="w-4 h-4 flex-shrink-0" />
+              <span>PDF Chat</span>
+            </button>
+            <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:bg-accent rounded-lg transition-colors">
+              <History className="w-4 h-4 flex-shrink-0" />
+              <span>History</span>
+            </button>
+          </nav>
+        </ScrollArea>
+      </div>
+
       {/* Main Content */}
+      <div className="flex-1 flex flex-col">{/* Main Content */}
       <main className="flex-1 flex flex-col items-center justify-center px-6 py-12">
         <div className="w-full max-w-4xl mx-auto space-y-12">
           {/* Hero Section with Orb */}
@@ -75,6 +112,7 @@ const Index = () => {
           </div>
         </div>
       </footer>
+      </div>
     </div>;
 };
 export default Index;
