@@ -16,8 +16,8 @@ const Index = () => {
       <div className="w-64 border-r border-border bg-white flex flex-col">
         <div className="p-4">
           <Button variant="ghost" className="w-full justify-start gap-2 border border-transparent bg-gradient-to-r from-gradient-start to-gradient-end bg-origin-border p-[1px] hover:shadow-glow transition-all">
-            <span className="w-full flex items-center gap-2 bg-background px-3 py-2 rounded-[calc(0.5rem-1px)]">
-              <Plus className="w-4 h-4 text-gradient-start" />
+            <span className="w-full flex items-center gap-2 bg-background px-2.5 py-1.5 rounded-[calc(0.5rem-1px)] text-sm">
+              <Plus className="w-3.5 h-3.5 text-gradient-start" />
               New Chat
             </span>
           </Button>
