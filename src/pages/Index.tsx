@@ -15,10 +15,7 @@ const Index = () => {
       {/* Left Sidebar Menu */}
       <div className="w-64 border-r border-border bg-white flex flex-col">
         <div className="p-4">
-          <Button
-            variant="outline"
-            className="w-full justify-start gap-2"
-          >
+          <Button variant="outline" className="w-full justify-start gap-2">
             <Plus className="w-4 h-4" />
             New Chat
           </Button>
@@ -30,14 +27,8 @@ const Index = () => {
               <Home className="w-4 h-4 flex-shrink-0" />
               <span>Home</span>
             </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:bg-accent rounded-lg transition-colors">
-              <FileSearch className="w-4 h-4 flex-shrink-0" />
-              <span>File Search</span>
-            </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:bg-accent rounded-lg transition-colors">
-              <FileText className="w-4 h-4 flex-shrink-0" />
-              <span>PDF Chat</span>
-            </button>
+            
+            
             <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:bg-accent rounded-lg transition-colors">
               <History className="w-4 h-4 flex-shrink-0" />
               <span>History</span>
