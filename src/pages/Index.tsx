@@ -77,8 +77,8 @@ const Index = () => {
                 <button className="p-3 hover:bg-muted/50 rounded-full transition-colors">
                   <Paperclip className="w-5 h-5 text-muted-foreground" />
                 </button>
-                <button className="p-3 hover:bg-muted/50 rounded-full transition-colors">
-                  <Database className="w-5 h-5 text-muted-foreground" />
+                <button className="px-4 py-3 hover:bg-muted/50 rounded-full transition-colors">
+                  <span className="text-sm text-muted-foreground font-medium">Source</span>
                 </button>
                 <Input placeholder="Ask me anything about equipment financing, risk, contracts, or assets…" className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground" />
                 <button className="p-3 rounded-full gradient-sharpei text-white hover:opacity-90 transition-opacity shadow-float">
