@@ -45,11 +45,11 @@ export function AppSidebar() {
           <div className={`flex items-center ${open ? 'gap-3 w-full' : 'justify-center'}`}>
             {open ? (
               <>
-                <div className="flex-shrink-0">
+                <div className="flex-shrink-0 w-16 h-8">
                   <img 
                     src={bbvaLogo} 
                     alt="BBVA" 
-                    className="h-8 w-auto object-contain transition-all"
+                    className="w-full h-full object-contain"
                   />
                 </div>
                 <div className="border-l border-border/50 h-8 ml-1" />
