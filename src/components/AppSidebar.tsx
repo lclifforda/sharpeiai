@@ -39,12 +39,12 @@ export function AppSidebar() {
   const {
     open
   } = useSidebar();
-  return <Sidebar collapsible="icon">
+  return <Sidebar collapsible="icon" className="border-r border-border">
       <SidebarHeader>
-        <div className="flex items-center px-4 py-6">
-          <div className="flex items-center gap-3 w-full">
+        <div className={`flex items-center py-6 ${open ? 'px-4' : 'px-2 justify-center'}`}>
+          <div className={`flex items-center ${open ? 'gap-3 w-full' : 'justify-center'}`}>
             <div className="flex-shrink-0">
-              <img src={bbvaLogo} alt="BBVA" className="h-8 w-auto object-contain" />
+              <img src={bbvaLogo} alt="BBVA" className={`${open ? 'h-8' : 'h-6'} w-auto object-contain transition-all`} />
             </div>
             {open && <div className="border-l border-border/50 h-8 ml-1" />}
           </div>
@@ -56,10 +56,15 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {navigationItems.map(item => <SidebarMenuItem key={item.path}>
-                  <SidebarMenuButton asChild>
-                    <NavLink to={item.path} end={item.path === "/"} className="flex items-center gap-3 px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors" activeClassName="bg-accent text-foreground font-medium">
+                  <SidebarMenuButton asChild tooltip={!open ? item.name : undefined}>
+                    <NavLink 
+                      to={item.path} 
+                      end={item.path === "/"} 
+                      className={`flex items-center gap-3 ${open ? 'px-3' : 'px-2 justify-center'} py-2.5 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors`}
+                      activeClassName="bg-accent text-foreground font-medium"
+                    >
                       <item.icon className="w-5 h-5 flex-shrink-0" />
-                      <span className="text-sm">{item.name}</span>
+                      {open && <span className="text-sm">{item.name}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>)}
@@ -69,28 +74,30 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter>
-        <div className="px-3 py-2 space-y-1 border-b border-border pb-4">
-          <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors">
-            <BookOpen className="w-4 h-4 flex-shrink-0" />
-            {open && <span>How does Sharpei work?</span>}
-          </button>
-          <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors">
-            <MessageSquare className="w-4 h-4 flex-shrink-0" />
-            {open && <span>Feedback</span>}
-          </button>
-          <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors">
-            <HelpCircle className="w-4 h-4 flex-shrink-0" />
-            {open && <span>Help & Docs</span>}
-          </button>
-          <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors">
-            <Mail className="w-4 h-4 flex-shrink-0" />
-            {open && <span>Contact Support</span>}
-          </button>
-        </div>
+        {open && (
+          <div className="px-3 py-2 space-y-1 border-b border-border pb-4">
+            <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors">
+              <BookOpen className="w-4 h-4 flex-shrink-0" />
+              <span>How does Sharpei work?</span>
+            </button>
+            <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors">
+              <MessageSquare className="w-4 h-4 flex-shrink-0" />
+              <span>Feedback</span>
+            </button>
+            <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors">
+              <HelpCircle className="w-4 h-4 flex-shrink-0" />
+              <span>Help & Docs</span>
+            </button>
+            <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors">
+              <Mail className="w-4 h-4 flex-shrink-0" />
+              <span>Contact Support</span>
+            </button>
+          </div>
+        )}
         
-        <div className="px-3 py-4 border-t">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+        <div className={`${open ? 'px-3 py-4' : 'px-2 py-4 flex justify-center'}`}>
+          <div className={`flex items-center ${open ? 'gap-3' : ''}`}>
+            <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0 cursor-pointer hover:bg-muted/80 transition-colors">
               <span className="text-foreground font-medium text-xs">LC</span>
             </div>
             {open && <>
