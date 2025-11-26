@@ -43,14 +43,26 @@ export function AppSidebar() {
       <SidebarHeader>
         <div className={`flex items-center py-6 ${open ? 'px-4' : 'px-3 justify-center'}`}>
           <div className={`flex items-center ${open ? 'gap-3 w-full' : 'justify-center'}`}>
-            <div className="flex-shrink-0 overflow-hidden">
-              <img 
-                src={bbvaLogo} 
-                alt="BBVA" 
-                className={`${open ? 'h-8' : 'h-6'} w-auto object-contain transition-all`}
-              />
-            </div>
-            {open && <div className="border-l border-border/50 h-8 ml-1" />}
+            {open ? (
+              <>
+                <div className="flex-shrink-0">
+                  <img 
+                    src={bbvaLogo} 
+                    alt="BBVA" 
+                    className="h-8 w-auto object-contain transition-all"
+                  />
+                </div>
+                <div className="border-l border-border/50 h-8 ml-1" />
+              </>
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0 overflow-hidden p-1">
+                <img 
+                  src={bbvaLogo} 
+                  alt="BBVA" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            )}
           </div>
         </div>
       </SidebarHeader>
