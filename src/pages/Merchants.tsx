@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
-import { Store, Search, TrendingUp, Shield, Calendar } from "lucide-react";
+import { Store, Search, TrendingUp, Shield, Calendar, ArrowDown, ArrowRight, ArrowUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import TableFilters from "@/components/TableFilters";
 import { EnrollMerchantDialog } from "@/components/EnrollMerchantDialog";
@@ -217,14 +217,22 @@ const Merchants = () => {
       </Badge>;
   };
   const getRiskBadge = (risk: string) => {
-    const variants: Record<string, "default" | "secondary" | "destructive"> = {
-      low: "default",
-      medium: "secondary",
-      high: "destructive"
-    };
-    return <Badge variant={variants[risk] || "outline"}>
-        {risk.charAt(0).toUpperCase() + risk.slice(1)}
-      </Badge>;
+    if (risk === "low") {
+      return <div className="flex items-center justify-center">
+          <ArrowDown className="w-4 h-4 text-success" />
+        </div>;
+    }
+    if (risk === "medium") {
+      return <div className="flex items-center justify-center">
+          <ArrowRight className="w-4 h-4 text-warning" />
+        </div>;
+    }
+    if (risk === "high") {
+      return <div className="flex items-center justify-center">
+          <ArrowUp className="w-4 h-4 text-destructive" />
+        </div>;
+    }
+    return null;
   };
   return <div className="min-h-screen bg-background">
       {/* Header */}
