@@ -218,17 +218,17 @@ const Merchants = () => {
   };
   const getRiskBadge = (risk: string) => {
     if (risk === "low") {
-      return <div className="flex items-center justify-center">
+      return <div className="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
           <ArrowDown className="w-4 h-4 text-success" />
         </div>;
     }
     if (risk === "medium") {
-      return <div className="flex items-center justify-center">
+      return <div className="w-8 h-8 rounded-lg bg-warning/10 flex items-center justify-center">
           <ArrowRight className="w-4 h-4 text-warning" />
         </div>;
     }
     if (risk === "high") {
-      return <div className="flex items-center justify-center">
+      return <div className="w-8 h-8 rounded-lg bg-destructive/10 flex items-center justify-center">
           <ArrowUp className="w-4 h-4 text-destructive" />
         </div>;
     }
