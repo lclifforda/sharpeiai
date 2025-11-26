@@ -44,7 +44,7 @@ export function AppSidebar() {
         <div className={`flex items-center py-6 ${open ? 'px-4' : 'px-2 justify-center'}`}>
           <div className={`flex items-center ${open ? 'gap-3 w-full' : 'justify-center'}`}>
             <div className="flex-shrink-0">
-              <img src={bbvaLogo} alt="BBVA" className={`${open ? 'h-8' : 'h-6'} w-auto object-contain transition-all`} />
+              <img src={bbvaLogo} alt="BBVA" className="h-8 w-auto object-contain transition-all" />
             </div>
             {open && <div className="border-l border-border/50 h-8 ml-1" />}
           </div>
