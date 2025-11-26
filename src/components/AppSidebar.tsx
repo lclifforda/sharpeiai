@@ -55,7 +55,7 @@ export function AppSidebar() {
                 <div className="border-l border-border/50 h-8 ml-1" />
               </>
             ) : (
-              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0 overflow-hidden p-1">
+              <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0 overflow-hidden p-1">
                 <img 
                   src={bbvaLogo} 
                   alt="BBVA" 
