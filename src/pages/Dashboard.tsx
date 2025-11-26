@@ -23,9 +23,9 @@ const Dashboard = () => {
   ];
 
   const creditRiskData = [
-    { risk: "Low", count: 124, color: "hsl(185, 85%, 50%)" },
-    { risk: "Medium", count: 48, color: "hsl(220, 90%, 55%)" },
-    { risk: "High", count: 12, color: "hsl(260, 85%, 60%)" },
+    { risk: "↓", count: 124, color: "hsl(185, 85%, 50%)" },
+    { risk: "→", count: 48, color: "hsl(220, 90%, 55%)" },
+    { risk: "↑", count: 12, color: "hsl(260, 85%, 60%)" },
   ];
 
   const underwritingFunnel = [
