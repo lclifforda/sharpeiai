@@ -8,9 +8,29 @@ import RenewalOfferDialog from "@/components/RenewalOfferDialog";
 import sharpeiLogo from "@/assets/sharpei-logo.png";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+const dataSources = [
+  "Salesforce",
+  "Teams",
+  "SharePoint",
+  "Payments System",
+  "Data Warehouse",
+];
+
 const Index = () => {
   const [isLeaseQuoteOpen, setIsLeaseQuoteOpen] = useState(false);
   const [isRenewalOfferOpen, setIsRenewalOfferOpen] = useState(false);
+  const [selectedSources, setSelectedSources] = useState<string[]>([]);
+
+  const toggleSource = (source: string) => {
+    setSelectedSources(prev =>
+      prev.includes(source)
+        ? prev.filter(s => s !== source)
+        : [...prev, source]
+    );
+  };
   return <div className="min-h-screen bg-background flex">
       {/* Left Sidebar Menu */}
       <div className="w-64 border-r border-border bg-white flex flex-col">
@@ -77,10 +97,38 @@ const Index = () => {
                 <button className="p-3 hover:bg-muted/50 rounded-full transition-colors">
                   <Paperclip className="w-5 h-5 text-muted-foreground" />
                 </button>
-                <button className="flex items-center gap-1.5 px-3 py-2 hover:bg-muted/50 rounded-full transition-colors">
-                  <Plus className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground font-medium">Sources</span>
-                </button>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button className="flex items-center gap-1.5 px-3 py-2 hover:bg-muted/50 rounded-full transition-colors">
+                      <Plus className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground font-medium">
+                        Sources {selectedSources.length > 0 && `(${selectedSources.length})`}
+                      </span>
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-64 bg-white z-50" align="start">
+                    <div className="space-y-3">
+                      <h4 className="font-medium text-sm text-foreground">Select Data Sources</h4>
+                      <div className="space-y-3">
+                        {dataSources.map((source) => (
+                          <div key={source} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={source}
+                              checked={selectedSources.includes(source)}
+                              onCheckedChange={() => toggleSource(source)}
+                            />
+                            <Label
+                              htmlFor={source}
+                              className="text-sm cursor-pointer flex-1"
+                            >
+                              {source}
+                            </Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
                 <Input placeholder="Ask me anything about equipment financing, risk, contracts, or assets…" className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground" />
                 <button className="p-3 rounded-full gradient-sharpei text-white hover:opacity-90 transition-opacity shadow-float">
                   <MessageSquare className="w-5 h-5" />
