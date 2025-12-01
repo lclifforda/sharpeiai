@@ -11,6 +11,8 @@ import { Switch } from "@/components/ui/switch";
 import { ArrowLeft, Plus, Minus, Upload, FileCheck, X, File } from "lucide-react";
 import robotImage from "@/assets/humanoid-robot.png";
 import { z } from "zod";
+import ApplicationMethodSelector from "@/components/ApplicationMethodSelector";
+import AIApplicationChat from "@/components/AIApplicationChat";
 
 // Validation schema
 const applicationSchema = z.object({
@@ -38,6 +40,7 @@ const ApplicationForm = () => {
     downPayment: 299
   };
 
+  const [selectedMethod, setSelectedMethod] = useState<"ai" | "traditional" | null>(null);
   const [applicantType, setApplicantType] = useState<"company" | "individual">("company");
   const [formData, setFormData] = useState({
     companyName: "",
@@ -146,6 +149,17 @@ const ApplicationForm = () => {
     }
   };
 
+  // Show method selector if no method chosen
+  if (!selectedMethod) {
+    return <ApplicationMethodSelector onSelectMethod={setSelectedMethod} />;
+  }
+
+  // Show AI chat if AI method chosen
+  if (selectedMethod === "ai") {
+    return <AIApplicationChat />;
+  }
+
+  // Show traditional form
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
