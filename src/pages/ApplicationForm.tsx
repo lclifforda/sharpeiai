@@ -351,10 +351,14 @@ const ApplicationForm = () => {
                   <p className="text-sm text-muted-foreground">Upload the following documents to complete your application</p>
                 </div>
                 
-                <div className="grid gap-4">
-                  {requiredDocuments.map((doc) => {
+                <div className="space-y-4">
+                  {requiredDocuments.map((doc, index) => {
                     const isUploaded = !!uploadedDocs[doc.id];
                     const isDragging = draggedOver === doc.id;
+                    const uploadedCount = Object.values(uploadedDocs).filter(Boolean).length;
+                    const shouldShow = index <= uploadedCount;
+                    
+                    if (!shouldShow) return null;
                     
                     return (
                       <div
@@ -362,7 +366,7 @@ const ApplicationForm = () => {
                         onDragOver={(e) => handleDragOver(e, doc.id)}
                         onDragLeave={handleDragLeave}
                         onDrop={(e) => handleDrop(e, doc.id)}
-                        className={`group relative rounded-lg border-2 border-dashed transition-all duration-300 ${
+                        className={`group relative rounded-lg border-2 border-dashed transition-all duration-300 animate-fade-in ${
                           isUploaded 
                             ? 'border-primary bg-primary/5 shadow-sm' 
                             : isDragging
@@ -387,7 +391,12 @@ const ApplicationForm = () => {
 
                             {/* Content */}
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold text-foreground mb-1">{doc.name}</h3>
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-xs font-semibold text-muted-foreground">
+                                  {index + 1} / {requiredDocuments.length}
+                                </span>
+                                <h3 className="font-semibold text-foreground">{doc.name}</h3>
+                              </div>
                               <p className="text-sm text-muted-foreground mb-2">{doc.description}</p>
                               
                               {isUploaded ? (
