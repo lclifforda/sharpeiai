@@ -7,6 +7,7 @@ import { Check } from "lucide-react";
 import robotFront from "@/assets/robot-front.png";
 import robotScene1 from "@/assets/robot-scene-1.png";
 import robotScene2 from "@/assets/robot-scene-2.png";
+import bbvaLogo from "@/assets/bbva-logo.png";
 
 const Checkout = () => {
   const [selectedImage, setSelectedImage] = useState(0);
@@ -217,8 +218,13 @@ const Checkout = () => {
 
               {/* CTA Buttons */}
               <div className="space-y-4 pt-4">
-                <Button className="w-full h-14 text-base font-semibold bg-primary hover:bg-primary/90">
-                  Continue to Payment
+                <Button className="w-full h-14 text-base font-semibold bg-primary hover:bg-primary/90 flex items-center justify-center gap-2">
+                  <img 
+                    src={bbvaLogo} 
+                    alt="BBVA" 
+                    className="h-5 brightness-0 invert"
+                  />
+                  <span>Powered by BBVA Commercial Leasing</span>
                 </Button>
                 <Button variant="outline" className="w-full h-14 text-base font-semibold">
                   Customize Your Order
