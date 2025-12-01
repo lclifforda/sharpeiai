@@ -15,6 +15,7 @@ import AssetDetail from "./pages/AssetDetail";
 import Merchants from "./pages/Merchants";
 import MerchantDetail from "./pages/MerchantDetail";
 import Checkout from "./pages/Checkout";
+import ApplicationForm from "./pages/ApplicationForm";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,7 @@ const App = () => (
           <Route element={<PageLayout><Merchants /></PageLayout>} path="/merchants" />
           <Route element={<PageLayout><MerchantDetail /></PageLayout>} path="/merchants/:id" />
           <Route element={<PageLayout><Checkout /></PageLayout>} path="/checkout" />
+          <Route element={<PageLayout><ApplicationForm /></PageLayout>} path="/application" />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
