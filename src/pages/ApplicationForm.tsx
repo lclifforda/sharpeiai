@@ -8,7 +8,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, Plus, Minus, Upload } from "lucide-react";
+import { ArrowLeft, Plus, Minus, Upload, FileCheck, X, File } from "lucide-react";
 import robotImage from "@/assets/humanoid-robot.png";
 import { z } from "zod";
 
@@ -64,6 +64,7 @@ const ApplicationForm = () => {
     personalGuarantee: null,
     insuranceCertificate: null,
   });
+  const [draggedOver, setDraggedOver] = useState<string | null>(null);
 
   const requiredDocuments = [
     { id: "businessLicense", name: "Business License", description: "State or local business license" },
@@ -78,6 +79,29 @@ const ApplicationForm = () => {
 
   const handleFileUpload = (docId: string, file: File | null) => {
     setUploadedDocs(prev => ({ ...prev, [docId]: file }));
+  };
+
+  const handleRemoveFile = (docId: string) => {
+    setUploadedDocs(prev => ({ ...prev, [docId]: null }));
+  };
+
+  const handleDragOver = (e: React.DragEvent, docId: string) => {
+    e.preventDefault();
+    setDraggedOver(docId);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDraggedOver(null);
+  };
+
+  const handleDrop = (e: React.DragEvent, docId: string) => {
+    e.preventDefault();
+    setDraggedOver(null);
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      handleFileUpload(docId, file);
+    }
   };
 
   const monthlyRate = 800;
@@ -321,42 +345,140 @@ const ApplicationForm = () => {
 
             {/* Required Documents */}
             <Card>
-              <CardContent className="p-6 space-y-4">
-                <h2 className="text-lg font-semibold text-foreground text-center mb-6">Required Documents for Lease</h2>
-                <div className="space-y-3">
-                  {requiredDocuments.map((doc) => (
-                    <div key={doc.id} className="flex items-center gap-4 p-4 border border-border rounded-lg hover:border-primary/30 transition-colors">
-                      <div className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center ${uploadedDocs[doc.id] ? 'border-primary bg-primary' : 'border-muted-foreground'}`}>
-                        {uploadedDocs[doc.id] && (
-                          <svg className="w-4 h-4 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                        )}
-                      </div>
-                      <div className="flex-1 text-center">
-                        <p className="font-medium text-foreground">{doc.name}</p>
-                        <p className="text-sm text-muted-foreground">{doc.description}</p>
-                        {uploadedDocs[doc.id] && (
-                          <p className="text-xs text-primary mt-1">{uploadedDocs[doc.id]?.name}</p>
-                        )}
-                      </div>
-                      <label htmlFor={`file-${doc.id}`} className="cursor-pointer">
-                        <div className="flex items-center gap-2 px-4 py-2 rounded-md border border-border hover:bg-accent transition-colors">
-                          <Upload className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-sm text-foreground">
-                            {uploadedDocs[doc.id] ? 'Change' : 'Upload'}
-                          </span>
+              <CardContent className="p-6 space-y-6">
+                <div className="text-center space-y-2">
+                  <h2 className="text-xl font-semibold text-foreground">Required Documents for Lease</h2>
+                  <p className="text-sm text-muted-foreground">Upload the following documents to complete your application</p>
+                </div>
+                
+                <div className="grid gap-4">
+                  {requiredDocuments.map((doc) => {
+                    const isUploaded = !!uploadedDocs[doc.id];
+                    const isDragging = draggedOver === doc.id;
+                    
+                    return (
+                      <div
+                        key={doc.id}
+                        onDragOver={(e) => handleDragOver(e, doc.id)}
+                        onDragLeave={handleDragLeave}
+                        onDrop={(e) => handleDrop(e, doc.id)}
+                        className={`group relative rounded-lg border-2 border-dashed transition-all duration-300 ${
+                          isUploaded 
+                            ? 'border-primary bg-primary/5 shadow-sm' 
+                            : isDragging
+                            ? 'border-primary bg-primary/10 scale-[1.02]'
+                            : 'border-border hover:border-primary/50 hover:bg-accent/50'
+                        }`}
+                      >
+                        <div className="p-5">
+                          <div className="flex items-start gap-4">
+                            {/* Icon/Status */}
+                            <div className={`flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center transition-all duration-300 ${
+                              isUploaded 
+                                ? 'bg-primary text-primary-foreground scale-110' 
+                                : 'bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary'
+                            }`}>
+                              {isUploaded ? (
+                                <FileCheck className="w-6 h-6 animate-scale-in" />
+                              ) : (
+                                <File className="w-6 h-6" />
+                              )}
+                            </div>
+
+                            {/* Content */}
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-semibold text-foreground mb-1">{doc.name}</h3>
+                              <p className="text-sm text-muted-foreground mb-2">{doc.description}</p>
+                              
+                              {isUploaded ? (
+                                <div className="flex items-center gap-2 animate-fade-in">
+                                  <div className="flex-1 flex items-center gap-2 px-3 py-2 bg-background rounded-md border border-border">
+                                    <File className="w-4 h-4 text-primary flex-shrink-0" />
+                                    <span className="text-sm text-foreground truncate">{uploadedDocs[doc.id]?.name}</span>
+                                    <span className="text-xs text-muted-foreground flex-shrink-0">
+                                      {uploadedDocs[doc.id] && (uploadedDocs[doc.id]!.size / 1024).toFixed(1)} KB
+                                    </span>
+                                  </div>
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleRemoveFile(doc.id)}
+                                    className="h-9 w-9 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              ) : (
+                                <div className="text-xs text-muted-foreground">
+                                  PDF, DOC, DOCX, JPG, PNG • Max 10MB
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Upload Button */}
+                            {!isUploaded && (
+                              <label htmlFor={`file-${doc.id}`} className="cursor-pointer">
+                                <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 hover:scale-105 shadow-sm">
+                                  <Upload className="w-4 h-4" />
+                                  <span className="text-sm font-medium">Upload</span>
+                                </div>
+                                <input
+                                  id={`file-${doc.id}`}
+                                  type="file"
+                                  className="hidden"
+                                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                                  onChange={(e) => handleFileUpload(doc.id, e.target.files?.[0] || null)}
+                                />
+                              </label>
+                            )}
+                            
+                            {isUploaded && (
+                              <label htmlFor={`file-${doc.id}`} className="cursor-pointer">
+                                <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-background hover:bg-accent transition-colors">
+                                  <Upload className="w-4 h-4 text-muted-foreground" />
+                                  <span className="text-sm font-medium text-foreground">Replace</span>
+                                </div>
+                                <input
+                                  id={`file-${doc.id}`}
+                                  type="file"
+                                  className="hidden"
+                                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                                  onChange={(e) => handleFileUpload(doc.id, e.target.files?.[0] || null)}
+                                />
+                              </label>
+                            )}
+                          </div>
                         </div>
-                        <input
-                          id={`file-${doc.id}`}
-                          type="file"
-                          className="hidden"
-                          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                          onChange={(e) => handleFileUpload(doc.id, e.target.files?.[0] || null)}
-                        />
-                      </label>
+
+                        {/* Drag overlay */}
+                        {isDragging && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-primary/10 rounded-lg backdrop-blur-sm animate-fade-in">
+                            <div className="text-center">
+                              <Upload className="w-8 h-8 text-primary mx-auto mb-2 animate-bounce" />
+                              <p className="text-sm font-medium text-primary">Drop file here</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Upload Summary */}
+                <div className="flex items-center justify-between pt-4 border-t border-border">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                    <span className="text-sm text-muted-foreground">
+                      {Object.values(uploadedDocs).filter(Boolean).length} of {requiredDocuments.length} documents uploaded
+                    </span>
+                  </div>
+                  {Object.values(uploadedDocs).filter(Boolean).length === requiredDocuments.length && (
+                    <div className="flex items-center gap-2 text-primary animate-fade-in">
+                      <FileCheck className="w-4 h-4" />
+                      <span className="text-sm font-medium">All documents uploaded</span>
                     </div>
-                  ))}
+                  )}
                 </div>
               </CardContent>
             </Card>
