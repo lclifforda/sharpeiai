@@ -14,6 +14,10 @@ const Checkout = () => {
   const [downPayment, setDownPayment] = useState(5000);
   const [term, setTerm] = useState("24");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [quantity, setQuantity] = useState(1);
+  const [insurance, setInsurance] = useState(false);
+  const [maintenance, setMaintenance] = useState(false);
+  const [warranty, setWarranty] = useState(false);
 
   const productImages = [robotFront, robotScene1, robotScene2];
   const monthlyPrice = 800;
@@ -113,7 +117,22 @@ const Checkout = () => {
             <div className="space-y-8">
               <div>
                 <h2 className="text-4xl font-semibold text-foreground mb-2">Optimus</h2>
-                <p className="text-lg text-muted-foreground">General Purpose Humanoid Robot</p>
+                
+                {/* Product Specs */}
+                <div className="flex items-center gap-8 mt-4 mb-6">
+                  <div className="text-center">
+                    <p className="text-2xl font-semibold text-foreground">5.6 <span className="text-lg">ft</span></p>
+                    <p className="text-xs text-muted-foreground">Height</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-semibold text-foreground">160 <span className="text-lg">lbs</span></p>
+                    <p className="text-xs text-muted-foreground">Weight</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-semibold text-foreground">28 <span className="text-lg">DoF</span></p>
+                    <p className="text-xs text-muted-foreground">Degrees of Freedom</p>
+                  </div>
+                </div>
               </div>
 
               {/* Pricing */}
@@ -125,6 +144,86 @@ const Checkout = () => {
                 <p className="text-sm text-muted-foreground">
                   ${totalPrice.toLocaleString()} total price · Lease starting at ${monthlyPrice}/mo
                 </p>
+              </div>
+
+              {/* Quantity Selector */}
+              <div className="space-y-3 border-t border-border pt-8">
+                <label className="text-sm font-medium text-foreground">Units</label>
+                <div className="flex items-center gap-4">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="h-12 w-12"
+                  >
+                    -
+                  </Button>
+                  <Input
+                    type="number"
+                    value={quantity}
+                    onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))}
+                    className="h-12 text-center text-lg font-semibold"
+                    min="1"
+                  />
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setQuantity(quantity + 1)}
+                    className="h-12 w-12"
+                  >
+                    +
+                  </Button>
+                </div>
+              </div>
+
+              {/* Add-ons */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-foreground">Add-Ons</h3>
+                
+                <button
+                  onClick={() => setInsurance(!insurance)}
+                  className={`w-full text-left p-4 rounded-lg border transition-colors ${
+                    insurance ? 'border-primary bg-primary/5' : 'border-border hover:border-muted-foreground'
+                  }`}
+                >
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="font-semibold text-foreground">Commercial Insurance</p>
+                      <p className="text-sm text-muted-foreground">Full coverage protection</p>
+                    </div>
+                    <p className="text-lg font-semibold text-foreground">+$150/mo</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => setMaintenance(!maintenance)}
+                  className={`w-full text-left p-4 rounded-lg border transition-colors ${
+                    maintenance ? 'border-primary bg-primary/5' : 'border-border hover:border-muted-foreground'
+                  }`}
+                >
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="font-semibold text-foreground">Maintenance Plan</p>
+                      <p className="text-sm text-muted-foreground">Annual service & repairs</p>
+                    </div>
+                    <p className="text-lg font-semibold text-foreground">+$200/mo</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => setWarranty(!warranty)}
+                  className={`w-full text-left p-4 rounded-lg border transition-colors ${
+                    warranty ? 'border-primary bg-primary/5' : 'border-border hover:border-muted-foreground'
+                  }`}
+                >
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="font-semibold text-foreground">Extended Warranty</p>
+                      <p className="text-sm text-muted-foreground">5-year extended coverage</p>
+                    </div>
+                    <p className="text-lg font-semibold text-foreground">+$100/mo</p>
+                  </div>
+                </button>
               </div>
 
               {/* Configuration Options */}
@@ -157,12 +256,14 @@ const Checkout = () => {
                   </Select>
                 </div>
 
+                <button 
+                  onClick={() => setIsModalOpen(true)}
+                  className="text-sm text-primary hover:underline"
+                >
+                  Edit Leasing Options →
+                </button>
+
                 <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-                  <DialogTrigger asChild>
-                    <button className="text-sm text-primary hover:underline">
-                      View all payment options →
-                    </button>
-                  </DialogTrigger>
                   <DialogContent className="max-w-md">
                     <DialogHeader>
                       <DialogTitle>Payment Options</DialogTitle>
@@ -208,7 +309,9 @@ const Checkout = () => {
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="text-sm text-muted-foreground">Estimated Monthly Payment</p>
-                    <p className="text-3xl font-semibold text-foreground mt-1">${monthlyPrice}</p>
+                    <p className="text-3xl font-semibold text-foreground mt-1">
+                      ${monthlyPrice + (insurance ? 150 : 0) + (maintenance ? 200 : 0) + (warranty ? 100 : 0)}
+                    </p>
                     <p className="text-xs text-muted-foreground mt-1">
                       ${downPayment.toLocaleString()} down · {term} months · 3.99% APR
                     </p>
@@ -216,19 +319,19 @@ const Checkout = () => {
                 </div>
               </div>
 
-              {/* CTA Buttons */}
-              <div className="space-y-4 pt-4">
-                <Button className="w-full h-14 text-base font-semibold bg-primary hover:bg-primary/90 flex items-center justify-center gap-2">
+              {/* CTA Button */}
+              <div className="space-y-2 pt-4">
+                <Button className="w-full h-14 text-base font-semibold bg-foreground text-background hover:bg-foreground/90">
+                  Apply Now
+                </Button>
+                <div className="flex items-center justify-center gap-2 py-2">
                   <img 
                     src={bbvaLogo} 
                     alt="BBVA" 
-                    className="h-5 brightness-0 invert"
+                    className="h-4"
                   />
-                  <span>Powered by BBVA Commercial Leasing</span>
-                </Button>
-                <Button variant="outline" className="w-full h-14 text-base font-semibold">
-                  Customize Your Order
-                </Button>
+                  <span className="text-xs text-muted-foreground">Powered by BBVA Commercial Leasing</span>
+                </div>
               </div>
 
               {/* Additional Info */}
