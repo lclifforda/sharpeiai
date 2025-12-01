@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import robotAngle1 from "@/assets/robot-angle-1.png";
 import robotAngle2 from "@/assets/robot-angle-2.png";
 
 const Checkout = () => {
+  const navigate = useNavigate();
   const [downPayment, setDownPayment] = useState(299);
   const [term, setTerm] = useState("24");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,6 +23,18 @@ const Checkout = () => {
   const [selectedImage, setSelectedImage] = useState(0);
 
   const productImages = [robotImage, robotAngle1, robotAngle2];
+
+  const handleApplyNow = () => {
+    navigate("/application", {
+      state: {
+        quantity,
+        maintenance,
+        insurance,
+        term,
+        downPayment
+      }
+    });
+  };
 
   const productPrice = 28800; // $800/mo * 36 months
   const monthlyRate = 800;
@@ -302,7 +316,11 @@ const Checkout = () => {
                         </div>
 
                         {/* BBVA Branded Button */}
-                        <Button className="w-full bg-foreground hover:bg-foreground/90 text-background" size="lg">
+                        <Button 
+                          onClick={handleApplyNow}
+                          className="w-full bg-foreground hover:bg-foreground/90 text-background" 
+                          size="lg"
+                        >
                           Apply Now
                         </Button>
 
