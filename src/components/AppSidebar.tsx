@@ -2,6 +2,13 @@ import { NavLink } from "@/components/NavLink";
 import { MessageSquare, LayoutDashboard, Building2, ShoppingCart, FileText, CreditCard, Package, Settings, LogOut, Headphones, Store, BookOpen, HelpCircle, Mail, Smartphone } from "lucide-react";
 import bbvaLogo from "@/assets/bbva-logo.png";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, SidebarHeader, useSidebar } from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
+const previewItem = {
+  name: "Checkout Preview",
+  path: "/checkout",
+  icon: Smartphone
+};
+
 const navigationItems = [{
   name: "AI Assistant",
   path: "/",
@@ -34,10 +41,6 @@ const navigationItems = [{
   name: "Assets",
   path: "/assets",
   icon: Package
-}, {
-  name: "Checkout Preview",
-  path: "/checkout",
-  icon: Smartphone
 }];
 export function AppSidebar() {
   const {
@@ -75,6 +78,26 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
+              {/* Preview Item - Visually Distinct */}
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip={!open ? previewItem.name : undefined}>
+                  <NavLink 
+                    to={previewItem.path} 
+                    className={`flex items-center gap-3 ${open ? 'px-3' : 'px-2 justify-center'} py-2.5 text-primary hover:text-primary hover:bg-primary/10 rounded-lg transition-colors border border-primary/20`}
+                    activeClassName="bg-primary/15 text-primary font-medium border-primary/30"
+                  >
+                    <previewItem.icon className="w-5 h-5 flex-shrink-0" />
+                    {open && <span className="text-sm font-medium">{previewItem.name}</span>}
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              
+              {/* Separator */}
+              <div className="py-2">
+                <Separator />
+              </div>
+
+              {/* Regular Navigation Items */}
               {navigationItems.map(item => <SidebarMenuItem key={item.path}>
                   <SidebarMenuButton asChild tooltip={!open ? item.name : undefined}>
                     <NavLink 
