@@ -8,6 +8,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Checkbox } from "@/components/ui/checkbox";
 import { ShoppingCart, CheckCircle2, RotateCcw, ArrowUpCircle, Info, Plus, Minus } from "lucide-react";
 import robotImage from "@/assets/humanoid-robot.png";
+import robotAngle1 from "@/assets/robot-angle-1.png";
+import robotAngle2 from "@/assets/robot-angle-2.png";
 
 const Checkout = () => {
   const [downPayment, setDownPayment] = useState(299);
@@ -16,6 +18,9 @@ const Checkout = () => {
   const [quantity, setQuantity] = useState(1);
   const [maintenance, setMaintenance] = useState(false);
   const [insurance, setInsurance] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(0);
+
+  const productImages = [robotImage, robotAngle1, robotAngle2];
 
   const productPrice = 28800; // $800/mo * 36 months
   const monthlyRate = 800;
@@ -58,13 +63,35 @@ const Checkout = () => {
             <Card>
               <CardContent className="p-6">
                 <div className="grid md:grid-cols-2 gap-6">
-                  {/* Product Image */}
-                  <div className="bg-muted rounded-lg overflow-hidden aspect-square flex items-center justify-center">
-                    <img 
-                      src={robotImage} 
-                      alt="Humanoid Robot" 
-                      className="w-full h-full object-cover"
-                    />
+                  {/* Product Image Gallery */}
+                  <div className="space-y-3">
+                    <div className="bg-muted rounded-lg overflow-hidden aspect-square flex items-center justify-center">
+                      <img 
+                        src={productImages[selectedImage]} 
+                        alt="Humanoid Robot" 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    {/* Thumbnail Gallery */}
+                    <div className="grid grid-cols-3 gap-2">
+                      {productImages.map((image, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setSelectedImage(index)}
+                          className={`bg-muted rounded-lg overflow-hidden aspect-square flex items-center justify-center border-2 transition-all ${
+                            selectedImage === index 
+                              ? 'border-primary' 
+                              : 'border-transparent hover:border-border'
+                          }`}
+                        >
+                          <img 
+                            src={image} 
+                            alt={`Robot view ${index + 1}`} 
+                            className="w-full h-full object-cover"
+                          />
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Product Details */}
