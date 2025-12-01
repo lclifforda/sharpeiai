@@ -110,14 +110,15 @@ const ApplicationForm = () => {
           Back to Checkout
         </Button>
 
+        {/* Title */}
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-foreground mb-2">Leasing Application</h1>
+          <p className="text-muted-foreground">Complete your information to finalize your lease</p>
+        </div>
+
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Left Side - Form */}
           <div className="lg:col-span-2 space-y-6">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">Leasing Application</h1>
-              <p className="text-muted-foreground">Complete your information to finalize your lease</p>
-            </div>
-
             {/* Applicant Type */}
             <Card>
               <CardContent className="p-6">
