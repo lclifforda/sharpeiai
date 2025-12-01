@@ -5,15 +5,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ShoppingCart, CheckCircle2, RotateCcw, ArrowUpCircle, Info } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ShoppingCart, CheckCircle2, RotateCcw, ArrowUpCircle, Info, Plus, Minus } from "lucide-react";
+import robotImage from "@/assets/humanoid-robot.png";
 
 const Checkout = () => {
   const [downPayment, setDownPayment] = useState(299);
   const [term, setTerm] = useState("24");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [quantity, setQuantity] = useState(1);
+  const [maintenance, setMaintenance] = useState(false);
+  const [insurance, setInsurance] = useState(false);
 
-  const productPrice = 1299;
-  const dailyRate = 1.25;
+  const productPrice = 28800; // $800/mo * 36 months
+  const monthlyRate = 800;
+  const maintenanceCost = 150;
+  const insuranceCost = 200;
 
   const calculateMonthlyPayment = () => {
     const principal = productPrice - downPayment;
@@ -23,10 +30,17 @@ const Checkout = () => {
     return payment.toFixed(2);
   };
 
+  const calculateTotal = () => {
+    let total = monthlyRate * quantity;
+    if (maintenance) total += maintenanceCost;
+    if (insurance) total += insuranceCost;
+    return total;
+  };
+
   const paymentOptions = [
-    { term: "12 months", monthly: "$112.50", apr: "3.5%", total: "$1,350" },
-    { term: "24 months", monthly: "$58.75", apr: "3.9%", total: "$1,410" },
-    { term: "36 months", monthly: "$41.20", apr: "4.2%", total: "$1,483" },
+    { term: "12 months", monthly: "$2,450", apr: "3.5%", total: "$29,400" },
+    { term: "24 months", monthly: "$1,275", apr: "3.9%", total: "$30,600" },
+    { term: "36 months", monthly: "$875", apr: "4.2%", total: "$31,500" },
   ];
 
   return (
@@ -37,25 +51,27 @@ const Checkout = () => {
           <p className="text-muted-foreground mt-2">See how BBVA Commercial Leasing appears in your checkout</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="max-w-4xl mx-auto">
           {/* Main Checkout Area */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="space-y-6">
             {/* Product Card */}
             <Card>
               <CardContent className="p-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   {/* Product Image */}
                   <div className="bg-muted rounded-lg overflow-hidden aspect-square flex items-center justify-center">
-                    <div className="w-full h-full bg-gradient-to-br from-muted to-accent flex items-center justify-center">
-                      <ShoppingCart className="w-32 h-32 text-muted-foreground/30" />
-                    </div>
+                    <img 
+                      src={robotImage} 
+                      alt="Humanoid Robot" 
+                      className="w-full h-full object-cover"
+                    />
                   </div>
 
                   {/* Product Details */}
                   <div className="space-y-4">
                     <div>
-                      <h2 className="text-2xl font-bold text-foreground">Commercial Equipment</h2>
-                      <p className="text-muted-foreground mt-1">Transform your business operations with professional-grade equipment</p>
+                      <h2 className="text-2xl font-bold text-foreground">Humanoid Robot F-02</h2>
+                      <p className="text-muted-foreground mt-1">Advanced AI-powered humanoid robot for commercial and industrial applications</p>
                     </div>
 
                     {/* Payment Tabs */}
@@ -69,9 +85,9 @@ const Checkout = () => {
                       <TabsContent value="cash" className="space-y-4 mt-4">
                         <div className="flex justify-between items-center py-3 border-b border-border">
                           <span className="text-foreground font-medium">One-time payment</span>
-                          <span className="text-2xl font-bold text-foreground">${productPrice}</span>
+                          <span className="text-2xl font-bold text-foreground">${productPrice.toLocaleString()}</span>
                         </div>
-                        <Button className="w-full" size="lg">Pay ${productPrice}</Button>
+                        <Button className="w-full" size="lg">Pay ${productPrice.toLocaleString()}</Button>
                       </TabsContent>
 
                       <TabsContent value="finance" className="space-y-4 mt-4">
@@ -86,16 +102,68 @@ const Checkout = () => {
                         {/* Product Summary */}
                         <div className="space-y-3">
                           <div className="flex justify-between items-center py-2">
-                            <span className="text-foreground">Commercial Equipment</span>
-                            <span className="text-foreground font-semibold">from ${dailyRate}/day</span>
+                            <span className="text-foreground">Humanoid Robot F-02</span>
+                            <span className="text-foreground font-semibold">${monthlyRate}/mo</span>
                           </div>
-                          <div className="flex justify-between items-center py-2 text-sm">
-                            <span className="text-muted-foreground">One Year Warranty</span>
-                            <span className="text-muted-foreground">Included</span>
+                          
+                          {/* Quantity Selector */}
+                          <div className="flex justify-between items-center py-2">
+                            <span className="text-muted-foreground">Units</span>
+                            <div className="flex items-center gap-2">
+                              <Button 
+                                variant="outline" 
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                              >
+                                <Minus className="h-4 w-4" />
+                              </Button>
+                              <span className="text-foreground font-semibold w-8 text-center">{quantity}</span>
+                              <Button 
+                                variant="outline" 
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={() => setQuantity(quantity + 1)}
+                              >
+                                <Plus className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
-                          <div className="flex justify-between items-center py-2 text-sm border-b border-border pb-3">
-                            <span className="text-muted-foreground">Maintenance Package</span>
-                            <span className="text-muted-foreground">Included</span>
+
+                          {/* Add-ons */}
+                          <div className="space-y-2 pt-2 border-t border-border">
+                            <p className="text-sm font-medium text-foreground">Add-ons</p>
+                            <div className="flex items-center justify-between py-2">
+                              <div className="flex items-center gap-2">
+                                <Checkbox 
+                                  id="maintenance" 
+                                  checked={maintenance}
+                                  onCheckedChange={(checked) => setMaintenance(checked as boolean)}
+                                />
+                                <label htmlFor="maintenance" className="text-sm text-muted-foreground cursor-pointer">
+                                  Maintenance Package
+                                </label>
+                              </div>
+                              <span className="text-sm text-foreground">+${maintenanceCost}/mo</span>
+                            </div>
+                            <div className="flex items-center justify-between py-2">
+                              <div className="flex items-center gap-2">
+                                <Checkbox 
+                                  id="insurance" 
+                                  checked={insurance}
+                                  onCheckedChange={(checked) => setInsurance(checked as boolean)}
+                                />
+                                <label htmlFor="insurance" className="text-sm text-muted-foreground cursor-pointer">
+                                  Insurance Coverage
+                                </label>
+                              </div>
+                              <span className="text-sm text-foreground">+${insuranceCost}/mo</span>
+                            </div>
+                          </div>
+                          
+                          <div className="flex justify-between items-center py-2 text-sm border-t border-border pt-3">
+                            <span className="text-foreground font-medium">Total Monthly Payment</span>
+                            <span className="text-foreground font-bold text-lg">${calculateTotal()}/mo</span>
                           </div>
                         </div>
 
@@ -133,11 +201,11 @@ const Checkout = () => {
                         <div className="bg-accent rounded-lg p-4 space-y-2">
                           <div className="flex items-baseline gap-2">
                             <span className="text-sm text-muted-foreground">from</span>
-                            <span className="text-3xl font-bold text-foreground">${dailyRate}</span>
-                            <span className="text-muted-foreground">/day</span>
+                            <span className="text-3xl font-bold text-foreground">${calculateTotal()}</span>
+                            <span className="text-muted-foreground">/mo</span>
                           </div>
                           <p className="text-xs text-muted-foreground">
-                            3.9% APR, ${downPayment} down, {term} mo
+                            3.9% APR, ${downPayment} down, {term} months
                           </p>
                           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                             <DialogTrigger asChild>
@@ -207,21 +275,16 @@ const Checkout = () => {
                         </div>
 
                         {/* BBVA Branded Button */}
-                        <Button className="w-full bg-primary hover:bg-primary/90" size="lg">
-                          <img 
-                            src="/src/assets/bbva-logo.png" 
-                            alt="BBVA" 
-                            className="h-5 mr-2 brightness-0 invert"
-                          />
-                          Lease with BBVA Commercial
+                        <Button className="w-full bg-foreground hover:bg-foreground/90 text-background" size="lg">
+                          Apply Now
                         </Button>
 
                         {/* Powered By */}
                         <div className="flex items-center justify-center gap-2 pt-2">
                           <span className="text-xs text-muted-foreground">Powered by</span>
                           <img 
-                            src="/src/assets/sharpei-logo.png" 
-                            alt="Sharpei" 
+                            src="/src/assets/bbva-logo.png" 
+                            alt="BBVA" 
                             className="h-4"
                           />
                         </div>
@@ -232,86 +295,6 @@ const Checkout = () => {
                       </TabsContent>
                     </Tabs>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Right Side Panel */}
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Info className="w-5 h-5 text-primary" />
-                  Merchant Experience
-                </CardTitle>
-                <CardDescription>How leasing appears on your checkout</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="text-xs font-bold text-primary">1</span>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-foreground">Seamless Integration</p>
-                      <p className="text-xs text-muted-foreground mt-1">Leasing option appears naturally alongside cash and financing</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="text-xs font-bold text-primary">2</span>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-foreground">Clear Pricing</p>
-                      <p className="text-xs text-muted-foreground mt-1">Customers see daily rates and flexible terms upfront</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="text-xs font-bold text-primary">3</span>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-foreground">BBVA Trust</p>
-                      <p className="text-xs text-muted-foreground mt-1">Backed by a recognized financial institution</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="text-xs font-bold text-primary">4</span>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-foreground">Flexible Options</p>
-                      <p className="text-xs text-muted-foreground mt-1">Keep, return, or upgrade at end of lease</p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-accent border-primary/20">
-              <CardHeader>
-                <CardTitle className="text-base">Why Offer Leasing?</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3 text-sm">
-                <div className="flex items-start gap-2">
-                  <span className="text-success">✓</span>
-                  <p className="text-muted-foreground">Increase average order value by 30-40%</p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="text-success">✓</span>
-                  <p className="text-muted-foreground">Convert more browsers into buyers</p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="text-success">✓</span>
-                  <p className="text-muted-foreground">Get paid upfront while customers pay over time</p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="text-success">✓</span>
-                  <p className="text-muted-foreground">Zero risk - BBVA handles all credit checks</p>
                 </div>
               </CardContent>
             </Card>
