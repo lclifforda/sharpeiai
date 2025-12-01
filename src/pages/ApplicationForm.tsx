@@ -8,7 +8,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, Plus, Minus } from "lucide-react";
+import { ArrowLeft, Plus, Minus, Upload } from "lucide-react";
 import robotImage from "@/assets/humanoid-robot.png";
 import { z } from "zod";
 
@@ -54,6 +54,31 @@ const ApplicationForm = () => {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [uploadedDocs, setUploadedDocs] = useState<Record<string, File | null>>({
+    businessLicense: null,
+    articlesOfIncorporation: null,
+    taxReturn: null,
+    profitLoss: null,
+    bankStatements: null,
+    equipmentQuote: null,
+    personalGuarantee: null,
+    insuranceCertificate: null,
+  });
+
+  const requiredDocuments = [
+    { id: "businessLicense", name: "Business License", description: "State or local business license" },
+    { id: "articlesOfIncorporation", name: "Articles of Incorporation", description: "Operating agreement or incorporation documents" },
+    { id: "taxReturn", name: "Business Tax Return (Most Recent)", description: "Complete business tax return from last year" },
+    { id: "profitLoss", name: "Profit & Loss Statement", description: "Year-to-date P&L statement" },
+    { id: "bankStatements", name: "Bank Statements (6 months)", description: "Recent business bank statements" },
+    { id: "equipmentQuote", name: "Equipment Quote/Invoice", description: "Vendor quote or purchase agreement" },
+    { id: "personalGuarantee", name: "Personal Guarantee Form", description: "Signed personal guarantee from owner(s)" },
+    { id: "insuranceCertificate", name: "Insurance Certificate", description: "Proof of equipment and liability insurance" },
+  ];
+
+  const handleFileUpload = (docId: string, file: File | null) => {
+    setUploadedDocs(prev => ({ ...prev, [docId]: file }));
+  };
 
   const monthlyRate = 800;
   const maintenanceCost = 150;
@@ -294,8 +319,50 @@ const ApplicationForm = () => {
               </CardContent>
             </Card>
 
+            {/* Required Documents */}
+            <Card>
+              <CardContent className="p-6 space-y-4">
+                <h2 className="text-lg font-semibold text-foreground text-center mb-6">Required Documents for Lease</h2>
+                <div className="space-y-3">
+                  {requiredDocuments.map((doc) => (
+                    <div key={doc.id} className="flex items-center gap-4 p-4 border border-border rounded-lg hover:border-primary/30 transition-colors">
+                      <div className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center ${uploadedDocs[doc.id] ? 'border-primary bg-primary' : 'border-muted-foreground'}`}>
+                        {uploadedDocs[doc.id] && (
+                          <svg className="w-4 h-4 text-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </div>
+                      <div className="flex-1 text-center">
+                        <p className="font-medium text-foreground">{doc.name}</p>
+                        <p className="text-sm text-muted-foreground">{doc.description}</p>
+                        {uploadedDocs[doc.id] && (
+                          <p className="text-xs text-primary mt-1">{uploadedDocs[doc.id]?.name}</p>
+                        )}
+                      </div>
+                      <label htmlFor={`file-${doc.id}`} className="cursor-pointer">
+                        <div className="flex items-center gap-2 px-4 py-2 rounded-md border border-border hover:bg-accent transition-colors">
+                          <Upload className="w-4 h-4 text-muted-foreground" />
+                          <span className="text-sm text-foreground">
+                            {uploadedDocs[doc.id] ? 'Change' : 'Upload'}
+                          </span>
+                        </div>
+                        <input
+                          id={`file-${doc.id}`}
+                          type="file"
+                          className="hidden"
+                          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                          onChange={(e) => handleFileUpload(doc.id, e.target.files?.[0] || null)}
+                        />
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Submit Button */}
-            <Button 
+            <Button
               onClick={handleSubmit}
               className="w-full bg-foreground hover:bg-foreground/90 text-background" 
               size="lg"
