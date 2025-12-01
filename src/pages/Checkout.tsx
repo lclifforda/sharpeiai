@@ -51,7 +51,7 @@ const Checkout = () => {
           <p className="text-muted-foreground mt-2">See how BBVA Commercial Leasing appears in your checkout</p>
         </div>
 
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           {/* Main Checkout Area */}
           <div className="space-y-6">
             {/* Product Card */}
