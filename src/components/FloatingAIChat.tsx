@@ -4,8 +4,6 @@ import { MessageCircle, X, Send, Plus, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
 
 interface Message {
   role: "user" | "assistant";
@@ -175,33 +173,6 @@ const FloatingAIChat = () => {
                 </button>
               </div>
             </div>
-
-            {/* Checkout Preview - Only show on checkout page */}
-            {location.pathname === "/checkout" && (
-              <>
-                <div className="p-4 bg-muted/30">
-                  <div className="flex items-start justify-between mb-2">
-                    <h4 className="text-sm font-semibold text-foreground">Current Order</h4>
-                    <Badge variant="secondary" className="text-xs">Draft</Badge>
-                  </div>
-                  <div className="space-y-2 text-xs text-muted-foreground">
-                    <div className="flex justify-between">
-                      <span>Humanoid Robot F-02</span>
-                      <span className="text-foreground font-medium">1x</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Lease Term</span>
-                      <span className="text-foreground font-medium">36 months</span>
-                    </div>
-                    <div className="flex justify-between items-center pt-2 border-t border-border">
-                      <span className="font-medium text-foreground">Est. Monthly</span>
-                      <span className="text-foreground font-semibold">$1,950/mo</span>
-                    </div>
-                  </div>
-                </div>
-                <Separator />
-              </>
-            )}
 
             {/* Messages */}
             <ScrollArea className="flex-1 p-4">
