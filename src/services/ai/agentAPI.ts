@@ -359,11 +359,11 @@ Now answer the user's question:
 `;
     
     try {
-      // Use CORS proxy for demo (or your own backend in production)
-      const useProxy = true; // Set to false if you have a backend
-      const apiUrl = useProxy 
-        ? 'https://corsproxy.io/?' + encodeURIComponent('https://api.anthropic.com/v1/messages')
-        : 'https://api.anthropic.com/v1/messages';
+      // Use custom base URL if provided, otherwise use public Anthropic API
+      const baseUrl = import.meta.env.VITE_ANTHROPIC_BASE_URL || 'https://api.anthropic.com';
+      const apiUrl = `${baseUrl}/v1/messages`;
+      
+      const claudeModel = import.meta.env.VITE_CLAUDE_MODEL || 'claude-3-haiku-20240307';
       
       const response = await fetch(apiUrl, {
         method: 'POST',
@@ -373,7 +373,7 @@ Now answer the user's question:
           'anthropic-version': '2023-06-01'
         },
         body: JSON.stringify({
-          model: 'claude-3-haiku-20240307',
+          model: claudeModel,
           max_tokens: 500,
           temperature: 0.7,
           messages: [
