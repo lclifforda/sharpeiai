@@ -9,10 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { ArrowLeft, Plus, Minus, Upload, FileCheck, X, File } from "lucide-react";
-// Original product image (commented for rollback)
-// import robotImage from "@/assets/humanoid-robot.png";
-// LG Monitor product image
-import monitorImage from "@/assets/lg-ultragear-monitors.png";
+import robotImage from "@/assets/humanoid-robot.png";
 import { z } from "zod";
 import ApplicationMethodSelector from "@/components/ApplicationMethodSelector";
 import AIApplicationChat from "@/components/AIApplicationChat";
@@ -128,15 +125,9 @@ const ApplicationForm = () => {
     }
   };
 
-  // Original product pricing (commented for rollback)
-  // const monthlyRate = 800;
-  // const maintenanceCost = 150;
-  // const insuranceCost = 200;
-  
-  // LG Monitor product pricing from checkout-v2
-  const monthlyRate = 60;
-  const maintenanceCost = 10;
-  const insuranceCost = 15;
+  const monthlyRate = 800;
+  const maintenanceCost = 150;
+  const insuranceCost = 200;
   
   // Equipment purchase price (for financing/lease calculations)
   const equipmentPurchasePrice = 350; // $350 per monitor (retail price)
@@ -893,16 +884,10 @@ const ApplicationForm = () => {
                 {/* Product */}
                 <div className="flex gap-4 pb-4 border-b border-border">
                   <div className="w-16 h-16 bg-muted rounded-lg overflow-hidden flex-shrink-0">
-                    {/* Original product image (commented for rollback) */}
-                    {/* <img src={robotImage} alt="Robot" className="w-full h-full object-cover" /> */}
-                    {/* LG Monitor product image */}
-                    <img src={monitorImage} alt="LG Monitor" className="w-full h-full object-cover" />
+                    <img src={robotImage} alt="Robot" className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1">
-                    {/* Original product name (commented for rollback) */}
-                    {/* <h3 className="font-medium text-foreground">Humanoid Robot F-02</h3> */}
-                    {/* LG Monitor product name */}
-                    <h3 className="font-medium text-foreground">24" FHD 3-Side Borderless IPS Monitor</h3>
+                    <h3 className="font-medium text-foreground">Humanoid Robot F-02</h3>
                     <p className="text-sm text-muted-foreground">${monthlyRate}/mo per unit</p>
                   </div>
                 </div>

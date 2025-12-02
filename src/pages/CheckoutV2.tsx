@@ -8,8 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CheckCircle2, RotateCcw, ArrowUpCircle, Plus, Minus } from "lucide-react";
-import monitorImage from "@/assets/lg-ultragear-monitors.png";
-import lgLogo from "@/assets/lg-logo.png";
+import robotImage from "@/assets/humanoid-robot.png";
 
 const CheckoutV2 = () => {
   const navigate = useNavigate();
@@ -33,10 +32,10 @@ const CheckoutV2 = () => {
     });
   };
 
-  const productPrice = 2160; // $60/mo * 36 months
-  const monthlyRate = 60;
-  const maintenanceCost = 10;
-  const insuranceCost = 15;
+  const productPrice = 28800; // $800/mo * 36 months
+  const monthlyRate = 800;
+  const maintenanceCost = 150;
+  const insuranceCost = 200;
 
   const calculateMonthlyPayment = () => {
     const principal = productPrice - downPayment;
@@ -62,13 +61,6 @@ const CheckoutV2 = () => {
   return (
     <div className="min-h-screen p-6 space-y-6">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-6">
-          <img 
-            src={lgLogo} 
-            alt="LG" 
-            className="h-10"
-          />
-        </div>
 
         <div className="max-w-6xl mx-auto">
           {/* Main Checkout Area */}
@@ -81,8 +73,8 @@ const CheckoutV2 = () => {
                   <div className="space-y-3">
                     <div className="bg-muted rounded-lg overflow-hidden aspect-square flex items-center justify-center">
                       <img 
-                        src={monitorImage} 
-                        alt="LG Monitor" 
+                        src={robotImage} 
+                        alt="Robot" 
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -91,15 +83,8 @@ const CheckoutV2 = () => {
                   {/* Product Details */}
                   <div className="space-y-4">
                     <div>
-                      <div className="mb-2">
-                        <img 
-                          src={lgLogo} 
-                          alt="LG" 
-                          className="h-8"
-                        />
-                      </div>
-                      <h2 className="text-2xl font-bold text-foreground">24" FHD 3-Side Borderless IPS Monitor</h2>
-                      <p className="text-muted-foreground mt-1">Professional-grade display with stunning clarity and ultra-slim bezels</p>
+                      <h2 className="text-2xl font-bold text-foreground">Humanoid Robot F-02</h2>
+                      <p className="text-muted-foreground mt-1">Advanced humanoid robot for commercial applications</p>
                     </div>
 
                     {/* Payment Tabs */}
@@ -130,7 +115,7 @@ const CheckoutV2 = () => {
                         {/* Product Summary */}
                         <div className="space-y-3">
                           <div className="flex justify-between items-center py-2">
-                            <span className="text-foreground">24" LG Monitor</span>
+                            <span className="text-foreground">Humanoid Robot F-02</span>
                             <span className="text-foreground font-semibold">${monthlyRate}/mo</span>
                           </div>
                           
