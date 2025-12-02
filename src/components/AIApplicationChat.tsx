@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,10 +6,12 @@ import { Input } from "@/components/ui/input";
 import { ArrowLeft, Send, Bot, User } from "lucide-react";
 import robotImage from "@/assets/humanoid-robot.png";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useAiAgent } from "@/hooks/useAiAgent";
 
 interface Message {
   role: "assistant" | "user";
   content: string;
+  suggestions?: string[];
 }
 
 const AIApplicationChat = () => {
@@ -23,6 +25,9 @@ const AIApplicationChat = () => {
     downPayment: 299
   };
 
+  const [sessionId] = useState(() => `session-${Date.now()}`);
+  const { sendMessage, isLoading, lastMessage, isConnected } = useAiAgent(sessionId);
+  
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
@@ -43,7 +48,20 @@ const AIApplicationChat = () => {
     return total;
   };
 
-  const handleSendMessage = () => {
+  // Handle AI responses from the agent
+  useEffect(() => {
+    if (lastMessage) {
+      const aiMessage: Message = {
+        role: "assistant",
+        content: lastMessage.text,
+        suggestions: lastMessage.suggestions
+      };
+      setMessages(prev => [...prev, aiMessage]);
+      setIsProcessing(false);
+    }
+  }, [lastMessage]);
+
+  const handleSendMessage = async () => {
     if (!inputValue.trim() || isProcessing) return;
 
     const userMessage: Message = {
@@ -55,15 +73,24 @@ const AIApplicationChat = () => {
     setInputValue("");
     setIsProcessing(true);
 
-    // Simulate AI response (in production, this would call your AI backend)
-    setTimeout(() => {
-      const aiResponse: Message = {
+    try {
+      // Send to real AI agent with order context
+      await sendMessage(inputValue, {
+        orderDetails: orderDetails,
+        cartTotal: calculateTotal(),
+        equipmentType: "Humanoid Robot F-02",
+        equipmentValue: monthlyRate * orderDetails.quantity * parseInt(orderDetails.term)
+      });
+    } catch (error) {
+      console.error('AI message failed:', error);
+      // Add error message to chat
+      const errorMessage: Message = {
         role: "assistant",
-        content: "Thank you! I've recorded that information. Now, could you please provide the name of your company representative?"
+        content: "I apologize, but I encountered an error. Please try again."
       };
-      setMessages(prev => [...prev, aiResponse]);
+      setMessages(prev => [...prev, errorMessage]);
       setIsProcessing(false);
-    }, 1000);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -115,6 +142,21 @@ const AIApplicationChat = () => {
                           }`}
                         >
                           <p className="text-sm leading-relaxed">{message.content}</p>
+                          
+                          {/* Suggestion buttons for AI messages */}
+                          {message.role === "assistant" && message.suggestions && message.suggestions.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mt-3">
+                              {message.suggestions.map((suggestion, idx) => (
+                                <button
+                                  key={idx}
+                                  onClick={() => setInputValue(suggestion)}
+                                  className="px-3 py-1.5 text-xs border border-border rounded-lg hover:bg-accent transition-colors bg-background"
+                                >
+                                  {suggestion}
+                                </button>
+                              ))}
+                            </div>
+                          )}
                         </div>
                         {message.role === "user" && (
                           <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
