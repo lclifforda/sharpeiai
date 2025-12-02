@@ -25,6 +25,8 @@ interface ChatMessage {
   suggestions?: string[];
   data?: any;
   offerData?: {
+    id: string;
+    type: 'financing' | 'lease';
     lender: string;
     apr: number;
     termMonths: number;
@@ -447,6 +449,8 @@ const AIApplicationChat = () => {
         ? ['Apply this offer', 'See other terms', 'Talk to sales']
         : ['I have a trade-in', 'No trade-in', 'Apply this offer'],
       offerData: {
+        id: generateCryptoId(),
+        type: offerType === 'lease' ? 'lease' : 'financing',
         lender,
         apr: rate,
         termMonths: term,
@@ -902,7 +906,7 @@ const AIApplicationChat = () => {
                                 <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
                               </div>
                             </div>
-                            <OfferCard {...message.offerData} />
+                            <OfferCard offer={message.offerData} />
                             {message.suggestions && message.suggestions.length > 0 && (
                               <div className="flex flex-wrap gap-2 mt-3">
                                 {message.suggestions.map((suggestion, idx) => (

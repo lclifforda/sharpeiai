@@ -41,6 +41,16 @@ const FloatingAIChat = () => {
 
   const currentConversation = conversations.find(c => c.id === currentConversationId)!;
 
+  // Predefined questions relevant to Sharpei's business
+  const predefinedQuestions = [
+    "How does financing work?",
+    "What's the difference between lease and finance?",
+    "What are the payment terms?",
+    "What documents do I need?",
+    "How is my rate calculated?",
+    "Can I pay early without penalties?",
+  ];
+
   // Handle AI responses
   useEffect(() => {
     if (lastMessage && !isProcessing) {
@@ -262,6 +272,25 @@ const FloatingAIChat = () => {
                 )}
               </div>
             </ScrollArea>
+
+            {/* Predefined Questions */}
+            {currentConversation.messages.length <= 1 && (
+              <div className="px-4 py-2 border-t border-border bg-muted/30">
+                <p className="text-xs text-muted-foreground mb-2">Common questions:</p>
+                <div className="flex flex-wrap gap-2">
+                  {predefinedQuestions.map((question, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setInput(question)}
+                      disabled={isProcessing}
+                      className="px-3 py-1.5 text-xs border border-border rounded-lg hover:bg-accent transition-colors bg-background disabled:opacity-50"
+                    >
+                      {question}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Input */}
             <div className="p-4 border-t border-border">
