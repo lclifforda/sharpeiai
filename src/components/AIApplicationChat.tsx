@@ -19,7 +19,7 @@ import ContractCard from "@/components/ContractCard";
 
 interface ChatMessage {
   id: string;
-  type: 'user' | 'ai' | 'system' | 'offer' | 'contract' | 'comparison';
+  type: 'user' | 'ai' | 'system' | 'offer' | 'contract' | 'comparison' | 'completion';
   content: string;
   timestamp: Date;
   suggestions?: string[];
@@ -45,6 +45,7 @@ interface ChatMessage {
     termMonths: number;
     monthlyPayment: number;
     docusignLink: string;
+    offerType?: 'financing' | 'lease';
   };
   comparisonData?: {
     financing: {
@@ -484,6 +485,7 @@ const AIApplicationChat = () => {
     const data = workingDataRef.current as any;
     const customerName = data.representativeName || data.fullName || 'Customer';
     const customerEmail = data.email || 'customer@example.com';
+    const offerType = (data.selectedOfferType || 'financing') as 'financing' | 'lease';
     
     setCurrentPrompt('contract_signature');
     setIsTyping(true);
@@ -514,7 +516,8 @@ const AIApplicationChat = () => {
           apr: offer.rate,
           termMonths: offer.term,
           monthlyPayment: offer.estMonthly,
-          docusignLink
+          docusignLink,
+          offerType
         }
       };
       setMessages((prev) => [...prev, contractMessage]);
@@ -828,7 +831,7 @@ const AIApplicationChat = () => {
     }
     
     // Apply button for business customers
-    if (currentPrompt === 'done' && lower.includes('apply')) {
+    if ((currentPrompt === 'done' || currentPrompt === 'ready_for_docs') && lower.includes('apply')) {
       initiateContractSignature();
       return;
     }
@@ -840,7 +843,22 @@ const AIApplicationChat = () => {
         setApplicationStep('complete');
         setTimeout(() => {
           setIsTyping(false);
-          pushAI('🎉 **Contract signed successfully!**\n\nYour financing application has been submitted. You should receive confirmation within 24-48 hours.\n\nNext steps:\n• We\'ll verify your information\n• Final approval notification\n• Equipment delivery coordination\n\nThank you for choosing us!');
+          const offer = lastOffer;
+          const data = workingDataRef.current as any;
+          const offerType = data.selectedOfferType || 'financing';
+          
+          const completionMessage: ChatMessage = {
+            id: generateCryptoId(),
+            type: 'completion',
+            content: 'Contract signed successfully!',
+            timestamp: new Date(),
+            data: {
+              offerType,
+              term: offer?.term,
+              monthlyPayment: offer?.estMonthly
+            }
+          };
+          setMessages((prev) => [...prev, completionMessage]);
           setCurrentPrompt('done');
         }, 1500);
         return;
@@ -934,7 +952,19 @@ const AIApplicationChat = () => {
                                 <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
                               </div>
                             </div>
-                            <ContractCard {...message.contractData} />
+                            <ContractCard 
+                              offer={{
+                                id: generateCryptoId(),
+                                type: message.contractData.offerType || 'financing',
+                                lender: message.contractData.lender,
+                                apr: message.contractData.apr,
+                                termMonths: message.contractData.termMonths,
+                                downPayment: message.contractData.downPayment,
+                                monthlyPayment: message.contractData.monthlyPayment,
+                                totalAmount: message.contractData.totalFinanced
+                              }}
+                              onSign={() => handleSendMessage('Sign contract')}
+                            />
                             {message.suggestions && message.suggestions.length > 0 && (
                               <div className="flex flex-wrap gap-2 mt-3">
                                 {message.suggestions.map((suggestion, idx) => (
@@ -948,6 +978,59 @@ const AIApplicationChat = () => {
                                 ))}
                               </div>
                             )}
+                          </div>
+                        )}
+                        
+                        {/* Completion View */}
+                        {message.type === 'completion' && message.data && (
+                          <div className="mb-4">
+                            <div className="rounded-xl overflow-hidden border-2 shadow-xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 border-green-500 animate-in fade-in slide-in-from-bottom-4 duration-300">
+                              <div className="p-8 space-y-6 text-center bg-card">
+                                <div className="space-y-4">
+                                  <div className="w-20 h-20 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto">
+                                    <svg className="w-10 h-10 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                  </div>
+                                  
+                                  <h2 className="text-3xl font-bold text-foreground">Thank You for Your Order!</h2>
+                                  <p className="text-lg text-muted-foreground max-w-md mx-auto">
+                                    Your order has been successfully placed and your financing is approved.
+                                  </p>
+                                </div>
+
+                                <div className="bg-accent/50 rounded-lg p-6 space-y-3 text-left">
+                                  <h3 className="font-semibold text-lg">Delivery Information</h3>
+                                  <div className="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-700 rounded-lg p-4">
+                                    <p className="text-lg font-bold text-blue-800 dark:text-blue-300">
+                                      🚚 You should receive your products in 5-7 business days
+                                    </p>
+                                  </div>
+                                  <ul className="space-y-2 text-muted-foreground mt-4">
+                                    <li className="flex items-start gap-2">
+                                      <span className="text-green-500 font-bold">✓</span>
+                                      <span>Confirmation email sent to your inbox</span>
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                      <span className="text-green-500 font-bold">✓</span>
+                                      <span>Tracking information will be provided once shipped</span>
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                      <span className="text-green-500 font-bold">✓</span>
+                                      <span>Your first payment will be due in 30 days</span>
+                                    </li>
+                                  </ul>
+                                </div>
+
+                                <div className="space-y-3">
+                                  <div className="text-sm text-muted-foreground">
+                                    <p className="font-semibold">Your Selected Offer:</p>
+                                    <p>{message.data.offerType === 'financing' ? 'Financing' : 'Lease'} - {message.data.term} months</p>
+                                    <p className="text-xl font-bold text-primary mt-1">${message.data.monthlyPayment}/month</p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         )}
                         
@@ -1066,7 +1149,7 @@ const AIApplicationChat = () => {
                         )}
                         
                         {/* Regular messages */}
-                        {message.type !== 'offer' && message.type !== 'contract' && message.type !== 'comparison' && (
+                        {message.type !== 'offer' && message.type !== 'contract' && message.type !== 'comparison' && message.type !== 'completion' && (
                           <div className={`flex gap-3 ${message.type === "user" ? "justify-end" : ""}`}>
                             {message.type === "ai" && (
                               <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
