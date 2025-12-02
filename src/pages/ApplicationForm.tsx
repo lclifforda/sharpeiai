@@ -9,7 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { ArrowLeft, Plus, Minus, Upload, FileCheck, X, File } from "lucide-react";
-import robotImage from "@/assets/humanoid-robot.png";
+// Original product image (commented for rollback)
+// import robotImage from "@/assets/humanoid-robot.png";
+// LG Monitor product image
+import monitorImage from "@/assets/lg-ultragear-monitors.png";
 import { z } from "zod";
 import ApplicationMethodSelector from "@/components/ApplicationMethodSelector";
 import AIApplicationChat from "@/components/AIApplicationChat";
@@ -77,11 +80,15 @@ const ApplicationForm = () => {
   const [draggedOver, setDraggedOver] = useState<string | null>(null);
   
   // Workflow state
-  const [currentStep, setCurrentStep] = useState<'info' | 'documents' | 'revenue' | 'offers' | 'contract' | 'complete'>('info');
-  const [revenue, setRevenue] = useState<number | null>(null);
+  // Revenue step removed (commented for rollback)
+  // const [currentStep, setCurrentStep] = useState<'info' | 'documents' | 'revenue' | 'offers' | 'contract' | 'complete'>('info');
+  const [currentStep, setCurrentStep] = useState<'info' | 'documents' | 'offers' | 'contract' | 'complete'>('info');
+  // Set default revenue to skip revenue step
+  const [revenue, setRevenue] = useState<number | null>(500000); // Default to $500K
   const [selectedOffer, setSelectedOffer] = useState<any | null>(null);
   const [generatedOffers, setGeneratedOffers] = useState<any[]>([]);
   const [isGeneratingOffers, setIsGeneratingOffers] = useState(false);
+  const [offerTypeFilter, setOfferTypeFilter] = useState<'financing' | 'lease'>('financing');
 
   const requiredDocuments = [
     { id: "businessLicense", name: "Business License", description: "State or local business license" },
@@ -121,9 +128,18 @@ const ApplicationForm = () => {
     }
   };
 
-  const monthlyRate = 800;
-  const maintenanceCost = 150;
-  const insuranceCost = 200;
+  // Original product pricing (commented for rollback)
+  // const monthlyRate = 800;
+  // const maintenanceCost = 150;
+  // const insuranceCost = 200;
+  
+  // LG Monitor product pricing from checkout-v2
+  const monthlyRate = 60;
+  const maintenanceCost = 10;
+  const insuranceCost = 15;
+  
+  // Equipment purchase price (for financing/lease calculations)
+  const equipmentPurchasePrice = 350; // $350 per monitor (retail price)
 
   const calculateTotal = () => {
     let total = monthlyRate * orderDetails.quantity;
@@ -132,7 +148,11 @@ const ApplicationForm = () => {
     return total;
   };
   
+  // For display in order summary (monthly)
   const cartTotal = calculateTotal();
+  
+  // For financing calculations (total purchase price)
+  const equipmentTotal = equipmentPurchasePrice * orderDetails.quantity;
   
   // Helper: Calculate monthly payment
   const computeMonthly = (principal: number, apr: number, months: number) => {
@@ -144,7 +164,10 @@ const ApplicationForm = () => {
   
   // Helper: Generate offers based on revenue
   const generateOffers = () => {
-    if (!revenue) return;
+    // Use default revenue if not set (revenue step skipped)
+    const revenueToUse = revenue || 500000;
+    console.log('🎯 Generating offers with revenue:', revenueToUse);
+    console.log('📊 Equipment total:', equipmentTotal, '($' + equipmentPurchasePrice + ' × ' + orderDetails.quantity + ')');
     
     setIsGeneratingOffers(true);
     
@@ -154,25 +177,25 @@ const ApplicationForm = () => {
       let rate = 10.99;
       let lender = 'Standard Lender';
       
-      if (revenue > 250000) {
+      if (revenueToUse > 250000) {
         rate = 0;
         lender = 'Premium Elite Lender';
-      } else if (revenue >= 120000) {
+      } else if (revenueToUse >= 120000) {
         rate = 7.99;
         lender = 'Preferred Lender';
-      } else if (revenue < 50000) {
+      } else if (revenueToUse < 50000) {
         rate = 15.99;
         lender = 'Alt Lender';
       }
       
       const offers = [];
-      const terms = [12, 24, 36, 48];
+      const terms = [12, 24, 36];
       
       // Generate financing offers for each term
       terms.forEach(term => {
-        const down = Math.min(cartTotal * 0.1, 500);
-        const monthlyPayment = computeMonthly(Math.max(0, cartTotal - down), rate, term);
-        const residuals = simulateResiduals([{ name: "Humanoid Robot F-02", price: cartTotal }], term);
+        const down = Math.min(equipmentTotal * 0.1, 500);
+        const monthlyPayment = computeMonthly(Math.max(0, equipmentTotal - down), rate, term);
+        const residuals = simulateResiduals([{ name: "24\" FHD 3-Side Borderless IPS Monitor", price: equipmentTotal }], term);
         
         offers.push({
           id: generateCryptoId(),
@@ -182,7 +205,7 @@ const ApplicationForm = () => {
           termMonths: term,
           downPayment: down,
           monthlyPayment,
-          totalAmount: cartTotal,
+          totalAmount: equipmentTotal,
           residuals: residuals.residuals.map(r => ({
             name: r.name,
             percentage: Math.round(r.residualPct * 100),
@@ -194,8 +217,8 @@ const ApplicationForm = () => {
       // Generate lease offers
       terms.forEach(term => {
         const depreciationFactor = 1.15;
-        const monthlyPayment = Math.round((cartTotal * depreciationFactor) / term);
-        const residuals = simulateResiduals([{ name: "Humanoid Robot F-02", price: cartTotal }], term);
+        const monthlyPayment = Math.round((equipmentTotal * depreciationFactor) / term);
+        const residuals = simulateResiduals([{ name: "24\" FHD 3-Side Borderless IPS Monitor", price: equipmentTotal }], term);
         
         offers.push({
           id: generateCryptoId(),
@@ -205,7 +228,7 @@ const ApplicationForm = () => {
           termMonths: term,
           downPayment: 0,
           monthlyPayment,
-          totalAmount: cartTotal,
+          totalAmount: equipmentTotal,
           residuals: residuals.residuals.map(r => ({
             name: r.name,
             percentage: Math.round(r.residualPct * 100),
@@ -214,8 +237,10 @@ const ApplicationForm = () => {
         });
       });
       
+      console.log('✅ Generated', offers.length, 'offers:', offers);
       setGeneratedOffers(offers);
       setIsGeneratingOffers(false);
+      console.log('🔄 Setting currentStep to: offers');
       setCurrentStep('offers');
     }, 1500);
   };
@@ -229,8 +254,10 @@ const ApplicationForm = () => {
   };
 
   const handleSubmit = () => {
-    // Check if we're ready to move to next step
-    const allDocsUploaded = Object.values(uploadedDocs).every(doc => doc !== null);
+    console.log('🚀 handleSubmit called, currentStep:', currentStep);
+    // Check if at least one document is uploaded
+    const atLeastOneDocUploaded = Object.values(uploadedDocs).some(doc => doc !== null);
+    console.log('📄 At least one doc uploaded:', atLeastOneDocUploaded);
     
     if (currentStep === 'info' || currentStep === 'documents') {
       // Validate form first
@@ -241,14 +268,19 @@ const ApplicationForm = () => {
         };
         applicationSchema.parse(dataToValidate);
         
-        // Check if all documents uploaded
-        if (!allDocsUploaded) {
-          alert('Please upload all required documents before continuing.');
+        // Check if at least one document uploaded
+        if (!atLeastOneDocUploaded) {
+          alert('Please upload at least one document before continuing.');
           return;
         }
         
-        // Move to revenue collection
-        setCurrentStep('revenue');
+        // Revenue step skipped - go directly to offers
+        // Set default revenue and generate offers directly
+        if (!revenue) {
+          setRevenue(500000); // Default to $500K
+        }
+        // Don't set step here - let generateOffers() do it after generating
+        generateOffers();
       } catch (error) {
         if (error instanceof z.ZodError) {
           const newErrors: Record<string, string> = {};
@@ -274,6 +306,8 @@ const ApplicationForm = () => {
   }
 
   // Show traditional form
+  console.log('🎨 Rendering with currentStep:', currentStep, 'generatedOffers:', generatedOffers.length, 'isGeneratingOffers:', isGeneratingOffers);
+  
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
@@ -310,7 +344,8 @@ const ApplicationForm = () => {
               </div>
               <div className="h-px flex-1 bg-border" />
               
-              {/* Step 2 */}
+              {/* Revenue step removed (commented for rollback) */}
+              {/* <div className="h-px flex-1 bg-border" />
               <div className="flex items-center gap-2 flex-1">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold ${
                   currentStep === 'revenue' ? 'bg-primary text-primary-foreground' : 
@@ -321,16 +356,16 @@ const ApplicationForm = () => {
                 <span className={`text-sm font-medium ${
                   currentStep === 'revenue' ? 'text-foreground' : 'text-muted-foreground'
                 }`}>Revenue</span>
-              </div>
+              </div> */}
               <div className="h-px flex-1 bg-border" />
               
-              {/* Step 3 */}
+              {/* Step 2 (was Step 3) */}
               <div className="flex items-center gap-2 flex-1">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold ${
                   currentStep === 'offers' ? 'bg-primary text-primary-foreground' : 
                   currentStep === 'contract' ? 'bg-green-500 text-white' : 'bg-muted text-muted-foreground'
                 }`}>
-                  {currentStep === 'contract' ? '✓' : '3'}
+                  {currentStep === 'contract' ? '✓' : '2'}
                 </div>
                 <span className={`text-sm font-medium ${
                   currentStep === 'offers' ? 'text-foreground' : 'text-muted-foreground'
@@ -338,15 +373,16 @@ const ApplicationForm = () => {
               </div>
               <div className="h-px flex-1 bg-border" />
               
-              {/* Step 4 */}
+              {/* Step 3 (was Step 4) */}
               <div className="flex items-center gap-2 flex-1">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold ${
-                  currentStep === 'contract' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                  currentStep === 'contract' ? 'bg-primary text-primary-foreground' : 
+                  currentStep === 'complete' ? 'bg-green-500 text-white' : 'bg-muted text-muted-foreground'
                 }`}>
-                  4
+                  {currentStep === 'complete' ? '✓' : '3'}
                 </div>
                 <span className={`text-sm font-medium ${
-                  currentStep === 'contract' ? 'text-foreground' : 'text-muted-foreground'
+                  currentStep === 'contract' || currentStep === 'complete' ? 'text-foreground' : 'text-muted-foreground'
                 }`}>Sign</span>
               </div>
             </div>
@@ -442,15 +478,21 @@ const ApplicationForm = () => {
               </CardContent>
             </Card>
 
-            {/* Company Details */}
+            {/* Company Details / Individual Details */}
             <Card>
               <CardContent className="p-6 space-y-4">
-                <h2 className="text-lg font-semibold text-foreground">Company Details</h2>
+                <h2 className="text-lg font-semibold text-foreground">
+                  {applicantType === 'company' ? 'Company Details' : 'Individual Details'}
+                </h2>
                 <div className="space-y-2">
-                  <Label htmlFor="vatNumber">VAT ID</Label>
+                  <Label htmlFor="vatNumber">
+                    {applicantType === 'company' 
+                      ? 'EIN (Employer Identification Number)' 
+                      : 'SSN (Social Security Number)'}
+                  </Label>
                   <Input 
                     id="vatNumber"
-                    placeholder="VAT number if applicable"
+                    placeholder={applicantType === 'company' ? 'XX-XXXXXXX' : 'XXX-XX-XXXX'}
                     value={formData.vatNumber}
                     onChange={(e) => handleInputChange("vatNumber", e.target.value)}
                   />
@@ -683,70 +725,75 @@ const ApplicationForm = () => {
               </CardContent>
             </Card>
 
-            {/* Revenue Collection Step */}
-            {currentStep === 'revenue' && (
-              <Card>
-                <CardContent className="p-6 space-y-4">
-                  <div className="text-center space-y-2">
-                    <h2 className="text-2xl font-bold text-foreground">Almost There!</h2>
-                    <p className="text-muted-foreground">One more question to generate your personalized offers</p>
-                  </div>
-                  
-                  <div className="space-y-3">
-                    <Label className="text-base font-semibold">What's your company's annual revenue?</Label>
-                    <RadioGroup value={revenue?.toString() || ""} onValueChange={(val) => setRevenue(parseInt(val))}>
-                      <div className="space-y-2">
-                        <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-accent cursor-pointer">
-                          <RadioGroupItem value="250000" id="rev1" />
-                          <Label htmlFor="rev1" className="cursor-pointer flex-1">Under $500K</Label>
-                        </div>
-                        <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-accent cursor-pointer">
-                          <RadioGroupItem value="2500000" id="rev2" />
-                          <Label htmlFor="rev2" className="cursor-pointer flex-1">$500K - $5M</Label>
-                        </div>
-                        <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-accent cursor-pointer">
-                          <RadioGroupItem value="25000000" id="rev3" />
-                          <Label htmlFor="rev3" className="cursor-pointer flex-1">$5M - $50M</Label>
-                        </div>
-                        <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-accent cursor-pointer">
-                          <RadioGroupItem value="75000000" id="rev4" />
-                          <Label htmlFor="rev4" className="cursor-pointer flex-1">Over $50M</Label>
-                        </div>
-                      </div>
-                    </RadioGroup>
-                  </div>
-                  
-                  <Button
-                    onClick={generateOffers}
-                    disabled={!revenue || isGeneratingOffers}
-                    className="w-full bg-gradient-to-r from-primary to-blue-600 hover:opacity-90"
-                    size="lg"
-                  >
-                    {isGeneratingOffers ? "Analyzing..." : "Generate Offers"}
-                  </Button>
-                </CardContent>
-              </Card>
+            {/* Submit Button (only show on info/documents steps) */}
+            <Button
+              onClick={handleSubmit}
+              className="w-full bg-foreground hover:bg-foreground/90 text-background" 
+              size="lg"
+            >
+              Continue
+            </Button>
+              </>
             )}
-
+            
             {/* Offers Selection Step */}
             {currentStep === 'offers' && (
               <Card>
                 <CardContent className="p-6 space-y-6">
-                  <div className="text-center space-y-2">
+                  {console.log('🎯 OFFERS SECTION RENDERING! generatedOffers:', generatedOffers)}
+                  <div className="text-center space-y-4">
                     <h2 className="text-2xl font-bold text-foreground">Your Personalized Offers</h2>
                     <p className="text-muted-foreground">Choose the financing option that works best for your business</p>
+                    
+                    {/* Financing/Leasing Toggle */}
+                    <div className="flex items-center justify-center gap-2 p-1 bg-muted rounded-lg inline-flex">
+                      <button
+                        onClick={() => setOfferTypeFilter('financing')}
+                        className={`px-6 py-2 rounded-md font-medium transition-all ${
+                          offerTypeFilter === 'financing'
+                            ? 'bg-primary text-primary-foreground shadow-sm'
+                            : 'text-muted-foreground hover:text-foreground'
+                        }`}
+                      >
+                        Financing
+                      </button>
+                      <button
+                        onClick={() => setOfferTypeFilter('lease')}
+                        className={`px-6 py-2 rounded-md font-medium transition-all ${
+                          offerTypeFilter === 'lease'
+                            ? 'bg-primary text-primary-foreground shadow-sm'
+                            : 'text-muted-foreground hover:text-foreground'
+                        }`}
+                      >
+                        Leasing
+                      </button>
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {generatedOffers.map((offer) => (
-                      <OfferCard
-                        key={offer.id}
-                        offer={offer}
-                        selected={selectedOffer?.id === offer.id}
-                        onSelect={() => setSelectedOffer(offer)}
-                      />
-                    ))}
-                  </div>
+                  {isGeneratingOffers ? (
+                    <div className="flex flex-col items-center justify-center py-12">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+                      <p className="text-lg font-medium text-foreground">Analyzing your information...</p>
+                      <p className="text-sm text-muted-foreground">Generating personalized offers</p>
+                    </div>
+                  ) : generatedOffers.length === 0 ? (
+                    <div className="text-center py-12">
+                      <p className="text-lg text-muted-foreground">No offers available. Please try again.</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {generatedOffers
+                        .filter(offer => offer.type === offerTypeFilter)
+                        .map((offer) => (
+                          <OfferCard
+                            key={offer.id}
+                            offer={offer}
+                            selected={selectedOffer?.id === offer.id}
+                            onSelect={() => setSelectedOffer(offer)}
+                          />
+                        ))}
+                    </div>
+                  )}
 
                   <Button
                     onClick={() => setCurrentStep('contract')}
@@ -830,17 +877,6 @@ const ApplicationForm = () => {
                 </CardContent>
               </Card>
             )}
-
-            {/* Submit Button (only show on info/documents steps) */}
-            <Button
-              onClick={handleSubmit}
-              className="w-full bg-foreground hover:bg-foreground/90 text-background" 
-              size="lg"
-            >
-              Continue
-            </Button>
-              </>
-            )}
           </div>
 
           {/* Right Side - Order Summary */}
@@ -852,10 +888,16 @@ const ApplicationForm = () => {
                 {/* Product */}
                 <div className="flex gap-4 pb-4 border-b border-border">
                   <div className="w-16 h-16 bg-muted rounded-lg overflow-hidden flex-shrink-0">
-                    <img src={robotImage} alt="Robot" className="w-full h-full object-cover" />
+                    {/* Original product image (commented for rollback) */}
+                    {/* <img src={robotImage} alt="Robot" className="w-full h-full object-cover" /> */}
+                    {/* LG Monitor product image */}
+                    <img src={monitorImage} alt="LG Monitor" className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-medium text-foreground">Humanoid Robot F-02</h3>
+                    {/* Original product name (commented for rollback) */}
+                    {/* <h3 className="font-medium text-foreground">Humanoid Robot F-02</h3> */}
+                    {/* LG Monitor product name */}
+                    <h3 className="font-medium text-foreground">24" FHD 3-Side Borderless IPS Monitor</h3>
                     <p className="text-sm text-muted-foreground">${monthlyRate}/mo per unit</p>
                   </div>
                 </div>
@@ -900,7 +942,10 @@ const ApplicationForm = () => {
 
                 {/* Add-ons */}
                 <div className="space-y-3 border-t border-border pt-4">
-                  <h3 className="font-semibold text-foreground">Robot Extras</h3>
+                  {/* Original section title (commented for rollback) */}
+                  {/* <h3 className="font-semibold text-foreground">Robot Extras</h3> */}
+                  {/* Updated section title */}
+                  <h3 className="font-semibold text-foreground">Equipment Extras</h3>
                   <div className={`p-3 rounded-lg border-2 transition-all ${orderDetails.insurance ? 'border-primary bg-primary/5' : 'border-border'}`}>
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1">
