@@ -781,7 +781,7 @@ const ApplicationForm = () => {
                       <p className="text-lg text-muted-foreground">No offers available. Please try again.</p>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       {generatedOffers
                         .filter(offer => offer.type === offerTypeFilter)
                         .map((offer) => (
@@ -1006,7 +1006,7 @@ const ApplicationForm = () => {
                 <div className="flex items-center justify-center gap-2 pt-4 border-t border-border">
                   <span className="text-xs text-muted-foreground">Powered by</span>
                   <img 
-                    src="/src/assets/bbva-logo.png" 
+                    src="/bbva-logo.png" 
                     alt="BBVA" 
                     className="h-4"
                   />

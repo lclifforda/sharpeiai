@@ -41,13 +41,13 @@ const OfferCard: React.FC<OfferCardProps> = ({
     >
       {/* Header */}
       <div className="bg-gradient-to-r from-primary to-blue-600 px-6 py-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-start justify-between">
           <div>
             <h3 className="text-white text-lg font-bold">Your Personalized Offer</h3>
             <p className="text-primary-foreground/80 text-sm">{lender}</p>
           </div>
-          <div className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
-            <span className="text-white text-xs font-semibold">✓ Approved</span>
+          <div className="text-right">
+            <div className="text-white text-xs font-semibold">✓ Approved</div>
           </div>
         </div>
       </div>

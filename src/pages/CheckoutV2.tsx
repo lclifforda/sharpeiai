@@ -315,7 +315,7 @@ const CheckoutV2 = () => {
                         <div className="flex items-center justify-center gap-2 pt-2">
                           <span className="text-xs text-muted-foreground">Powered by</span>
                           <img 
-                            src="/src/assets/bbva-logo.png" 
+                            src="/bbva-logo.png" 
                             alt="BBVA" 
                             className="h-4"
                           />
