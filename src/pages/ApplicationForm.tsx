@@ -377,12 +377,12 @@ const ApplicationForm = () => {
               <div className="flex items-center gap-2 flex-1">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold ${
                   currentStep === 'contract' ? 'bg-primary text-primary-foreground' : 
-                  currentStep === 'complete' ? 'bg-green-500 text-white' : 'bg-muted text-muted-foreground'
+                  (currentStep as string) === 'complete' ? 'bg-green-500 text-white' : 'bg-muted text-muted-foreground'
                 }`}>
-                  {currentStep === 'complete' ? '✓' : '3'}
+                  {(currentStep as string) === 'complete' ? '✓' : '3'}
                 </div>
                 <span className={`text-sm font-medium ${
-                  currentStep === 'contract' || currentStep === 'complete' ? 'text-foreground' : 'text-muted-foreground'
+                  currentStep === 'contract' || (currentStep as string) === 'complete' ? 'text-foreground' : 'text-muted-foreground'
                 }`}>Sign</span>
               </div>
             </div>
@@ -740,7 +740,7 @@ const ApplicationForm = () => {
             {currentStep === 'offers' && (
               <Card>
                 <CardContent className="p-6 space-y-6">
-                  {console.log('🎯 OFFERS SECTION RENDERING! generatedOffers:', generatedOffers)}
+                  {/* Offers section */}
                   <div className="text-center space-y-4">
                     <h2 className="text-2xl font-bold text-foreground">Your Personalized Offers</h2>
                     <p className="text-muted-foreground">Choose the financing option that works best for your business</p>
