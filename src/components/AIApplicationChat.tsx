@@ -4,7 +4,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Send, Bot, User } from "lucide-react";
-import robotImage from "@/assets/humanoid-robot.png";
+// Original product image (commented for rollback)
+// import robotImage from "@/assets/humanoid-robot.png";
+// LG Monitor product image
+import monitorImage from "@/assets/lg-ultragear-monitors.png";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAiAgent } from "@/hooks/useAiAgent";
 import { agentAPI } from "@/services/ai/agentAPI";
@@ -96,9 +99,15 @@ const AIApplicationChat = () => {
   // Application step tracking for business customers
   const [applicationStep, setApplicationStep] = useState<ApplicationStep>('info');
 
-  const monthlyRate = 800;
-  const maintenanceCost = 150;
-  const insuranceCost = 200;
+  // Original product details (commented for rollback)
+  // const monthlyRate = 800;
+  // const maintenanceCost = 150;
+  // const insuranceCost = 200;
+  
+  // LG Monitor product details from checkout-v2
+  const monthlyRate = 60;
+  const maintenanceCost = 10;
+  const insuranceCost = 15;
 
   const calculateTotal = () => {
     let total = monthlyRate * orderDetails.quantity;
@@ -108,8 +117,16 @@ const AIApplicationChat = () => {
   };
   
   const cartTotal = calculateTotal();
+  // Original cart items (commented for rollback)
+  // const cartItems = [{
+  //   name: "Humanoid Robot F-02",
+  //   price: cartTotal,
+  //   quantity: orderDetails.quantity
+  // }];
+  
+  // LG Monitor cart items
   const cartItems = [{
-    name: "Humanoid Robot F-02",
+    name: "24\" FHD 3-Side Borderless IPS Monitor",
     price: cartTotal,
     quantity: orderDetails.quantity
   }];
@@ -231,15 +248,22 @@ const AIApplicationChat = () => {
         pushAI(`Who is the authorized representative for this application?`);
         return;
       }
-      if (!data.income) {
-        setCurrentPrompt('ask_revenue_tranche');
-        pushAI(`What range does your company's annual revenue fall into?`, [
-          'Under $500K',
-          '$500K - $5M',
-          '$5M - $50M',
-          'Over $50M'
-        ]);
-        return;
+      // Revenue step skipped for now (commented for rollback)
+      // if (!data.income) {
+      //   setCurrentPrompt('ask_revenue_tranche');
+      //   pushAI(`What range does your company's annual revenue fall into?`, [
+      //     'Under $500K',
+      //     '$500K - $5M',
+      //     '$5M - $50M',
+      //     'Over $50M'
+      //   ]);
+      //   return;
+      // }
+      
+      // Set default income to skip revenue step and proceed to offers
+      // Check workingDataRef directly to ensure we skip revenue
+      if (!workingDataRef.current.income) {
+        workingDataRef.current = { ...workingDataRef.current, income: 500000 }; // Default to $500K for offer calculation
       }
       
       // Conditional: Guarantor info required if financing amount > $50K
@@ -642,44 +666,45 @@ const AIApplicationChat = () => {
       return;
     }
     
-    if (currentPrompt === 'ask_revenue_tranche') {
-      if (lower.includes('under') || (lower.includes('500') && !lower.includes('5m'))) {
-        setCurrentPrompt('ask_revenue_precise');
-        pushAI('Got it! Can you narrow it down?', ['$100K - $250K', '$250K - $500K']);
-      } else if (lower.includes('500k') && lower.includes('5m')) {
-        setCurrentPrompt('ask_revenue_precise');
-        pushAI('Perfect! Can you narrow it down?', ['$500K - $2M', '$2M - $5M']);
-      } else if (lower.includes('5m') && lower.includes('50m')) {
-        setCurrentPrompt('ask_revenue_precise');
-        pushAI('Excellent! Can you narrow it down?', ['$5M - $20M', '$20M - $50M']);
-      } else if (lower.includes('over') || lower.includes('50m')) {
-        pushAI('Excellent! High revenue company.');
-        updateAndNext({ income: 75000000 });
-      } else {
-        pushAI('Please select a revenue range from the options above.');
-      }
-      return;
-    }
+    // Revenue handlers commented out - revenue step is skipped (commented for rollback)
+    // if (currentPrompt === 'ask_revenue_tranche') {
+    //   if (lower.includes('under') || (lower.includes('500') && !lower.includes('5m'))) {
+    //     setCurrentPrompt('ask_revenue_precise');
+    //     pushAI('Got it! Can you narrow it down?', ['$100K - $250K', '$250K - $500K']);
+    //   } else if (lower.includes('500k') && lower.includes('5m')) {
+    //     setCurrentPrompt('ask_revenue_precise');
+    //     pushAI('Perfect! Can you narrow it down?', ['$500K - $2M', '$2M - $5M']);
+    //   } else if (lower.includes('5m') && lower.includes('50m')) {
+    //     setCurrentPrompt('ask_revenue_precise');
+    //     pushAI('Excellent! Can you narrow it down?', ['$5M - $20M', '$20M - $50M']);
+    //   } else if (lower.includes('over') || lower.includes('50m')) {
+    //     pushAI('Excellent! High revenue company.');
+    //     updateAndNext({ income: 75000000 });
+    //   } else {
+    //     pushAI('Please select a revenue range from the options above.');
+    //   }
+    //   return;
+    // }
     
-    if (currentPrompt === 'ask_revenue_precise') {
-      const match = text.match(/\$?([\d.,]+)\s*([KkMm])?/g);
-      if (match && match.length >= 2) {
-        const parseAmount = (str: string): number => {
-          const num = parseFloat(str.replace(/[^0-9.]/g, ''));
-          if (str.toLowerCase().includes('m')) return num * 1000000;
-          if (str.toLowerCase().includes('k')) return num * 1000;
-          return num;
-        };
-        const low = parseAmount(match[0]);
-        const high = parseAmount(match[1]);
-        const midpoint = Math.round((low + high) / 2);
-        pushAI(`Got it. Annual revenue ~ $${midpoint.toLocaleString()}.`);
-        updateAndNext({ income: midpoint });
-      } else {
-        pushAI('Please select a range option.');
-      }
-      return;
-    }
+    // if (currentPrompt === 'ask_revenue_precise') {
+    //   const match = text.match(/\$?([\d.,]+)\s*([KkMm])?/g);
+    //   if (match && match.length >= 2) {
+    //     const parseAmount = (str: string): number => {
+    //       const num = parseFloat(str.replace(/[^0-9.]/g, ''));
+    //       if (str.toLowerCase().includes('m')) return num * 1000000;
+    //       if (str.toLowerCase().includes('k')) return num * 1000;
+    //       return num;
+    //     };
+    //     const low = parseAmount(match[0]);
+    //     const high = parseAmount(match[1]);
+    //     const midpoint = Math.round((low + high) / 2);
+    //     pushAI(`Got it. Annual revenue ~ $${midpoint.toLocaleString()}.`);
+    //     updateAndNext({ income: midpoint });
+    //   } else {
+    //     pushAI('Please select a range option.');
+    //   }
+    //   return;
+    // }
     
     if (currentPrompt === 'ask_guarantor_ssn') {
       const digits = lower.replace(/\D/g, '');
@@ -1132,14 +1157,25 @@ const AIApplicationChat = () => {
                   
                   <div className="space-y-4 pb-4 border-b border-border">
                     <div className="flex gap-4">
-                      <img 
+                      {/* Original product image (commented for rollback) */}
+                      {/* <img 
                         src={robotImage} 
                         alt="Humanoid Robot"
                         className="w-20 h-20 object-contain rounded-md bg-muted"
+                      /> */}
+                      {/* LG Monitor product image */}
+                      <img 
+                        src={monitorImage} 
+                        alt="LG Monitor"
+                        className="w-20 h-20 object-contain rounded-md bg-muted"
                       />
                       <div className="flex-1">
-                        <h3 className="font-semibold text-foreground">Humanoid Robot F-02</h3>
-                        <p className="text-sm text-muted-foreground">SKU: HR-F02-2024</p>
+                        {/* Original product name (commented for rollback) */}
+                        {/* <h3 className="font-semibold text-foreground">Humanoid Robot F-02</h3>
+                        <p className="text-sm text-muted-foreground">SKU: HR-F02-2024</p> */}
+                        {/* LG Monitor product details */}
+                        <h3 className="font-semibold text-foreground">24" FHD 3-Side Borderless IPS Monitor</h3>
+                        <p className="text-sm text-muted-foreground">SKU: LG-24FHD-2024</p>
                         <p className="text-sm text-muted-foreground mt-1">Qty: {orderDetails.quantity}</p>
                       </div>
                     </div>
