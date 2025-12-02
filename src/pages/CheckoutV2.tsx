@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CheckCircle2, RotateCcw, ArrowUpCircle, Plus, Minus } from "lucide-react";
-import monitorImage from "@/assets/lg-monitor.png";
+import monitorImage from "@/assets/lg-monitor-lifestyle.png";
 
 const CheckoutV2 = () => {
   const navigate = useNavigate();
