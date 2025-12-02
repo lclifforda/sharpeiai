@@ -27,6 +27,7 @@ export interface UserProfile {
   email?: string;
   phone?: string;
   dob?: string;
+  housingCost?: number;
   location?: {
     country: string;
     state?: string;
@@ -51,6 +52,10 @@ export interface UserProfile {
     address?: string;
     driversLicenseState?: string;
   };
+  selectedTerm?: number;
+  selectedOfferType?: 'financing' | 'lease';
+  financingType?: 'financing' | 'lease';
+  tradeInEstimate?: number;
 }
 
 export interface RoutingDecision {
