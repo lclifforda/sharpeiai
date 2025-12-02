@@ -27,7 +27,8 @@ const CheckoutV2 = () => {
         maintenance,
         insurance,
         term,
-        downPayment
+        downPayment,
+        formType: "application"
       }
     });
   };
