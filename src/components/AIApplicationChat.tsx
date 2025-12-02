@@ -934,7 +934,21 @@ const AIApplicationChat = () => {
                                 <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
                               </div>
                             </div>
-                            <ContractCard {...message.contractData} />
+                            <ContractCard 
+                              offer={{
+                                id: 'contract-offer',
+                                type: 'financing',
+                                lender: message.contractData.lender,
+                                apr: message.contractData.apr,
+                                termMonths: message.contractData.termMonths,
+                                downPayment: message.contractData.downPayment,
+                                monthlyPayment: message.contractData.monthlyPayment,
+                                totalAmount: message.contractData.totalFinanced
+                              }}
+                              onSign={() => {
+                                pushAI("🎉 Congratulations! Your contract has been signed successfully. You'll receive a confirmation email shortly.");
+                              }}
+                            />
                             {message.suggestions && message.suggestions.length > 0 && (
                               <div className="flex flex-wrap gap-2 mt-3">
                                 {message.suggestions.map((suggestion, idx) => (
@@ -1215,7 +1229,7 @@ const AIApplicationChat = () => {
                     </div>
                     <div className="flex justify-between pt-3 border-t border-border">
                       <span className="font-semibold text-foreground">Total Monthly Payment</span>
-                      <span className="font-bold text-xl text-primary">${calculateTotal()}/mo</span>
+                      <span className="font-bold text-xl text-blue-500">${calculateTotal()}/mo</span>
                     </div>
                   </div>
                 </div>
