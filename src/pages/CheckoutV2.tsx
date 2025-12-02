@@ -67,7 +67,6 @@ const CheckoutV2 = () => {
             alt="LG" 
             className="h-10"
           />
-          <p className="text-muted-foreground mt-2">See how BBVA Commercial Leasing appears in your checkout</p>
         </div>
 
         <div className="max-w-6xl mx-auto">
