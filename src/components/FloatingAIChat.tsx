@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { MessageCircle, X, Send, Plus, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useAiAgent } from "@/hooks/useAiAgent";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
+  suggestions?: string[];
 }
 
 interface Conversation {
@@ -15,6 +17,7 @@ interface Conversation {
   title: string;
   messages: Message[];
   createdAt: Date;
+  sessionId: string;
 }
 
 const FloatingAIChat = () => {
@@ -22,15 +25,19 @@ const FloatingAIChat = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [currentConversationId, setCurrentConversationId] = useState("1");
+  const initialSessionId = `floating-session-${Date.now()}`;
+  const { sendMessage, isLoading, lastMessage, isConnected } = useAiAgent(initialSessionId);
   const [conversations, setConversations] = useState<Conversation[]>([
     {
       id: "1",
       title: "New Conversation",
       messages: [{ role: "assistant", content: "Hi! I'm your AI assistant. How can I help you today?" }],
       createdAt: new Date(),
+      sessionId: initialSessionId,
     }
   ]);
   const [input, setInput] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // Don't show on AI Assistant page
   if (location.pathname === "/") {
@@ -39,12 +46,37 @@ const FloatingAIChat = () => {
 
   const currentConversation = conversations.find(c => c.id === currentConversationId)!;
 
+  // Handle AI responses
+  useEffect(() => {
+    if (lastMessage && !isProcessing) {
+      return;
+    }
+    if (lastMessage && isProcessing) {
+      setConversations(prev => prev.map(conv => {
+        if (conv.id === currentConversationId) {
+          return {
+            ...conv,
+            messages: [...conv.messages, { 
+              role: "assistant" as const, 
+              content: lastMessage.text,
+              suggestions: lastMessage.suggestions
+            }]
+          };
+        }
+        return conv;
+      }));
+      setIsProcessing(false);
+    }
+  }, [lastMessage]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const createNewChat = () => {
+    const newSessionId = `floating-session-${Date.now()}`;
     const newConversation: Conversation = {
       id: Date.now().toString(),
       title: "New Conversation",
       messages: [{ role: "assistant", content: "Hi! I'm your AI assistant. How can I help you today?" }],
       createdAt: new Date(),
+      sessionId: newSessionId,
     };
     setConversations([newConversation, ...conversations]);
     setCurrentConversationId(newConversation.id);
@@ -56,14 +88,15 @@ const FloatingAIChat = () => {
     setShowHistory(false);
   };
 
-  const handleSend = () => {
-    if (!input.trim()) return;
+  const handleSend = async () => {
+    if (!input.trim() || isProcessing) return;
     
+    const messageText = input;
     const updatedConversations = conversations.map(conv => {
       if (conv.id === currentConversationId) {
-        const newMessages = [...conv.messages, { role: "user" as const, content: input }];
+        const newMessages = [...conv.messages, { role: "user" as const, content: messageText }];
         // Update title based on first user message
-        const newTitle = conv.messages.length === 1 ? input.slice(0, 30) + (input.length > 30 ? "..." : "") : conv.title;
+        const newTitle = conv.messages.length === 1 ? messageText.slice(0, 30) + (messageText.length > 30 ? "..." : "") : conv.title;
         return { ...conv, messages: newMessages, title: newTitle };
       }
       return conv;
@@ -71,22 +104,31 @@ const FloatingAIChat = () => {
     
     setConversations(updatedConversations);
     setInput("");
+    setIsProcessing(true);
     
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      // Send to real AI agent
+      const currentSession = conversations.find(c => c.id === currentConversationId);
+      await sendMessage(messageText, {
+        conversationHistory: currentConversation.messages.slice(-5), // Last 5 messages for context
+        source: 'floating-chat'
+      });
+    } catch (error) {
+      console.error('AI message failed:', error);
       setConversations(prev => prev.map(conv => {
         if (conv.id === currentConversationId) {
           return {
             ...conv,
             messages: [...conv.messages, { 
               role: "assistant" as const, 
-              content: "I'm here to help! This is a demo response. In production, this would connect to your AI backend." 
+              content: "I apologize, but I encountered an error. Please try again."
             }]
           };
         }
         return conv;
       }));
-    }, 1000);
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -189,10 +231,35 @@ const FloatingAIChat = () => {
                           : "bg-muted text-foreground"
                       }`}
                     >
-                      <p className="text-sm">{message.content}</p>
+                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                      {/* Suggestion buttons for AI messages */}
+                      {message.role === "assistant" && message.suggestions && message.suggestions.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {message.suggestions.map((suggestion, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => setInput(suggestion)}
+                              className="px-2 py-1 text-xs border border-border rounded hover:bg-accent transition-colors bg-background"
+                            >
+                              {suggestion}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
+                {isProcessing && (
+                  <div className="flex justify-start">
+                    <div className="bg-muted rounded-lg p-3">
+                      <div className="flex gap-1">
+                        <div className="w-2 h-2 rounded-full bg-foreground/40 animate-bounce" style={{ animationDelay: "0ms" }} />
+                        <div className="w-2 h-2 rounded-full bg-foreground/40 animate-bounce" style={{ animationDelay: "150ms" }} />
+                        <div className="w-2 h-2 rounded-full bg-foreground/40 animate-bounce" style={{ animationDelay: "300ms" }} />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </ScrollArea>
 
@@ -210,11 +277,13 @@ const FloatingAIChat = () => {
                   }}
                   placeholder="Ask me anything..."
                   className="min-h-[60px] resize-none"
+                  disabled={isProcessing}
                 />
                 <Button
                   onClick={handleSend}
                   size="icon"
                   className="gradient-sharpei hover:opacity-90 transition-opacity"
+                  disabled={!input.trim() || isProcessing}
                 >
                   <Send className="w-4 h-4" />
                 </Button>
