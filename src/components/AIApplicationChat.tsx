@@ -184,7 +184,7 @@ const AIApplicationChat = () => {
         pushAI(`What's your company name?`);
         return;
       }
-      if (!(data as any).businessInfo?.nif || String((data as any).businessInfo?.nif).replace(/\D/g, '').length !== 9) {
+      if (!(data as any).businessInfo?.nif || String((data as any).businessInfo?.nif).trim().length === 0) {
         setCurrentPrompt('ask_nif');
         pushAI(`What's your Employer Identification Number (EIN)?\n\nFormat: XX-XXXXXXX (9 digits)`);
         return;
@@ -288,14 +288,13 @@ const AIApplicationChat = () => {
     pushAI('Perfect! Let me show you your financing options...');
     setCurrentPrompt('done');
     
-    if (!offerIssuedRef.current && !lastOffer) {
-      offerIssuedRef.current = true;
-      setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-        proposeMultipleOffers();
-      }, 800);
-    }
+    // Always show offers when we reach this point
+    offerIssuedRef.current = true;
+    setIsTyping(true);
+    setTimeout(() => {
+      setIsTyping(false);
+      proposeMultipleOffers();
+    }, 800);
   };
   
   const proposeMultipleOffers = () => {
@@ -311,6 +310,71 @@ const AIApplicationChat = () => {
     setCurrentPrompt('choose_offer_type');
   };
   
+  const proposeComparison = () => {
+    const data = workingDataRef.current as any;
+    const isBusinessCustomer = data.customerType === 'business';
+    const term = 36; // Default term for comparison
+    
+    // Calculate financing offer
+    let financingRate = 10.99;
+    let financingLender = 'Standard Lender';
+    
+    if (data.income && data.income > 250000) {
+      financingRate = 0;
+      financingLender = 'Premium Elite Lender';
+    } else if ((data.creditScore && data.creditScore >= 750) || (data.income && data.income >= 120000)) {
+      financingRate = 7.99;
+      financingLender = 'Preferred Lender';
+    } else if (data.creditScore && data.creditScore < 650) {
+      financingRate = 15.99;
+      financingLender = 'Alt Lender';
+    }
+    
+    const financingDown = Math.min(cartTotal * 0.1, 500);
+    const financingMonthly = computeMonthly(Math.max(0, cartTotal - financingDown), financingRate, term);
+    const financingTotal = financingMonthly * term + financingDown;
+    
+    // Calculate lease offer
+    const leaseLender = isBusinessCustomer ? 'Commercial Lease Co.' : 'Lease Solutions';
+    const leaseDown = 0;
+    const depreciationFactor = 1.15;
+    const leaseMonthly = Math.round((cartTotal * depreciationFactor) / term);
+    const leaseTotal = leaseMonthly * term;
+    
+    const difference = financingTotal - leaseTotal;
+    const differenceText = difference > 0 
+      ? `Lease saves $${Math.abs(difference).toLocaleString()} over ${term} months`
+      : `Financing saves $${Math.abs(difference).toLocaleString()} over ${term} months`;
+    
+    const comparisonMessage: ChatMessage = {
+      id: generateCryptoId(),
+      type: 'comparison',
+      content: `Here's a side-by-side comparison of your options:`,
+      timestamp: new Date(),
+      suggestions: ['Choose Financing', 'Choose Lease', 'See other terms'],
+      comparisonData: {
+        financing: {
+          lender: financingLender,
+          apr: financingRate,
+          monthlyPayment: financingMonthly,
+          downPayment: financingDown,
+          totalCost: financingTotal
+        },
+        lease: {
+          lender: leaseLender,
+          monthlyPayment: leaseMonthly,
+          downPayment: leaseDown,
+          totalCost: leaseTotal
+        },
+        difference: differenceText,
+        term: term
+      }
+    };
+    
+    setMessages(prev => [...prev, comparisonMessage]);
+    setCurrentPrompt('choose_offer_type');
+  };
+
   const proposeSelectedOffer = (offerType: string, term: number) => {
     const data = workingDataRef.current as any;
     const isBusinessCustomer = data.customerType === 'business';
@@ -492,13 +556,22 @@ const AIApplicationChat = () => {
     }
     
     if (currentPrompt === 'ask_nif') {
-      const digits = lower.replace(/\D/g, '');
-      if (digits.length === 9) {
-        const businessInfo = (workingDataRef.current as any).businessInfo || {};
-        businessInfo.nif = `${digits.slice(0, 2)}-${digits.slice(2)}`;
+      // Accept any input for EIN - format it if it looks like digits, otherwise use as-is
+      const businessInfo = (workingDataRef.current as any).businessInfo || {};
+      const digits = text.replace(/\D/g, '');
+      if (digits.length >= 1) {
+        // If we have digits, format them if it's 9 digits, otherwise use the input as-is
+        if (digits.length === 9) {
+          businessInfo.nif = `${digits.slice(0, 2)}-${digits.slice(2)}`;
+        } else {
+          // Accept any format if user provided something
+          businessInfo.nif = text;
+        }
         updateAndNext({ businessInfo });
       } else {
-        pushAI('Please enter exactly 9 digits for your EIN (format: XX-XXXXXXX).');
+        // If no digits found, still accept the text input
+        businessInfo.nif = text;
+        updateAndNext({ businessInfo });
       }
       return;
     }
@@ -681,6 +754,14 @@ const AIApplicationChat = () => {
     
     // Offer selection handlers
     if (currentPrompt === 'choose_offer_type') {
+      if (lower.includes('compare') || lower.includes('side-by-side') || lower.includes('side by side')) {
+        setIsTyping(true);
+        setTimeout(() => {
+          setIsTyping(false);
+          proposeComparison();
+        }, 800);
+        return;
+      }
       if (lower.includes('financ') && !lower.includes('compare')) {
         (workingDataRef.current as any).selectedOfferType = 'financing';
         setCurrentPrompt('ask_term_length');
@@ -693,7 +774,7 @@ const AIApplicationChat = () => {
         pushAI(`Perfect! What lease term works best for you?`, ['12 months', '24 months', '36 months', '48 months']);
         return;
       }
-      pushAI('Which option would you like to see?', ['Show me Financing options', 'Show me Lease options']);
+      pushAI('Which option would you like to see?', ['Show me Financing options', 'Show me Lease options', 'Compare side-by-side']);
       return;
     }
     
@@ -780,8 +861,8 @@ const AIApplicationChat = () => {
           {/* Chat Area */}
           <div className="lg:col-span-2">
             <Card className="h-[600px] flex flex-col">
-              <CardContent className="p-0 flex-1 flex flex-col">
-                <ScrollArea className="flex-1 p-6">
+              <CardContent className="p-0 flex-1 flex flex-col overflow-hidden">
+                <ScrollArea className="flex-1 min-h-0 p-6">
                   <div className="space-y-4">
                     {messages.map((message, index) => (
                       <div key={message.id || index}>
@@ -841,8 +922,122 @@ const AIApplicationChat = () => {
                           </div>
                         )}
                         
+                        {/* Comparison View */}
+                        {message.type === 'comparison' && message.comparisonData && (
+                          <div className="mb-4">
+                            <div className="flex gap-3 mb-4">
+                              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                                <Bot className="w-5 h-5 text-primary-foreground" />
+                              </div>
+                              <div className="bg-muted text-foreground rounded-2xl p-4 max-w-[80%]">
+                                <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                              </div>
+                            </div>
+                            <div className="grid md:grid-cols-2 gap-4 mb-4">
+                              {/* Financing Column */}
+                              <div className="rounded-xl overflow-hidden border-2 shadow-lg bg-gradient-to-br from-primary/10 to-blue-500/10 border-primary">
+                                <div className="bg-gradient-to-r from-primary to-blue-600 px-6 py-4">
+                                  <h3 className="text-white text-lg font-bold">Equipment Financing</h3>
+                                  <p className="text-primary-foreground/80 text-sm">{message.comparisonData.financing.lender}</p>
+                                </div>
+                                <div className="p-6 bg-card">
+                                  <div className="space-y-4">
+                                    <div>
+                                      <p className="text-2xl font-bold text-foreground">${message.comparisonData.financing.monthlyPayment.toLocaleString()}</p>
+                                      <p className="text-sm text-muted-foreground">per month</p>
+                                    </div>
+                                    <div className="space-y-2 pt-4 border-t border-border">
+                                      <div className="flex justify-between text-sm">
+                                        <span className="text-muted-foreground">Down Payment</span>
+                                        <span className="font-medium text-foreground">${message.comparisonData.financing.downPayment.toLocaleString()}</span>
+                                      </div>
+                                      <div className="flex justify-between text-sm">
+                                        <span className="text-muted-foreground">APR</span>
+                                        <span className="font-medium text-foreground">{message.comparisonData.financing.apr}%</span>
+                                      </div>
+                                      <div className="flex justify-between text-sm">
+                                        <span className="text-muted-foreground">Term</span>
+                                        <span className="font-medium text-foreground">{message.comparisonData.term} months</span>
+                                      </div>
+                                      <div className="flex justify-between text-sm pt-2 border-t border-border">
+                                        <span className="font-semibold text-foreground">Total Cost</span>
+                                        <span className="font-bold text-primary">${message.comparisonData.financing.totalCost.toLocaleString()}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              {/* Lease Column */}
+                              <div className="rounded-xl overflow-hidden border-2 shadow-lg bg-gradient-to-br from-green-500/10 to-emerald-500/10 border-green-500">
+                                <div className="bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-4">
+                                  <h3 className="text-white text-lg font-bold">Equipment Lease</h3>
+                                  <p className="text-white/80 text-sm">{message.comparisonData.lease.lender}</p>
+                                </div>
+                                <div className="p-6 bg-card">
+                                  <div className="space-y-4">
+                                    <div>
+                                      <p className="text-2xl font-bold text-foreground">${message.comparisonData.lease.monthlyPayment.toLocaleString()}</p>
+                                      <p className="text-sm text-muted-foreground">per month</p>
+                                    </div>
+                                    <div className="space-y-2 pt-4 border-t border-border">
+                                      <div className="flex justify-between text-sm">
+                                        <span className="text-muted-foreground">Down Payment</span>
+                                        <span className="font-medium text-foreground">${message.comparisonData.lease.downPayment.toLocaleString()}</span>
+                                      </div>
+                                      <div className="flex justify-between text-sm">
+                                        <span className="text-muted-foreground">APR</span>
+                                        <span className="font-medium text-foreground">N/A</span>
+                                      </div>
+                                      <div className="flex justify-between text-sm">
+                                        <span className="text-muted-foreground">Term</span>
+                                        <span className="font-medium text-foreground">{message.comparisonData.term} months</span>
+                                      </div>
+                                      <div className="flex justify-between text-sm pt-2 border-t border-border">
+                                        <span className="font-semibold text-foreground">Total Cost</span>
+                                        <span className="font-bold text-green-600">${message.comparisonData.lease.totalCost.toLocaleString()}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* Difference Summary */}
+                            <div className="bg-muted/50 rounded-lg p-4 mb-4">
+                              <p className="text-sm font-semibold text-foreground text-center">{message.comparisonData.difference}</p>
+                            </div>
+                            
+                            {message.suggestions && message.suggestions.length > 0 && (
+                              <div className="flex flex-wrap gap-2">
+                                {message.suggestions.map((suggestion, idx) => (
+                                  <button
+                                    key={idx}
+                                    onClick={() => {
+                                      if (suggestion === 'Choose Financing') {
+                                        (workingDataRef.current as any).selectedOfferType = 'financing';
+                                        setCurrentPrompt('ask_term_length');
+                                        pushAI(`Perfect! What financing term works best for you?`, ['12 months', '24 months', '36 months', '48 months']);
+                                      } else if (suggestion === 'Choose Lease') {
+                                        (workingDataRef.current as any).selectedOfferType = 'lease';
+                                        setCurrentPrompt('ask_term_length');
+                                        pushAI(`Perfect! What lease term works best for you?`, ['12 months', '24 months', '36 months', '48 months']);
+                                      } else {
+                                        handleSendMessage(suggestion);
+                                      }
+                                    }}
+                                    className="px-3 py-1.5 text-xs border border-border rounded-lg hover:bg-accent transition-colors bg-background"
+                                  >
+                                    {suggestion}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                        
                         {/* Regular messages */}
-                        {message.type !== 'offer' && message.type !== 'contract' && (
+                        {message.type !== 'offer' && message.type !== 'contract' && message.type !== 'comparison' && (
                           <div className={`flex gap-3 ${message.type === "user" ? "justify-end" : ""}`}>
                             {message.type === "ai" && (
                               <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
@@ -901,7 +1096,7 @@ const AIApplicationChat = () => {
                 </ScrollArea>
 
                 {/* Input Area */}
-                <div className="border-t border-border p-4">
+                <div className="border-t border-border p-4 flex-shrink-0">
                   <div className="flex gap-2">
                     <Input
                       value={inputValue}

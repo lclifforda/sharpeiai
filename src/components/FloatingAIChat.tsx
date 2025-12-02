@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { MessageCircle, X, Send, Plus, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,27 +22,22 @@ interface Conversation {
 
 const FloatingAIChat = () => {
   const location = useLocation();
+  const initialSessionIdRef = useRef(`floating-session-${Date.now()}`);
   const [isOpen, setIsOpen] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [currentConversationId, setCurrentConversationId] = useState("1");
-  const initialSessionId = `floating-session-${Date.now()}`;
-  const { sendMessage, isLoading, lastMessage, isConnected } = useAiAgent(initialSessionId);
-  const [conversations, setConversations] = useState<Conversation[]>([
+  const { sendMessage, isLoading, lastMessage, isConnected } = useAiAgent(initialSessionIdRef.current);
+  const [conversations, setConversations] = useState<Conversation[]>(() => [
     {
       id: "1",
       title: "New Conversation",
       messages: [{ role: "assistant", content: "Hi! I'm your AI assistant. How can I help you today?" }],
       createdAt: new Date(),
-      sessionId: initialSessionId,
+      sessionId: initialSessionIdRef.current,
     }
   ]);
   const [input, setInput] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
-
-  // Don't show on AI Assistant page
-  if (location.pathname === "/") {
-    return null;
-  }
 
   const currentConversation = conversations.find(c => c.id === currentConversationId)!;
 
@@ -67,7 +62,7 @@ const FloatingAIChat = () => {
       }));
       setIsProcessing(false);
     }
-  }, [lastMessage]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [lastMessage, isProcessing, currentConversationId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const createNewChat = () => {
     const newSessionId = `floating-session-${Date.now()}`;
@@ -130,6 +125,11 @@ const FloatingAIChat = () => {
       setIsProcessing(false);
     }
   };
+
+  // Don't show on AI Assistant page
+  if (location.pathname === "/") {
+    return null;
+  }
 
   return (
     <>
