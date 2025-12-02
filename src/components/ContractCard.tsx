@@ -1,28 +1,90 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 
-interface ContractCardProps {
+interface Offer {
+  id: string;
+  type: 'financing' | 'lease';
   lender: string;
-  customerName: string;
-  customerEmail: string;
-  totalFinanced: number;
-  downPayment: number;
   apr: number;
   termMonths: number;
+  downPayment: number;
   monthlyPayment: number;
-  docusignLink: string;
+  totalAmount: number;
+  residuals?: {
+    name: string;
+    percentage: number;
+    value: number;
+  }[];
+}
+
+interface ContractCardProps {
+  offer: Offer;
+  onSign: () => void;
 }
 
 const ContractCard: React.FC<ContractCardProps> = ({
-  lender,
-  customerName,
-  customerEmail,
-  totalFinanced,
-  downPayment,
-  apr,
-  termMonths,
-  monthlyPayment,
-  docusignLink,
+  offer,
+  onSign,
 }) => {
+  const { lender, apr, termMonths, downPayment, monthlyPayment, totalAmount, type } = offer;
+  // Demo customer data - in production this would come from the form
+  const customerName = "Demo Customer";
+  const customerEmail = "customer@example.com";
+  
+  const [showSignatureModal, setShowSignatureModal] = useState(false);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [signature, setSignature] = useState<string | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  
+  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    setIsDrawing(true);
+    const rect = canvas.getBoundingClientRect();
+    ctx.beginPath();
+    ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+  };
+  
+  const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!isDrawing) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    const rect = canvas.getBoundingClientRect();
+    ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+  };
+  
+  const stopDrawing = () => {
+    setIsDrawing(false);
+    const canvas = canvasRef.current;
+    if (canvas) {
+      setSignature(canvas.toDataURL());
+    }
+  };
+  
+  const clearSignature = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    setSignature(null);
+  };
+  
+  const handleSignContract = () => {
+    if (signature) {
+      setShowSignatureModal(false);
+      onSign();
+    }
+  };
   return (
     <div className="rounded-xl overflow-hidden border-2 shadow-xl bg-gradient-to-br from-purple-500/10 to-blue-500/10 border-purple-500 animate-in fade-in slide-in-from-bottom-4 duration-300">
       {/* Header */}
@@ -57,19 +119,18 @@ const ContractCard: React.FC<ContractCardProps> = ({
         </div>
         
         <button
-          onClick={() => alert('Demo mode: In production, this would open DocuSign for e-signature. For now, click "Sign contract" in the chat to continue.')}
-          className="block w-full bg-gradient-to-r from-primary to-cyan-600 hover:from-primary/90 hover:to-cyan-600/90 text-white font-semibold py-3 px-4 rounded-lg transition-all transform hover:scale-[1.02] text-center"
+          onClick={() => setShowSignatureModal(true)}
+          className="block w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 px-4 rounded-lg transition-all transform hover:scale-[1.02] text-center shadow-lg"
         >
           <span className="flex items-center justify-center gap-2">
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
-              <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
+              <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
-            DocuSign (Demo Mode - Not Active)
+            Review & Sign Contract
           </span>
         </button>
         <p className="text-xs mt-2 text-center text-muted-foreground">
-          💡 Demo: Use "Sign contract" button in chat to proceed
+          🔒 Secure electronic signature
         </p>
       </div>
 
@@ -96,13 +157,15 @@ const ContractCard: React.FC<ContractCardProps> = ({
         </div>
 
         {/* Key Terms Grid */}
-        <div className="grid grid-cols-2 gap-3 p-4 rounded-lg mb-4 bg-muted/50">
+        <div className={`grid gap-3 p-4 rounded-lg mb-4 bg-muted/50 ${
+          type === 'lease' ? 'grid-cols-3' : 'grid-cols-2'
+        }`}>
           <div>
             <div className="text-xs mb-1 text-muted-foreground">
-              Total Financed
+              {type === 'lease' ? 'Total Equipment Value' : 'Total Financed'}
             </div>
             <div className="text-lg font-bold text-foreground">
-              ${totalFinanced.toLocaleString()}
+              ${totalAmount.toLocaleString()}
             </div>
           </div>
           <div>
@@ -113,16 +176,18 @@ const ContractCard: React.FC<ContractCardProps> = ({
               ${downPayment}
             </div>
           </div>
-          <div>
-            <div className="text-xs mb-1 text-muted-foreground">
-              APR
+          {type === 'financing' && (
+            <div>
+              <div className="text-xs mb-1 text-muted-foreground">
+                APR
+              </div>
+              <div className={`text-lg font-bold ${
+                apr < 8 ? 'text-green-500' : apr < 12 ? 'text-primary' : 'text-amber-500'
+              }`}>
+                {apr}%
+              </div>
             </div>
-            <div className={`text-lg font-bold ${
-              apr < 8 ? 'text-green-500' : apr < 12 ? 'text-primary' : 'text-amber-500'
-            }`}>
-              {apr}%
-            </div>
-          </div>
+          )}
           <div>
             <div className="text-xs mb-1 text-muted-foreground">
               Term
@@ -161,22 +226,27 @@ const ContractCard: React.FC<ContractCardProps> = ({
                 <strong>Payment Obligation:</strong> Fixed ${monthlyPayment}/month for {termMonths} months
               </p>
             </div>
+            {type === 'financing' && (
+              <div className="flex items-start gap-2">
+                <span className="text-purple-500 text-xs mt-0.5">2.</span>
+                <p className="text-xs text-foreground">
+                  <strong>Interest Rate:</strong> Fixed APR of {apr}% for entire term
+                </p>
+              </div>
+            )}
             <div className="flex items-start gap-2">
-              <span className="text-purple-500 text-xs mt-0.5">2.</span>
+              <span className="text-purple-500 text-xs mt-0.5">{type === 'financing' ? '3' : '2'}.</span>
               <p className="text-xs text-foreground">
-                <strong>Interest Rate:</strong> Fixed APR of {apr}% for entire term
+                <strong>{type === 'lease' ? 'Equipment Use:' : 'Ownership:'}</strong> {type === 'lease' 
+                  ? 'Equipment delivered immediately, return or purchase at end of term'
+                  : 'Equipment delivered immediately, title transfers after final payment'
+                }
               </p>
             </div>
             <div className="flex items-start gap-2">
-              <span className="text-purple-500 text-xs mt-0.5">3.</span>
+              <span className="text-purple-500 text-xs mt-0.5">{type === 'financing' ? '4' : '3'}.</span>
               <p className="text-xs text-foreground">
-                <strong>Ownership:</strong> Equipment delivered immediately, title transfers after final payment
-              </p>
-            </div>
-            <div className="flex items-start gap-2">
-              <span className="text-purple-500 text-xs mt-0.5">4.</span>
-              <p className="text-xs text-foreground">
-                <strong>Default:</strong> 15-day grace period, late fees after 30 days
+                <strong>{type === 'lease' ? 'Late Payment:' : 'Default:'}</strong> 15-day grace period, late fees after 30 days
               </p>
             </div>
           </div>
@@ -186,6 +256,93 @@ const ContractCard: React.FC<ContractCardProps> = ({
           Ask me to explain any section in detail before signing
         </p>
       </div>
+      
+      {/* Signature Modal */}
+      {showSignatureModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-blue-600 to-cyan-600 px-6 py-4 rounded-t-xl">
+              <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clipRule="evenodd" />
+                </svg>
+                DocuSign - Electronic Signature
+              </h3>
+            </div>
+            
+            {/* Modal Body */}
+            <div className="p-6 space-y-4">
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                <p className="text-sm text-blue-800 dark:text-blue-200">
+                  <strong>Document:</strong> Equipment Financing Agreement - {lender}
+                </p>
+                <p className="text-sm text-blue-800 dark:text-blue-200 mt-1">
+                  <strong>Signer:</strong> {customerName} ({customerEmail})
+                </p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                  Please sign below:
+                </label>
+                <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900">
+                  <canvas
+                    ref={canvasRef}
+                    width={600}
+                    height={200}
+                    className="w-full cursor-crosshair"
+                    onMouseDown={startDrawing}
+                    onMouseMove={draw}
+                    onMouseUp={stopDrawing}
+                    onMouseLeave={stopDrawing}
+                  />
+                </div>
+                <div className="flex justify-between items-center mt-2">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Sign with your mouse or trackpad</p>
+                  <button
+                    onClick={clearSignature}
+                    className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium"
+                  >
+                    Clear
+                  </button>
+                </div>
+              </div>
+              
+              <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 text-xs text-gray-600 dark:text-gray-400">
+                <p className="font-semibold mb-2">By signing, you agree to:</p>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>{type === 'lease' ? 'Lease' : 'Monthly'} payment of ${monthlyPayment} for {termMonths} months</li>
+                  {type === 'financing' && <li>Fixed APR of {apr}% for the entire term</li>}
+                  {type === 'lease' && <li>Option to purchase or return equipment at end of term</li>}
+                  <li>All terms and conditions outlined in the contract</li>
+                </ul>
+              </div>
+            </div>
+            
+            {/* Modal Footer */}
+            <div className="px-6 py-4 bg-gray-50 dark:bg-gray-900 rounded-b-xl flex gap-3">
+              <button
+                onClick={() => setShowSignatureModal(false)}
+                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 font-medium text-gray-700 dark:text-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSignContract}
+                disabled={!signature}
+                className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-all ${
+                  signature
+                    ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white'
+                    : 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                }`}
+              >
+                Complete Signature
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
