@@ -88,7 +88,7 @@ const ApplicationForm = () => {
   const [selectedOffer, setSelectedOffer] = useState<any | null>(null);
   const [generatedOffers, setGeneratedOffers] = useState<any[]>([]);
   const [isGeneratingOffers, setIsGeneratingOffers] = useState(false);
-  const [offerTypeFilter, setOfferTypeFilter] = useState<'financing' | 'lease'>('financing');
+  const [offerTypeFilter, setOfferTypeFilter] = useState<'financing' | 'lease'>('lease');
 
   const requiredDocuments = [
     { id: "businessLicense", name: "Business License", description: "State or local business license" },
@@ -835,26 +835,31 @@ const ApplicationForm = () => {
                       </svg>
                     </div>
                     
-                    <h2 className="text-3xl font-bold text-foreground">Application Submitted!</h2>
+                    <h2 className="text-3xl font-bold text-foreground">Thank You for Your Order!</h2>
                     <p className="text-lg text-muted-foreground max-w-md mx-auto">
-                      Congratulations! Your financing application has been successfully submitted.
+                      Your order has been successfully placed and your financing is approved.
                     </p>
                   </div>
 
                   <div className="bg-accent/50 rounded-lg p-6 space-y-3 text-left">
-                    <h3 className="font-semibold text-lg">What's Next?</h3>
-                    <ul className="space-y-2 text-muted-foreground">
+                    <h3 className="font-semibold text-lg">Delivery Information</h3>
+                    <div className="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-700 rounded-lg p-4">
+                      <p className="text-lg font-bold text-blue-800 dark:text-blue-300">
+                        🚚 You should receive your products in 5-7 business days
+                      </p>
+                    </div>
+                    <ul className="space-y-2 text-muted-foreground mt-4">
                       <li className="flex items-start gap-2">
-                        <span className="text-primary font-bold">1.</span>
-                        <span>Our team will review your application within 24-48 hours</span>
+                        <span className="text-green-500 font-bold">✓</span>
+                        <span>Confirmation email sent to your inbox</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-primary font-bold">2.</span>
-                        <span>You'll receive a confirmation email with your application ID</span>
+                        <span className="text-green-500 font-bold">✓</span>
+                        <span>Tracking information will be provided once shipped</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <span className="text-primary font-bold">3.</span>
-                        <span>Once approved, we'll coordinate equipment delivery with you</span>
+                        <span className="text-green-500 font-bold">✓</span>
+                        <span>Your first payment will be due in 30 days</span>
                       </li>
                     </ul>
                   </div>
