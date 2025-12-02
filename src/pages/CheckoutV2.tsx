@@ -62,7 +62,11 @@ const CheckoutV2 = () => {
     <div className="min-h-screen p-6 space-y-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-foreground">LG Merchant Checkout Preview</h1>
+          <img 
+            src={lgLogo} 
+            alt="LG" 
+            className="h-10"
+          />
           <p className="text-muted-foreground mt-2">See how BBVA Commercial Leasing appears in your checkout</p>
         </div>
 
