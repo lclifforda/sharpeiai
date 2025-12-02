@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Checkbox } from "@/components/ui/checkbox";
 import { CheckCircle2, RotateCcw, ArrowUpCircle, Plus, Minus } from "lucide-react";
 import monitorImage from "@/assets/lg-ultragear-monitors.png";
+import lgLogo from "@/assets/lg-logo.png";
 
 const CheckoutV2 = () => {
   const navigate = useNavigate();
@@ -86,6 +87,13 @@ const CheckoutV2 = () => {
                   {/* Product Details */}
                   <div className="space-y-4">
                     <div>
+                      <div className="mb-2">
+                        <img 
+                          src={lgLogo} 
+                          alt="LG" 
+                          className="h-8"
+                        />
+                      </div>
                       <h2 className="text-2xl font-bold text-foreground">24" FHD 3-Side Borderless IPS Monitor</h2>
                       <p className="text-muted-foreground mt-1">Professional-grade display with stunning clarity and ultra-slim bezels</p>
                     </div>
