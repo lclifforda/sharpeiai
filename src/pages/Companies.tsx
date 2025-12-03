@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Building2, Search, Plus, List, LayoutGrid, MapPin, Users } from "lucide-react";
@@ -7,6 +8,7 @@ import TableFilters from "@/components/TableFilters";
 import { ExportButton } from "@/components/ExportButton";
 
 const Companies = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
     industry: [] as string[],
@@ -14,6 +16,7 @@ const Companies = () => {
   });
   const allCompanies = [
     { 
+      id: "1",
       name: "TechCorp Industries", 
       industry: "Manufacturing", 
       location: "San Francisco, CA",
@@ -23,6 +26,7 @@ const Companies = () => {
       status: "active" 
     },
     { 
+      id: "2",
       name: "DataFlow Systems", 
       industry: "Logistics", 
       location: "Austin, TX",
@@ -32,6 +36,7 @@ const Companies = () => {
       status: "active" 
     },
     { 
+      id: "3",
       name: "SmartFactory Inc", 
       industry: "Manufacturing", 
       location: "Detroit, MI",
@@ -41,6 +46,7 @@ const Companies = () => {
       status: "active" 
     },
     { 
+      id: "4",
       name: "AutoMotive Solutions", 
       industry: "Automotive", 
       location: "Chicago, IL",
@@ -50,6 +56,7 @@ const Companies = () => {
       status: "inactive" 
     },
     { 
+      id: "5",
       name: "AgriTech Farms", 
       industry: "Agriculture", 
       location: "Des Moines, IA",
@@ -179,7 +186,8 @@ const Companies = () => {
           <div className="divide-y divide-border">
             {companies.map((company) => (
               <div 
-                key={company.name} 
+                key={company.id} 
+                onClick={() => navigate(`/companies/${company.id}`)}
                 className="grid grid-cols-[2fr_1.2fr_1.8fr_1fr_1.2fr_1fr_0.8fr] gap-6 px-6 py-5 hover:bg-gradient-to-r hover:from-gradient-start/5 hover:to-gradient-purple/5 transition-colors cursor-pointer"
               >
                 <div>

@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { ArrowLeft, Plus, Minus, Upload, FileCheck, X, File } from "lucide-react";
 import robotImage from "@/assets/humanoid-robot.png";
+import sharpeiLogo from "@/assets/sharpei-logo.png";
 import { z } from "zod";
 import ApplicationMethodSelector from "@/components/ApplicationMethodSelector";
 import AIApplicationChat from "@/components/AIApplicationChat";
@@ -991,10 +992,11 @@ const ApplicationForm = () => {
                 <div className="flex items-center justify-center gap-2 pt-4 border-t border-border">
                   <span className="text-xs text-muted-foreground">Powered by</span>
                   <img 
-                    src="/bbva-logo.png" 
-                    alt="BBVA" 
-                    className="h-4"
+                    src={sharpeiLogo} 
+                    alt="Sharpei AI" 
+                    className="h-4 w-4 object-contain"
                   />
+                  <span className="text-xs text-muted-foreground font-medium">Sharpei AI</span>
                 </div>
               </CardContent>
             </Card>

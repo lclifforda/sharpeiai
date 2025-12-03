@@ -11,6 +11,7 @@ import { ShoppingCart, CheckCircle2, RotateCcw, ArrowUpCircle, Info, Plus, Minus
 import robotImage from "@/assets/humanoid-robot.png";
 import robotAngle1 from "@/assets/robot-angle-1.png";
 import robotAngle2 from "@/assets/robot-angle-2.png";
+import sharpeiLogo from "@/assets/sharpei-logo.png";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -328,10 +329,11 @@ const Checkout = () => {
                         <div className="flex items-center justify-center gap-2 pt-2">
                           <span className="text-xs text-muted-foreground">Powered by</span>
                           <img 
-                            src="/bbva-logo.png" 
-                            alt="BBVA" 
-                            className="h-4"
+                            src={sharpeiLogo} 
+                            alt="Sharpei AI" 
+                            className="h-4 w-4 object-contain"
                           />
+                          <span className="text-xs text-muted-foreground font-medium">Sharpei AI</span>
                         </div>
 
                         <p className="text-xs text-muted-foreground text-center">

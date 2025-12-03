@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FileText, Search, Plus, Download } from "lucide-react";
@@ -6,6 +7,7 @@ import TableFilters from "@/components/TableFilters";
 import { ExportButton } from "@/components/ExportButton";
 
 const Contracts = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
     type: [] as string[],
@@ -67,7 +69,10 @@ const Contracts = () => {
                 filename="contracts" 
                 sheetName="Contracts"
               />
-              <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+              <Button 
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+                onClick={() => navigate("/contracts/new")}
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 New Contract
               </Button>
@@ -116,7 +121,8 @@ const Contracts = () => {
           <div className="divide-y divide-border">
             {contracts.map((contract) => (
               <div 
-                key={contract.id} 
+                key={contract.id}
+                onClick={() => navigate(`/contracts/${contract.id}`)}
                 className="grid grid-cols-[1.2fr_2fr_1.5fr_1fr_1fr_1fr_1fr_0.8fr] gap-6 px-6 py-5 hover:bg-gradient-to-r hover:from-gradient-start/5 hover:to-gradient-purple/5 transition-colors cursor-pointer"
               >
                 <div>
