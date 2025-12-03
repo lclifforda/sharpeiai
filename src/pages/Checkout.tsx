@@ -73,10 +73,18 @@ const Checkout = () => {
   };
 
   const calculateLeaseTotal = () => {
-    let total = monthlyRate * leaseQuantity;
+    // Calculate base monthly payment: (monthlyRate * quantity) - (downPayment amortized over term)
+    const months = parseInt(leaseTerm);
+    const baseMonthly = monthlyRate * leaseQuantity;
+    const downPaymentAmortized = leaseDownPayment / months;
+    let total = baseMonthly - downPaymentAmortized;
+    
+    // Add optional services
     if (leaseMaintenance) total += maintenanceCost;
     if (leaseInsurance) total += insuranceCost;
-    return total;
+    
+    // Ensure total doesn't go negative and format to 2 decimal places
+    return Math.max(0, parseFloat(total.toFixed(2)));
   };
 
   const calculateFinanceTotal = () => {
