@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { MessageSquare, Paperclip, RefreshCw, FileSearch, History, FilePlus, Plus, Home, FileText, Database } from "lucide-react";
+import { MessageSquare, Paperclip, RefreshCw, FileSearch, History, FilePlus, Plus, Home, ChevronDown, Sparkles, User } from "lucide-react";
 import SharpeiOrb from "@/components/SharpeiOrb";
 import QuickActionCard from "@/components/QuickActionCard";
 import LeaseQuoteDialog from "@/components/LeaseQuoteDialog";
@@ -11,6 +11,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 const dataSources = [
   "Salesforce",
   "Teams",
@@ -19,10 +26,23 @@ const dataSources = [
   "Data Warehouse",
 ];
 
+interface Message {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+}
+
 const Index = () => {
   const [isLeaseQuoteOpen, setIsLeaseQuoteOpen] = useState(false);
   const [isRenewalOfferOpen, setIsRenewalOfferOpen] = useState(false);
   const [selectedSources, setSelectedSources] = useState<string[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [inputValue, setInputValue] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const hasStartedChat = messages.length > 0;
 
   const toggleSource = (source: string) => {
     setSelectedSources(prev =>
@@ -31,7 +51,68 @@ const Index = () => {
         : [...prev, source]
     );
   };
-  return <div className="min-h-screen bg-background flex">
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleSendMessage = async () => {
+    if (!inputValue.trim()) return;
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: inputValue.trim()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setInputValue("");
+    setIsTyping(true);
+
+    // Simulate AI response
+    setTimeout(() => {
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: "I understand you're asking about equipment financing. Let me help you with that. Based on your query, I can provide detailed information about lease terms, rates, and options available for your specific needs."
+      };
+      setMessages(prev => [...prev, assistantMessage]);
+      setIsTyping(false);
+    }, 1500);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  const handleQuickAction = (action: string) => {
+    switch (action) {
+      case 'renewal':
+        setIsRenewalOfferOpen(true);
+        break;
+      case 'review':
+        setInputValue("Review a lease contract - analyze terms, conditions, and obligations");
+        inputRef.current?.focus();
+        break;
+      case 'history':
+        setInputValue("Search asset history - track equipment lifecycle and maintenance");
+        inputRef.current?.focus();
+        break;
+      case 'quote':
+        setIsLeaseQuoteOpen(true);
+        break;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background flex">
       {/* Left Sidebar Menu */}
       <div className="w-64 border-r border-border bg-white flex flex-col">
         <div className="p-4">
@@ -50,7 +131,6 @@ const Index = () => {
               <span>Home</span>
             </button>
             
-            
             <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:bg-accent rounded-lg transition-colors">
               <History className="w-4 h-4 flex-shrink-0" />
               <span>History</span>
@@ -60,104 +140,235 @@ const Index = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">{/* Main Content */}
-      <main className="flex-1 flex flex-col items-center justify-center px-6 py-12">
-        <div className="w-full max-w-4xl mx-auto space-y-12">
-          {/* Hero Section with Orb */}
-          <div className="text-center space-y-8">
-            <SharpeiOrb />
+      <div className="flex-1 flex flex-col">
+        <main className="flex-1 flex flex-col px-6 py-8">
+          <div className="w-full max-w-4xl mx-auto flex-1 flex flex-col">
             
-            <div className="space-y-2">
-              <h1 className="text-3xl font-semibold text-foreground">
-                Hey! I'm Sharpei AI, your equipment-financing copilot
-                <span className="inline-block w-0.5 h-8 bg-gradient-start ml-1 animate-pulse" />
-              </h1>
-              <p className="text-muted-foreground text-lg">
-                I help banks, lenders, and leasing teams streamline workflows with audit-ready AI assistance.
-              </p>
-            </div>
-          </div>
+            {/* Initial State - Orb and Quick Actions */}
+            {!hasStartedChat ? (
+              <div className="flex-1 flex flex-col items-center justify-center space-y-12">
+                {/* Hero Section with Orb */}
+                <div className="text-center space-y-8">
+                  <SharpeiOrb />
+                  
+                  <div className="space-y-2">
+                    <h1 className="text-3xl font-semibold text-foreground">
+                      Hey! I'm Sharpei AI, your equipment-financing copilot
+                      <span className="inline-block w-0.5 h-8 bg-gradient-start ml-1 animate-pulse" />
+                    </h1>
+                    <p className="text-muted-foreground text-lg">
+                      I help banks, lenders, and leasing teams streamline workflows with audit-ready AI assistance.
+                    </p>
+                  </div>
+                </div>
 
-          {/* Quick Actions */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div onClick={() => setIsRenewalOfferOpen(true)}>
-              <QuickActionCard icon={<RefreshCw className="w-6 h-6 text-gradient-start" />} title="Generate a renewal / EoT quote" description="for existing leases and end-of-term options" />
-            </div>
-            <QuickActionCard icon={<FileSearch className="w-6 h-6 text-gradient-blue" />} title="Review a lease contract" description="analyze terms, conditions, and obligations" />
-            <QuickActionCard icon={<History className="w-6 h-6 text-gradient-purple" />} title="Search asset history" description="track equipment lifecycle and maintenance" />
-            <div onClick={() => setIsLeaseQuoteOpen(true)}>
-              <QuickActionCard icon={<FilePlus className="w-6 h-6 text-gradient-end" />} title="Generate a new lease quote" description="for any equipment within seconds" />
-            </div>
-          </div>
-
-          {/* Universal Chat Input */}
-          <div className="w-full max-w-3xl mx-auto">
-            <div className="relative">
-              <div className="flex items-center gap-3 p-2 bg-white rounded-full border border-border shadow-float-lg hover:shadow-float transition-all duration-300">
-                <button className="p-3 hover:bg-muted/50 rounded-full transition-colors">
-                  <Paperclip className="w-5 h-5 text-muted-foreground" />
-                </button>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <button className="flex items-center gap-1.5 px-3 py-2 hover:bg-muted/50 rounded-full transition-colors">
-                      <Plus className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground font-medium">
-                        Sources {selectedSources.length > 0 && `(${selectedSources.length})`}
-                      </span>
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-64 bg-white z-50" align="start">
-                    <div className="space-y-3">
-                      <h4 className="font-medium text-sm text-foreground">Select Data Sources</h4>
-                      <div className="space-y-3">
-                        {dataSources.map((source) => (
-                          <div key={source} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={source}
-                              checked={selectedSources.includes(source)}
-                              onCheckedChange={() => toggleSource(source)}
-                            />
-                            <Label
-                              htmlFor={source}
-                              className="text-sm cursor-pointer flex-1"
-                            >
-                              {source}
-                            </Label>
-                          </div>
-                        ))}
-                      </div>
+                {/* Quick Actions */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                  <div onClick={() => handleQuickAction('renewal')}>
+                    <QuickActionCard icon={<RefreshCw className="w-6 h-6 text-gradient-start" />} title="Generate a renewal / EoT quote" description="for existing leases and end-of-term options" />
+                  </div>
+                  <div onClick={() => handleQuickAction('review')}>
+                    <QuickActionCard icon={<FileSearch className="w-6 h-6 text-gradient-blue" />} title="Review a lease contract" description="analyze terms, conditions, and obligations" />
+                  </div>
+                  <div onClick={() => handleQuickAction('history')}>
+                    <QuickActionCard icon={<History className="w-6 h-6 text-gradient-purple" />} title="Search asset history" description="track equipment lifecycle and maintenance" />
+                  </div>
+                  <div onClick={() => handleQuickAction('quote')}>
+                    <QuickActionCard icon={<FilePlus className="w-6 h-6 text-gradient-end" />} title="Generate a new lease quote" description="for any equipment within seconds" />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* Chat State - Messages with integrated orb */
+              <div className="flex-1 flex flex-col">
+                {/* Chat Header with Mini Orb */}
+                <div className="flex items-center gap-3 pb-4 border-b border-border mb-4">
+                  <div className="relative w-10 h-10">
+                    <div className="absolute inset-0 rounded-full gradient-sharpei opacity-30 blur-md" />
+                    <div className="relative w-full h-full rounded-full gradient-sharpei shadow-lg flex items-center justify-center">
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/30 to-transparent" />
                     </div>
-                  </PopoverContent>
-                </Popover>
-                <Input placeholder="Ask me anything about equipment financing, risk, contracts, or assets…" className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground" />
-                <button className="p-3 rounded-full gradient-sharpei text-white hover:opacity-90 transition-opacity shadow-float">
-                  <MessageSquare className="w-5 h-5" />
-                </button>
+                  </div>
+                  <div className="flex-1">
+                    <h2 className="text-sm font-medium text-foreground">Sharpei AI</h2>
+                    <p className="text-xs text-muted-foreground">Equipment financing copilot</p>
+                  </div>
+                  
+                  {/* Collapsed Quick Actions Menu */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm" className="gap-2">
+                        <Sparkles className="w-4 h-4" />
+                        Quick Actions
+                        <ChevronDown className="w-3 h-3" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-64">
+                      <DropdownMenuItem onClick={() => handleQuickAction('renewal')} className="gap-3 py-3">
+                        <RefreshCw className="w-4 h-4 text-gradient-start" />
+                        <div>
+                          <p className="font-medium text-sm">Renewal / EoT Quote</p>
+                          <p className="text-xs text-muted-foreground">End-of-term options</p>
+                        </div>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleQuickAction('review')} className="gap-3 py-3">
+                        <FileSearch className="w-4 h-4 text-gradient-blue" />
+                        <div>
+                          <p className="font-medium text-sm">Review Contract</p>
+                          <p className="text-xs text-muted-foreground">Analyze terms</p>
+                        </div>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleQuickAction('history')} className="gap-3 py-3">
+                        <History className="w-4 h-4 text-gradient-purple" />
+                        <div>
+                          <p className="font-medium text-sm">Search Asset History</p>
+                          <p className="text-xs text-muted-foreground">Track lifecycle</p>
+                        </div>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleQuickAction('quote')} className="gap-3 py-3">
+                        <FilePlus className="w-4 h-4 text-gradient-end" />
+                        <div>
+                          <p className="font-medium text-sm">New Lease Quote</p>
+                          <p className="text-xs text-muted-foreground">Generate quickly</p>
+                        </div>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+
+                {/* Messages Area */}
+                <ScrollArea className="flex-1 pr-4 -mr-4">
+                  <div className="space-y-6 pb-4">
+                    {messages.map((message) => (
+                      <div
+                        key={message.id}
+                        className={`flex gap-3 ${message.role === 'user' ? 'flex-row-reverse' : ''}`}
+                      >
+                        {/* Avatar */}
+                        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                          message.role === 'assistant' 
+                            ? 'gradient-sharpei' 
+                            : 'bg-muted'
+                        }`}>
+                          {message.role === 'assistant' ? (
+                            <div className="w-full h-full rounded-full bg-gradient-to-br from-white/30 to-transparent" />
+                          ) : (
+                            <User className="w-4 h-4 text-muted-foreground" />
+                          )}
+                        </div>
+
+                        {/* Message Bubble */}
+                        <div className={`max-w-[75%] ${
+                          message.role === 'user' 
+                            ? 'bg-primary text-primary-foreground rounded-2xl rounded-tr-md' 
+                            : 'bg-muted rounded-2xl rounded-tl-md'
+                        } px-4 py-3`}>
+                          <p className="text-sm leading-relaxed">{message.content}</p>
+                        </div>
+                      </div>
+                    ))}
+
+                    {/* Typing Indicator */}
+                    {isTyping && (
+                      <div className="flex gap-3">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full gradient-sharpei flex items-center justify-center">
+                          <div className="w-full h-full rounded-full bg-gradient-to-br from-white/30 to-transparent" />
+                        </div>
+                        <div className="bg-muted rounded-2xl rounded-tl-md px-4 py-3">
+                          <div className="flex gap-1">
+                            <div className="w-2 h-2 rounded-full bg-muted-foreground/50 animate-bounce" style={{ animationDelay: '0ms' }} />
+                            <div className="w-2 h-2 rounded-full bg-muted-foreground/50 animate-bounce" style={{ animationDelay: '150ms' }} />
+                            <div className="w-2 h-2 rounded-full bg-muted-foreground/50 animate-bounce" style={{ animationDelay: '300ms' }} />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    <div ref={messagesEndRef} />
+                  </div>
+                </ScrollArea>
+              </div>
+            )}
+
+            {/* Universal Chat Input - Always at bottom */}
+            <div className="w-full max-w-3xl mx-auto mt-6">
+              <div className="relative">
+                <div className="flex items-center gap-3 p-2 bg-white rounded-full border border-border shadow-float-lg hover:shadow-float transition-all duration-300">
+                  <button className="p-3 hover:bg-muted/50 rounded-full transition-colors">
+                    <Paperclip className="w-5 h-5 text-muted-foreground" />
+                  </button>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button className="flex items-center gap-1.5 px-3 py-2 hover:bg-muted/50 rounded-full transition-colors">
+                        <Plus className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground font-medium">
+                          Sources {selectedSources.length > 0 && `(${selectedSources.length})`}
+                        </span>
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-64 bg-white z-50" align="start">
+                      <div className="space-y-3">
+                        <h4 className="font-medium text-sm text-foreground">Select Data Sources</h4>
+                        <div className="space-y-3">
+                          {dataSources.map((source) => (
+                            <div key={source} className="flex items-center space-x-2">
+                              <Checkbox
+                                id={source}
+                                checked={selectedSources.includes(source)}
+                                onCheckedChange={() => toggleSource(source)}
+                              />
+                              <Label
+                                htmlFor={source}
+                                className="text-sm cursor-pointer flex-1"
+                              >
+                                {source}
+                              </Label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                  <Input 
+                    ref={inputRef}
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Ask me anything about equipment financing, risk, contracts, or assets…" 
+                    className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground" 
+                  />
+                  <button 
+                    onClick={handleSendMessage}
+                    disabled={!inputValue.trim()}
+                    className="p-3 rounded-full gradient-sharpei text-white hover:opacity-90 transition-opacity shadow-float disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <MessageSquare className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </main>
+        </main>
 
-      <LeaseQuoteDialog open={isLeaseQuoteOpen} onOpenChange={setIsLeaseQuoteOpen} />
-      <RenewalOfferDialog open={isRenewalOfferOpen} onOpenChange={setIsRenewalOfferOpen} />
+        <LeaseQuoteDialog open={isLeaseQuoteOpen} onOpenChange={setIsLeaseQuoteOpen} />
+        <RenewalOfferDialog open={isRenewalOfferOpen} onOpenChange={setIsRenewalOfferOpen} />
 
-      {/* Footer */}
-      <footer className="border-t border-border bg-white/50 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          
-          <div className="mt-4 flex items-center justify-center gap-2">
-            <p className="text-xs text-muted-foreground/70">
-              Powered by
-            </p>
-            <img src={sharpeiLogo} alt="Sharpei AI" className="h-4 w-4 object-contain" />
-            <p className="text-xs text-muted-foreground/70 font-medium">
-              Sharpei AI
-            </p>
+        {/* Footer */}
+        <footer className="border-t border-border bg-white/50 backdrop-blur-sm">
+          <div className="max-w-7xl mx-auto px-6 py-6">
+            <div className="mt-4 flex items-center justify-center gap-2">
+              <p className="text-xs text-muted-foreground/70">
+                Powered by
+              </p>
+              <img src={sharpeiLogo} alt="Sharpei AI" className="h-4 w-4 object-contain" />
+              <p className="text-xs text-muted-foreground/70 font-medium">
+                Sharpei AI
+              </p>
+            </div>
           </div>
-        </div>
-      </footer>
+        </footer>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Index;
