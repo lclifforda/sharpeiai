@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AddRepresentativeDialog } from "@/components/AddRepresentativeDialog";
 
 interface Representative {
   id: string;
@@ -38,7 +39,7 @@ const CompanyDetail = () => {
   const { id } = useParams();
 
   // Mock data - in production, fetch from API
-  const companyData: any = {
+  const initialCompanyData: any = {
     '1': {
       name: 'TechCorp Industries',
       industry: 'Manufacturing',
@@ -170,7 +171,21 @@ const CompanyDetail = () => {
     },
   };
 
+  // State to manage representatives for the current company
+  const [companyData, setCompanyData] = useState(initialCompanyData);
   const company = companyData[id || '1'] || companyData['1'];
+
+  // Handle adding a new representative
+  const handleAddRepresentative = (newRepresentative: Representative) => {
+    const companyId = id || '1';
+    setCompanyData((prev: any) => ({
+      ...prev,
+      [companyId]: {
+        ...prev[companyId],
+        representatives: [...(prev[companyId]?.representatives || []), newRepresentative],
+      },
+    }));
+  };
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -325,10 +340,7 @@ const CompanyDetail = () => {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Representatives</CardTitle>
-                <Button>
-                  <UserPlus className="w-4 h-4 mr-2" />
-                  Add Representative
-                </Button>
+                <AddRepresentativeDialog onAdd={handleAddRepresentative} />
               </div>
             </CardHeader>
             <CardContent>
