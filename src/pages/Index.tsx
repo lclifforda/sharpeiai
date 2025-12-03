@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { MessageSquare, Paperclip, RefreshCw, FileSearch, History, FilePlus, Plus, Home, Send } from "lucide-react";
+import { MessageSquare, Paperclip, RefreshCw, FileSearch, History, FilePlus, Plus, Home, FileText, Database } from "lucide-react";
 import SharpeiOrb from "@/components/SharpeiOrb";
 import QuickActionCard from "@/components/QuickActionCard";
 import LeaseQuoteDialog from "@/components/LeaseQuoteDialog";
@@ -11,7 +11,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-
 const dataSources = [
   "Salesforce",
   "Teams",
@@ -20,21 +19,10 @@ const dataSources = [
   "Data Warehouse",
 ];
 
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-}
-
 const Index = () => {
   const [isLeaseQuoteOpen, setIsLeaseQuoteOpen] = useState(false);
   const [isRenewalOfferOpen, setIsRenewalOfferOpen] = useState(false);
   const [selectedSources, setSelectedSources] = useState<string[]>([]);
-  const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [isTyping, setIsTyping] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  const hasStartedChat = messages.length > 0;
 
   const toggleSource = (source: string) => {
     setSelectedSources(prev =>
@@ -43,48 +31,11 @@ const Index = () => {
         : [...prev, source]
     );
   };
-
-  const handleSend = () => {
-    if (!input.trim()) return;
-    
-    const userMessage = input;
-    setMessages(prev => [...prev, { role: "user", content: userMessage }]);
-    setInput("");
-    setIsTyping(true);
-
-    // Simulate AI response
-    setTimeout(() => {
-      setMessages(prev => [...prev, { 
-        role: "assistant", 
-        content: "I'd be happy to help you with that! Based on your question, I can provide detailed information about equipment financing options, lease terms, and risk assessments. What specific aspect would you like to explore further?" 
-      }]);
-      setIsTyping(false);
-    }, 1500);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
-
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages, isTyping]);
-
-  return (
-    <div className="min-h-screen bg-background flex">
+  return <div className="min-h-screen bg-background flex">
       {/* Left Sidebar Menu */}
       <div className="w-64 border-r border-border bg-white flex flex-col">
         <div className="p-4">
-          <Button 
-            variant="ghost" 
-            className="w-full justify-start gap-2 border border-transparent bg-gradient-to-r from-gradient-start to-gradient-end bg-origin-border p-[1px] hover:shadow-glow transition-all"
-            onClick={() => setMessages([])}
-          >
+          <Button variant="ghost" className="w-full justify-start gap-2 border border-transparent bg-gradient-to-r from-gradient-start to-gradient-end bg-origin-border p-[1px] hover:shadow-glow transition-all">
             <span className="w-full flex items-center gap-2 bg-background px-3 py-2 rounded-[calc(0.5rem-1px)]">
               <Plus className="w-4 h-4 text-gradient-start" />
               New Chat
@@ -99,6 +50,7 @@ const Index = () => {
               <span>Home</span>
             </button>
             
+            
             <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:bg-accent rounded-lg transition-colors">
               <History className="w-4 h-4 flex-shrink-0" />
               <span>History</span>
@@ -108,164 +60,104 @@ const Index = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        <main className="flex-1 flex flex-col px-6 py-12 overflow-hidden">
-          <div className="w-full max-w-4xl mx-auto flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col">{/* Main Content */}
+      <main className="flex-1 flex flex-col items-center justify-center px-6 py-12">
+        <div className="w-full max-w-4xl mx-auto space-y-12">
+          {/* Hero Section with Orb */}
+          <div className="text-center space-y-8">
+            <SharpeiOrb />
             
-            {/* Initial State - Orb, Title, and Pills */}
-            {!hasStartedChat && (
-              <div className="flex-1 flex flex-col items-center justify-center space-y-12 animate-fade-in">
-                {/* Hero Section with Orb */}
-                <div className="text-center space-y-8">
-                  <SharpeiOrb />
-                  
-                  <div className="space-y-2">
-                    <h1 className="text-3xl font-semibold text-foreground">
-                      Hey! I'm Sharpei AI, your equipment-financing copilot
-                      <span className="inline-block w-0.5 h-8 bg-gradient-start ml-1 animate-pulse" />
-                    </h1>
-                    <p className="text-muted-foreground text-lg">
-                      I help banks, lenders, and leasing teams streamline workflows with audit-ready AI assistance.
-                    </p>
-                  </div>
-                </div>
+            <div className="space-y-2">
+              <h1 className="text-3xl font-semibold text-foreground">
+                Hey! I'm Sharpei AI, your equipment-financing copilot
+                <span className="inline-block w-0.5 h-8 bg-gradient-start ml-1 animate-pulse" />
+              </h1>
+              <p className="text-muted-foreground text-lg">
+                I help banks, lenders, and leasing teams streamline workflows with audit-ready AI assistance.
+              </p>
+            </div>
+          </div>
 
-                {/* Quick Actions */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                  <div onClick={() => setIsRenewalOfferOpen(true)}>
-                    <QuickActionCard icon={<RefreshCw className="w-6 h-6 text-gradient-start" />} title="Generate a renewal / EoT quote" description="for existing leases and end-of-term options" />
-                  </div>
-                  <QuickActionCard icon={<FileSearch className="w-6 h-6 text-gradient-blue" />} title="Review a lease contract" description="analyze terms, conditions, and obligations" />
-                  <QuickActionCard icon={<History className="w-6 h-6 text-gradient-purple" />} title="Search asset history" description="track equipment lifecycle and maintenance" />
-                  <div onClick={() => setIsLeaseQuoteOpen(true)}>
-                    <QuickActionCard icon={<FilePlus className="w-6 h-6 text-gradient-end" />} title="Generate a new lease quote" description="for any equipment within seconds" />
-                  </div>
-                </div>
-              </div>
-            )}
+          {/* Quick Actions */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div onClick={() => setIsRenewalOfferOpen(true)}>
+              <QuickActionCard icon={<RefreshCw className="w-6 h-6 text-gradient-start" />} title="Generate a renewal / EoT quote" description="for existing leases and end-of-term options" />
+            </div>
+            <QuickActionCard icon={<FileSearch className="w-6 h-6 text-gradient-blue" />} title="Review a lease contract" description="analyze terms, conditions, and obligations" />
+            <QuickActionCard icon={<History className="w-6 h-6 text-gradient-purple" />} title="Search asset history" description="track equipment lifecycle and maintenance" />
+            <div onClick={() => setIsLeaseQuoteOpen(true)}>
+              <QuickActionCard icon={<FilePlus className="w-6 h-6 text-gradient-end" />} title="Generate a new lease quote" description="for any equipment within seconds" />
+            </div>
+          </div>
 
-            {/* Chat State - Messages with integrated orb */}
-            {hasStartedChat && (
-              <div className="flex-1 flex flex-col overflow-hidden animate-fade-in">
-                {/* Chat Messages */}
-                <ScrollArea className="flex-1 pr-4" ref={scrollRef}>
-                  <div className="space-y-6 pb-4">
-                    {messages.map((message, index) => (
-                      <div key={index} className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-                        {message.role === "assistant" && (
-                          <div className="w-10 h-10 rounded-full gradient-sharpei flex-shrink-0 flex items-center justify-center shadow-float">
-                            <div className="w-6 h-6 rounded-full bg-white/30" />
-                          </div>
-                        )}
-                        <div className={`max-w-[70%] rounded-2xl px-4 py-3 ${
-                          message.role === "user" 
-                            ? "bg-primary text-primary-foreground" 
-                            : "bg-muted text-foreground"
-                        }`}>
-                          <p className="text-sm leading-relaxed">{message.content}</p>
-                        </div>
-                      </div>
-                    ))}
-                    
-                    {/* Typing indicator */}
-                    {isTyping && (
-                      <div className="flex gap-3 justify-start">
-                        <div className="w-10 h-10 rounded-full gradient-sharpei flex-shrink-0 flex items-center justify-center shadow-float">
-                          <div className="w-6 h-6 rounded-full bg-white/30" />
-                        </div>
-                        <div className="bg-muted rounded-2xl px-4 py-3">
-                          <div className="flex gap-1">
-                            <div className="w-2 h-2 rounded-full bg-foreground/40 animate-bounce" style={{ animationDelay: "0ms" }} />
-                            <div className="w-2 h-2 rounded-full bg-foreground/40 animate-bounce" style={{ animationDelay: "150ms" }} />
-                            <div className="w-2 h-2 rounded-full bg-foreground/40 animate-bounce" style={{ animationDelay: "300ms" }} />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </ScrollArea>
-              </div>
-            )}
-
-            {/* Universal Chat Input - Always visible at bottom */}
-            <div className="w-full max-w-3xl mx-auto mt-6">
-              <div className="relative">
-                <div className="flex items-center gap-3 p-2 bg-white rounded-full border border-border shadow-float-lg hover:shadow-float transition-all duration-300">
-                  <button className="p-3 hover:bg-muted/50 rounded-full transition-colors">
-                    <Paperclip className="w-5 h-5 text-muted-foreground" />
-                  </button>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <button className="flex items-center gap-1.5 px-3 py-2 hover:bg-muted/50 rounded-full transition-colors">
-                        <Plus className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-sm text-muted-foreground font-medium">
-                          Sources {selectedSources.length > 0 && `(${selectedSources.length})`}
-                        </span>
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-64 bg-white z-50" align="start">
+          {/* Universal Chat Input */}
+          <div className="w-full max-w-3xl mx-auto">
+            <div className="relative">
+              <div className="flex items-center gap-3 p-2 bg-white rounded-full border border-border shadow-float-lg hover:shadow-float transition-all duration-300">
+                <button className="p-3 hover:bg-muted/50 rounded-full transition-colors">
+                  <Paperclip className="w-5 h-5 text-muted-foreground" />
+                </button>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button className="flex items-center gap-1.5 px-3 py-2 hover:bg-muted/50 rounded-full transition-colors">
+                      <Plus className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground font-medium">
+                        Sources {selectedSources.length > 0 && `(${selectedSources.length})`}
+                      </span>
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-64 bg-white z-50" align="start">
+                    <div className="space-y-3">
+                      <h4 className="font-medium text-sm text-foreground">Select Data Sources</h4>
                       <div className="space-y-3">
-                        <h4 className="font-medium text-sm text-foreground">Select Data Sources</h4>
-                        <div className="space-y-3">
-                          {dataSources.map((source) => (
-                            <div key={source} className="flex items-center space-x-2">
-                              <Checkbox
-                                id={source}
-                                checked={selectedSources.includes(source)}
-                                onCheckedChange={() => toggleSource(source)}
-                              />
-                              <Label
-                                htmlFor={source}
-                                className="text-sm cursor-pointer flex-1"
-                              >
-                                {source}
-                              </Label>
-                            </div>
-                          ))}
-                        </div>
+                        {dataSources.map((source) => (
+                          <div key={source} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={source}
+                              checked={selectedSources.includes(source)}
+                              onCheckedChange={() => toggleSource(source)}
+                            />
+                            <Label
+                              htmlFor={source}
+                              className="text-sm cursor-pointer flex-1"
+                            >
+                              {source}
+                            </Label>
+                          </div>
+                        ))}
                       </div>
-                    </PopoverContent>
-                  </Popover>
-                  <Input 
-                    placeholder="Ask me anything about equipment financing, risk, contracts, or assets…" 
-                    className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground" 
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                  />
-                  <button 
-                    className="p-3 rounded-full gradient-sharpei text-white hover:opacity-90 transition-opacity shadow-float disabled:opacity-50"
-                    onClick={handleSend}
-                    disabled={!input.trim()}
-                  >
-                    <Send className="w-5 h-5" />
-                  </button>
-                </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+                <Input placeholder="Ask me anything about equipment financing, risk, contracts, or assets…" className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground" />
+                <button className="p-3 rounded-full gradient-sharpei text-white hover:opacity-90 transition-opacity shadow-float">
+                  <MessageSquare className="w-5 h-5" />
+                </button>
               </div>
             </div>
           </div>
-        </main>
+        </div>
+      </main>
 
-        <LeaseQuoteDialog open={isLeaseQuoteOpen} onOpenChange={setIsLeaseQuoteOpen} />
-        <RenewalOfferDialog open={isRenewalOfferOpen} onOpenChange={setIsRenewalOfferOpen} />
+      <LeaseQuoteDialog open={isLeaseQuoteOpen} onOpenChange={setIsLeaseQuoteOpen} />
+      <RenewalOfferDialog open={isRenewalOfferOpen} onOpenChange={setIsRenewalOfferOpen} />
 
-        {/* Footer */}
-        <footer className="border-t border-border bg-white/50 backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-6 py-6">
-            <div className="mt-4 flex items-center justify-center gap-2">
-              <p className="text-xs text-muted-foreground/70">
-                Powered by
-              </p>
-              <img src={sharpeiLogo} alt="Sharpei AI" className="h-4 w-4 object-contain" />
-              <p className="text-xs text-muted-foreground/70 font-medium">
-                Sharpei AI
-              </p>
-            </div>
+      {/* Footer */}
+      <footer className="border-t border-border bg-white/50 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          
+          <div className="mt-4 flex items-center justify-center gap-2">
+            <p className="text-xs text-muted-foreground/70">
+              Powered by
+            </p>
+            <img src={sharpeiLogo} alt="Sharpei AI" className="h-4 w-4 object-contain" />
+            <p className="text-xs text-muted-foreground/70 font-medium">
+              Sharpei AI
+            </p>
           </div>
-        </footer>
+        </div>
+      </footer>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
