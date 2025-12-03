@@ -70,15 +70,53 @@ const Index = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const query = inputValue.trim().toLowerCase();
     setInputValue("");
     setIsTyping(true);
 
-    // Simulate AI response
+    // Simulate AI response based on query
     setTimeout(() => {
+      let responseContent = "I understand you're asking about equipment financing. Let me help you with that. Based on your query, I can provide detailed information about lease terms, rates, and options available for your specific needs.";
+
+      // Mock response for contracts ending this month
+      if (query.includes('contract') && (query.includes('ending') || query.includes('expir'))) {
+        responseContent = `Here are the contracts ending this month:
+
+**1. Acme Manufacturing Co.**
+• Contract ID: LC-2024-0892
+• Equipment: CNC Milling Machine X500
+• End Date: December 15, 2024
+• Monthly Payment: €4,250
+• Status: Renewal pending
+
+**2. TechFlow Industries**
+• Contract ID: LC-2024-0756
+• Equipment: Industrial Robot Arm R-200
+• End Date: December 22, 2024
+• Monthly Payment: €6,800
+• Status: Customer contacted
+
+**3. GreenEnergy Solutions**
+• Contract ID: LC-2024-0634
+• Equipment: Solar Panel Array (50 units)
+• End Date: December 28, 2024
+• Monthly Payment: €12,500
+• Status: Buyout requested
+
+**4. Metro Logistics Ltd.**
+• Contract ID: LC-2024-0589
+• Equipment: Fleet Tracking System
+• End Date: December 31, 2024
+• Monthly Payment: €1,850
+• Status: Pending review
+
+Would you like me to generate renewal offers for any of these contracts?`;
+      }
+
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: "I understand you're asking about equipment financing. Let me help you with that. Based on your query, I can provide detailed information about lease terms, rates, and options available for your specific needs."
+        content: responseContent
       };
       setMessages(prev => [...prev, assistantMessage]);
       setIsTyping(false);
