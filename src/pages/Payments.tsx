@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { CreditCard, Search, ArrowUpRight, ArrowDownRight } from "lucide-react";
@@ -7,6 +8,7 @@ import TableFilters from "@/components/TableFilters";
 import { ExportButton } from "@/components/ExportButton";
 
 const Payments = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
     type: [] as string[],
@@ -149,7 +151,8 @@ const Payments = () => {
           <div className="divide-y divide-border">
             {transactions.map((transaction) => (
               <div 
-                key={transaction.id} 
+                key={transaction.id}
+                onClick={() => navigate(`/payments/${transaction.id}`)}
                 className="grid grid-cols-[0.6fr_1fr_2fr_1fr_1fr_1fr] gap-6 px-6 py-5 hover:bg-gradient-to-r hover:from-gradient-start/5 hover:to-gradient-purple/5 transition-colors cursor-pointer"
               >
                 <div>
