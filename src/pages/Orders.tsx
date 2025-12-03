@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Search, Plus } from "lucide-react";
@@ -7,25 +8,25 @@ import TableFilters from "@/components/TableFilters";
 import { ExportButton } from "@/components/ExportButton";
 
 const Orders = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
     status: [] as string[],
   });
   const allOrders = [
-    { id: "ORD-1234", company: "TechCorp Industries", equipment: "CNC Machine", amount: "$125,000", status: "Processing", date: "2025-11-10" },
-    { id: "ORD-1235", company: "MedEquip Solutions", equipment: "MRI Scanner", amount: "$890,000", status: "Approved", date: "2025-11-09" },
-    { id: "ORD-1236", company: "BuildPro Construction", equipment: "Excavator", amount: "$75,000", status: "Delivered", date: "2025-11-08" },
-    { id: "ORD-1237", company: "AgriTech Farms", equipment: "Tractor Fleet", amount: "$450,000", status: "Pending", date: "2025-11-07" },
+    { id: "ORD-001", company: "TechCorp Industries", equipment: "IoT Sensor Kit", amount: "$22,500", status: "active", date: "2025-01-15" },
+    { id: "ORD-002", company: "DataFlow Systems", equipment: "Edge Computing Device", amount: "$16,000", status: "active", date: "2025-02-01" },
+    { id: "ORD-003", company: "SmartFactory Inc", equipment: "Industrial Camera", amount: "$28,000", status: "pending", date: "2025-11-08" },
+    { id: "ORD-004", company: "AgriTech Farms", equipment: "GPS Tracking Module", amount: "$12,000", status: "completed", date: "2024-11-07" },
   ];
 
   const filterGroups = [
     {
       label: "Status",
       options: [
-        { label: "Processing", value: "Processing", checked: filters.status.includes("Processing") },
-        { label: "Approved", value: "Approved", checked: filters.status.includes("Approved") },
-        { label: "Delivered", value: "Delivered", checked: filters.status.includes("Delivered") },
-        { label: "Pending", value: "Pending", checked: filters.status.includes("Pending") },
+        { label: "Active", value: "active", checked: filters.status.includes("active") },
+        { label: "Pending", value: "pending", checked: filters.status.includes("pending") },
+        { label: "Completed", value: "completed", checked: filters.status.includes("completed") },
       ]
     }
   ];
@@ -57,11 +58,14 @@ const Orders = () => {
   }, [searchQuery, filters]);
 
   const getStatusBadge = (status: string) => {
-    if (status === "Approved" || status === "Delivered") {
-      return <Badge className="bg-success text-success-foreground hover:bg-success/90">{status}</Badge>;
+    if (status === "active") {
+      return <Badge className="bg-success text-success-foreground hover:bg-success/90">Active</Badge>;
     }
-    if (status === "Pending" || status === "Processing") {
-      return <Badge className="bg-warning text-warning-foreground hover:bg-warning/90">{status}</Badge>;
+    if (status === "pending") {
+      return <Badge className="bg-warning text-warning-foreground hover:bg-warning/90">Pending</Badge>;
+    }
+    if (status === "completed") {
+      return <Badge variant="outline">Completed</Badge>;
     }
     return <Badge variant="outline">{status}</Badge>;
   };
@@ -129,7 +133,8 @@ const Orders = () => {
           <div className="divide-y divide-border">
             {orders.map((order) => (
               <div 
-                key={order.id} 
+                key={order.id}
+                onClick={() => navigate(`/orders/${order.id}`)}
                 className="grid grid-cols-[1fr_2fr_2fr_1.2fr_1fr_1fr] gap-6 px-6 py-5 hover:bg-gradient-to-r hover:from-gradient-start/5 hover:to-gradient-purple/5 transition-colors cursor-pointer"
               >
                 <div>

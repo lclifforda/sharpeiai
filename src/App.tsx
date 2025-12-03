@@ -7,11 +7,16 @@ import PageLayout from "./components/PageLayout";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Companies from "./pages/Companies";
+import CompanyDetail from "./pages/CompanyDetail";
 import Orders from "./pages/Orders";
+import OrderDetail from "./pages/OrderDetail";
 import Contracts from "./pages/Contracts";
+import ContractDetail from "./pages/ContractDetail";
+import ContractCreate from "./pages/ContractCreate";
 import Payments from "./pages/Payments";
 import Inventory from "./pages/Inventory";
 import AssetDetail from "./pages/AssetDetail";
+import InventoryDetail from "./pages/InventoryDetail";
 import Merchants from "./pages/Merchants";
 import MerchantDetail from "./pages/MerchantDetail";
 import Checkout from "./pages/Checkout";
@@ -31,11 +36,16 @@ const App = () => (
           <Route element={<PageLayout><Index /></PageLayout>} path="/" />
           <Route element={<PageLayout><Dashboard /></PageLayout>} path="/dashboard" />
           <Route element={<PageLayout><Companies /></PageLayout>} path="/companies" />
+          <Route element={<PageLayout><CompanyDetail /></PageLayout>} path="/companies/:id" />
           <Route element={<PageLayout><Orders /></PageLayout>} path="/orders" />
+          <Route element={<PageLayout><OrderDetail /></PageLayout>} path="/orders/:id" />
           <Route element={<PageLayout><Contracts /></PageLayout>} path="/contracts" />
+          <Route element={<PageLayout><ContractCreate /></PageLayout>} path="/contracts/new" />
+          <Route element={<PageLayout><ContractDetail /></PageLayout>} path="/contracts/:id" />
           <Route element={<PageLayout><Payments /></PageLayout>} path="/payments" />
           <Route element={<PageLayout><Inventory /></PageLayout>} path="/assets" />
           <Route element={<PageLayout><AssetDetail /></PageLayout>} path="/assets/:id" />
+          <Route element={<PageLayout><InventoryDetail /></PageLayout>} path="/inventory/:id" />
           <Route element={<PageLayout><Merchants /></PageLayout>} path="/merchants" />
           <Route element={<PageLayout><MerchantDetail /></PageLayout>} path="/merchants/:id" />
           <Route element={<PageLayout><Checkout /></PageLayout>} path="/checkout" />

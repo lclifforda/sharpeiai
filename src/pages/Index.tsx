@@ -1,16 +1,17 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { MessageSquare, Paperclip, RefreshCw, FileSearch, History, FilePlus, Plus, Home, FileText, Database } from "lucide-react";
+import { MessageSquare, Paperclip, RefreshCw, FileSearch, History, FilePlus, Plus, Home, FileText, Database, X } from "lucide-react";
 import SharpeiOrb from "@/components/SharpeiOrb";
 import QuickActionCard from "@/components/QuickActionCard";
 import LeaseQuoteDialog from "@/components/LeaseQuoteDialog";
 import RenewalOfferDialog from "@/components/RenewalOfferDialog";
-import sharpeiLogo from "@/assets/sharpei-logo.png";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { useAiAgent } from "@/hooks/useAiAgent";
+import { Card, CardContent } from "@/components/ui/card";
 const dataSources = [
   "Salesforce",
   "Teams",
@@ -23,6 +24,11 @@ const Index = () => {
   const [isLeaseQuoteOpen, setIsLeaseQuoteOpen] = useState(false);
   const [isRenewalOfferOpen, setIsRenewalOfferOpen] = useState(false);
   const [selectedSources, setSelectedSources] = useState<string[]>([]);
+  const [chatInput, setChatInput] = useState("");
+  const [chatMessages, setChatMessages] = useState<Array<{role: 'user' | 'assistant', content: string}>>([]);
+  const [showResponse, setShowResponse] = useState(false);
+  const sessionIdRef = useRef(`index-session-${Date.now()}`);
+  const { sendMessage, isLoading, lastMessage, isConnected } = useAiAgent(sessionIdRef.current);
 
   const toggleSource = (source: string) => {
     setSelectedSources(prev =>
@@ -30,6 +36,43 @@ const Index = () => {
         ? prev.filter(s => s !== source)
         : [...prev, source]
     );
+  };
+
+  // Handle AI responses
+  useEffect(() => {
+    if (lastMessage) {
+      setChatMessages(prev => [...prev, { role: 'assistant', content: lastMessage.text }]);
+      setShowResponse(true);
+    }
+  }, [lastMessage]);
+
+  const handleSendMessage = async () => {
+    if (!chatInput.trim() || isLoading) return;
+    
+    const message = chatInput.trim();
+    setChatMessages(prev => [...prev, { role: 'user', content: message }]);
+    setChatInput("");
+    setShowResponse(true);
+    
+    try {
+      await sendMessage(message, {
+        source: 'index-chat',
+        selectedSources: selectedSources
+      });
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      setChatMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: 'Sorry, I encountered an error. Please try again.' 
+      }]);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
   };
   return <div className="min-h-screen bg-background flex">
       {/* Left Sidebar Menu */}
@@ -79,7 +122,7 @@ const Index = () => {
           </div>
 
           {/* Quick Actions */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 transition-all duration-300 ${showResponse && chatMessages.length > 0 ? 'scale-90 opacity-60' : ''}`}>
             <div onClick={() => setIsRenewalOfferOpen(true)}>
               <QuickActionCard icon={<RefreshCw className="w-6 h-6 text-gradient-start" />} title="Generate a renewal / EoT quote" description="for existing leases and end-of-term options" />
             </div>
@@ -91,7 +134,58 @@ const Index = () => {
           </div>
 
           {/* Universal Chat Input */}
-          <div className="w-full max-w-3xl mx-auto">
+          <div className="w-full max-w-3xl mx-auto space-y-4">
+            {/* Chat Response Display */}
+            {showResponse && chatMessages.length > 0 && (
+              <Card className="bg-white border border-border shadow-float">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-semibold text-base text-foreground">Chat Response</h3>
+                    <button
+                      onClick={() => {
+                        setShowResponse(false);
+                        setChatMessages([]);
+                      }}
+                      className="p-1 hover:bg-muted rounded transition-colors"
+                    >
+                      <X className="w-5 h-5 text-muted-foreground" />
+                    </button>
+                  </div>
+                  <ScrollArea className="max-h-[500px] min-h-[400px]">
+                    <div className="space-y-4 pr-4">
+                      {chatMessages.map((msg, idx) => (
+                        <div
+                          key={idx}
+                          className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                        >
+                          <div
+                            className={`max-w-[85%] rounded-lg p-4 ${
+                              msg.role === 'user'
+                                ? 'bg-primary text-primary-foreground'
+                                : 'bg-muted text-foreground'
+                            }`}
+                          >
+                            <p className="text-base whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                          </div>
+                        </div>
+                      ))}
+                      {isLoading && (
+                        <div className="flex justify-start">
+                          <div className="bg-muted rounded-lg p-4">
+                            <div className="flex gap-2">
+                              <div className="w-3 h-3 rounded-full bg-foreground/40 animate-bounce" style={{ animationDelay: "0ms" }} />
+                              <div className="w-3 h-3 rounded-full bg-foreground/40 animate-bounce" style={{ animationDelay: "150ms" }} />
+                              <div className="w-3 h-3 rounded-full bg-foreground/40 animate-bounce" style={{ animationDelay: "300ms" }} />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </ScrollArea>
+                </CardContent>
+              </Card>
+            )}
+
             <div className="relative">
               <div className="flex items-center gap-3 p-2 bg-white rounded-full border border-border shadow-float-lg hover:shadow-float transition-all duration-300">
                 <button className="p-3 hover:bg-muted/50 rounded-full transition-colors">
@@ -129,8 +223,19 @@ const Index = () => {
                     </div>
                   </PopoverContent>
                 </Popover>
-                <Input placeholder="Ask me anything about equipment financing, risk, contracts, or assets…" className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground" />
-                <button className="p-3 rounded-full gradient-sharpei text-white hover:opacity-90 transition-opacity shadow-float">
+                <Input 
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyDown={handleKeyPress}
+                  placeholder="Ask me anything about equipment financing, risk, contracts, or assets…" 
+                  className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground"
+                  disabled={isLoading}
+                />
+                <button 
+                  onClick={handleSendMessage}
+                  disabled={!chatInput.trim() || isLoading}
+                  className="p-3 rounded-full gradient-sharpei text-white hover:opacity-90 transition-opacity shadow-float disabled:opacity-50 disabled:cursor-not-allowed"
+                >
                   <MessageSquare className="w-5 h-5" />
                 </button>
               </div>
@@ -141,22 +246,6 @@ const Index = () => {
 
       <LeaseQuoteDialog open={isLeaseQuoteOpen} onOpenChange={setIsLeaseQuoteOpen} />
       <RenewalOfferDialog open={isRenewalOfferOpen} onOpenChange={setIsRenewalOfferOpen} />
-
-      {/* Footer */}
-      <footer className="border-t border-border bg-white/50 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          
-          <div className="mt-4 flex items-center justify-center gap-2">
-            <p className="text-xs text-muted-foreground/70">
-              Powered by
-            </p>
-            <img src={sharpeiLogo} alt="Sharpei AI" className="h-4 w-4 object-contain" />
-            <p className="text-xs text-muted-foreground/70 font-medium">
-              Sharpei AI
-            </p>
-          </div>
-        </div>
-      </footer>
       </div>
     </div>;
 };

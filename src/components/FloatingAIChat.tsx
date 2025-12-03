@@ -40,6 +40,9 @@ const FloatingAIChat = () => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const currentConversation = conversations.find(c => c.id === currentConversationId)!;
+  
+  // Use isLoading from hook as the source of truth for processing state
+  const isActuallyProcessing = isProcessing || isLoading;
 
   // Predefined questions relevant to Sharpei's business
   const predefinedQuestions = [
@@ -53,9 +56,6 @@ const FloatingAIChat = () => {
 
   // Handle AI responses
   useEffect(() => {
-    if (lastMessage && !isProcessing) {
-      return;
-    }
     if (lastMessage && isProcessing) {
       setConversations(prev => prev.map(conv => {
         if (conv.id === currentConversationId) {
@@ -94,9 +94,9 @@ const FloatingAIChat = () => {
   };
 
   const handleSend = async () => {
-    if (!input.trim() || isProcessing) return;
+    if (!input.trim() || isActuallyProcessing) return;
     
-    const messageText = input;
+    const messageText = input.trim();
     const updatedConversations = conversations.map(conv => {
       if (conv.id === currentConversationId) {
         const newMessages = [...conv.messages, { role: "user" as const, content: messageText }];
@@ -113,7 +113,6 @@ const FloatingAIChat = () => {
     
     try {
       // Send to real AI agent
-      const currentSession = conversations.find(c => c.id === currentConversationId);
       await sendMessage(messageText, {
         conversationHistory: currentConversation.messages.slice(-5), // Last 5 messages for context
         source: 'floating-chat'
@@ -248,8 +247,13 @@ const FloatingAIChat = () => {
                           {message.suggestions.map((suggestion, idx) => (
                             <button
                               key={idx}
-                              onClick={() => setInput(suggestion)}
-                              className="px-2 py-1 text-xs border border-border rounded hover:bg-accent transition-colors bg-background"
+                              onClick={() => {
+                                setInput(suggestion);
+                                // Auto-send suggestion when clicked
+                                setTimeout(() => handleSend(), 100);
+                              }}
+                              disabled={isActuallyProcessing}
+                              className="px-2 py-1 text-xs border border-border rounded hover:bg-accent transition-colors bg-background disabled:opacity-50"
                             >
                               {suggestion}
                             </button>
@@ -259,7 +263,7 @@ const FloatingAIChat = () => {
                     </div>
                   </div>
                 ))}
-                {isProcessing && (
+                {isActuallyProcessing && (
                   <div className="flex justify-start">
                     <div className="bg-muted rounded-lg p-3">
                       <div className="flex gap-1">
@@ -281,8 +285,12 @@ const FloatingAIChat = () => {
                   {predefinedQuestions.map((question, idx) => (
                     <button
                       key={idx}
-                      onClick={() => setInput(question)}
-                      disabled={isProcessing}
+                      onClick={() => {
+                        setInput(question);
+                        // Auto-send predefined questions
+                        setTimeout(() => handleSend(), 100);
+                      }}
+                      disabled={isActuallyProcessing}
                       className="px-3 py-1.5 text-xs border border-border rounded-lg hover:bg-accent transition-colors bg-background disabled:opacity-50"
                     >
                       {question}
@@ -306,13 +314,13 @@ const FloatingAIChat = () => {
                   }}
                   placeholder="Ask me anything..."
                   className="min-h-[60px] resize-none"
-                  disabled={isProcessing}
+                  disabled={isActuallyProcessing}
                 />
                 <Button
                   onClick={handleSend}
                   size="icon"
                   className="gradient-sharpei hover:opacity-90 transition-opacity"
-                  disabled={!input.trim() || isProcessing}
+                  disabled={!input.trim() || isActuallyProcessing}
                 >
                   <Send className="w-4 h-4" />
                 </Button>

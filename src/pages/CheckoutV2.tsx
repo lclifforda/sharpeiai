@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Checkbox } from "@/components/ui/checkbox";
 import { CheckCircle2, RotateCcw, ArrowUpCircle, Plus, Minus } from "lucide-react";
 import robotImage from "@/assets/humanoid-robot.png";
+import sharpeiLogo from "@/assets/sharpei-logo.png";
 
 const CheckoutV2 = () => {
   const navigate = useNavigate();
@@ -300,11 +301,11 @@ const CheckoutV2 = () => {
                         <div className="flex items-center justify-center gap-2 pt-2">
                           <span className="text-xs text-muted-foreground">Powered by</span>
                           <img 
-                            src="/bbva-logo.png" 
-                            alt="BBVA" 
-                            className="h-4"
+                            src={sharpeiLogo} 
+                            alt="Sharpei AI" 
+                            className="h-4 w-4 object-contain"
                           />
-                          <span className="text-xs text-muted-foreground">Commercial Leasing</span>
+                          <span className="text-xs text-muted-foreground font-medium">Sharpei AI</span>
                         </div>
                       </TabsContent>
                     </Tabs>

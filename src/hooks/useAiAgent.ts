@@ -30,13 +30,26 @@ export const useAiAgent = (sessionId: string): UseAiAgentReturn => {
       setConnectionStatus('connected');
     } catch (error) {
       console.error('Failed to initialize AI agent connection:', error);
-      setIsConnected(false);
-      setConnectionStatus('error');
+      // In demo mode, still allow connections even if initialization fails
+      if (import.meta.env.VITE_DEMO_MODE === 'true') {
+        setIsConnected(true);
+        setConnectionStatus('connected');
+      } else {
+        setIsConnected(false);
+        setConnectionStatus('error');
+      }
     }
   };
 
   const sendMessage = useCallback(async (message: string, context?: any) => {
-    if (!isConnected || isLoading) return;
+    if (isLoading) return;
+
+    // In demo mode, allow sending messages even if not "connected" yet
+    // The API will handle demo mode responses
+    if (!isConnected && import.meta.env.VITE_DEMO_MODE !== 'true') {
+      console.warn('AI agent not connected yet');
+      return;
+    }
 
     setIsLoading(true);
     try {

@@ -1,5 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
+import Anthropic from '@anthropic-ai/sdk';
 import type { AgentResponse, AgentInitResponse } from './types';
+import { getPredefinedPortalResponse } from './portalAI';
 
 class AgentAPI {
   private api: AxiosInstance;
@@ -66,6 +68,21 @@ class AgentAPI {
     console.log('📨 sendMessage called - sessionId:', sessionId, 'message:', message);
     console.log('🎮 DEMO_MODE:', import.meta.env.VITE_DEMO_MODE);
     console.log('🎯 Context:', context);
+    
+    // Check for portal-specific responses first
+    const portalResponse = getPredefinedPortalResponse(message);
+    if (portalResponse) {
+      console.log('🏢 Using portal-specific response');
+      return {
+        message: portalResponse,
+        type: 'text',
+        suggestions: [
+          'Ask another question',
+          'View inventory',
+          'Check payments'
+        ]
+      };
+    }
     
     // Return mock response in demo mode (now supports async Claude calls)
     if (import.meta.env.VITE_DEMO_MODE === 'true') {
@@ -145,7 +162,9 @@ class AgentAPI {
                       lowerMessage.includes('difference') ||
                       lowerMessage.includes('compare') ||
                       lowerMessage.includes('tell me') ||
-                      lowerMessage.includes('can you');
+                      lowerMessage.includes('can you') ||
+                      lowerMessage.includes('help') ||
+                      lowerMessage.includes('understand');
     
     console.log('❓ isQuestion:', isQuestion);
     console.log('🔑 Has Claude API key:', !!import.meta.env.VITE_CLAUDE_API_KEY);
@@ -165,9 +184,10 @@ class AgentAPI {
       console.log('⏭️ Skipping Claude - isQuestion:', isQuestion, 'hasKey:', !!import.meta.env.VITE_CLAUDE_API_KEY);
     }
     
-    if (lowerMessage.includes('income') || lowerMessage.includes('salary')) {
+    // Income/Salary queries
+    if (lowerMessage.includes('income') || lowerMessage.includes('salary') || lowerMessage.includes('revenue')) {
       return {
-        message: "Great! Based on your income information, I can see you're well-qualified for our premium banking products. This will positively impact your qualification score.",
+        message: "Great! Based on your income information, I can see you're well-qualified for our premium financing products. Higher income typically qualifies you for better rates and terms. This will positively impact your qualification score.",
         type: 'qualification_update',
         qualification: {
           score: 80,
@@ -178,31 +198,90 @@ class AgentAPI {
             existingRelationship: 65
           },
           recommendations: ['Your income qualification is excellent!']
-        }
-      };
-    }
-    
-    if (lowerMessage.includes('credit') || lowerMessage.includes('score')) {
-      return {
-        message: "I'll help you understand how your credit score affects your qualification. Most of our products require a minimum score of 650, with better rates available for scores above 750.",
-        type: 'text',
+        },
         suggestions: [
-          'What is your approximate credit score?',
-          'Do you have any recent credit inquiries?',
-          'Are you interested in credit monitoring services?'
+          'How does income affect my rate?',
+          'What documents do I need?',
+          'Continue with application'
         ]
       };
     }
     
-    if (lowerMessage.includes('loan') || lowerMessage.includes('mortgage')) {
+    // Credit score queries
+    if (lowerMessage.includes('credit') || lowerMessage.includes('score')) {
       return {
-        message: "I can help you explore loan options! Based on your profile, you may qualify for competitive rates. What type of loan are you most interested in?",
+        message: "I'll help you understand how your credit score affects your qualification. Most of our financing products require a minimum score of 650, with better rates available for scores above 750. Your credit score is one of the key factors we consider when determining your APR.",
+        type: 'text',
+        suggestions: [
+          'What is your approximate credit score?',
+          'How can I improve my rate?',
+          'What if my credit score is low?'
+        ]
+      };
+    }
+    
+    // Loan/Financing queries
+    if (lowerMessage.includes('loan') || lowerMessage.includes('financ') || lowerMessage.includes('equipment')) {
+      return {
+        message: "I can help you explore equipment financing options! Based on your profile, you may qualify for competitive rates. We offer both leasing and financing options. What type of equipment are you looking to finance?",
         type: 'suggestion',
         suggestions: [
-          'Personal loan',
-          'Home mortgage',
-          'Auto loan',
-          'Business loan'
+          'Tell me about leasing',
+          'Tell me about financing',
+          'What documents do I need?',
+          'How does the process work?'
+        ]
+      };
+    }
+    
+    // APR/Rate queries
+    if (lowerMessage.includes('apr') || lowerMessage.includes('rate') || lowerMessage.includes('interest')) {
+      return {
+        message: "APR (Annual Percentage Rate) is the yearly cost of borrowing money, expressed as a percentage. It includes both the interest rate and any fees. Our rates typically range from 6.99% to 16.99%, depending on your credit score, income, and other factors. Would you like to know what rate you might qualify for?",
+        type: 'text',
+        suggestions: [
+          'How is my rate calculated?',
+          'How can I get a better rate?',
+          'What affects my rate?'
+        ]
+      };
+    }
+    
+    // Payment queries
+    if (lowerMessage.includes('payment') || lowerMessage.includes('monthly') || lowerMessage.includes('pay')) {
+      return {
+        message: "Monthly payments depend on several factors: the equipment price, your APR, the term length, and any down payment. Generally, longer terms mean lower monthly payments but higher total cost. Shorter terms mean higher monthly payments but you pay less overall. Would you like to see payment estimates?",
+        type: 'text',
+        suggestions: [
+          'Can I lower my payment?',
+          'What about down payment?',
+          'How do I calculate payments?'
+        ]
+      };
+    }
+    
+    // Documents queries
+    if (lowerMessage.includes('document') || lowerMessage.includes('paperwork') || lowerMessage.includes('need')) {
+      return {
+        message: "The documents you need depend on whether you're applying as an individual or business. For businesses, we typically need: business tax returns, bank statements, financial statements, and business registration. For individuals, we need: personal tax returns, pay stubs, and bank statements. I can guide you through the specific requirements.",
+        type: 'text',
+        suggestions: [
+          'What documents for business?',
+          'What documents for individual?',
+          'Can I submit later?'
+        ]
+      };
+    }
+    
+    // Terms queries
+    if (lowerMessage.includes('term') || lowerMessage.includes('length') || lowerMessage.includes('duration')) {
+      return {
+        message: "We offer flexible terms typically ranging from 12 to 60 months. The term length affects both your monthly payment and total cost. Shorter terms mean higher monthly payments but less interest overall. Longer terms mean lower monthly payments but more interest. What term length are you considering?",
+        type: 'text',
+        suggestions: [
+          'What term is best for me?',
+          'Can I change the term?',
+          'How does term affect payment?'
         ]
       };
     }
@@ -215,12 +294,25 @@ class AgentAPI {
     if (hasLease && hasFinancing) {
       console.log('✅ Returning lease vs financing response');
       return {
-        message: "Great question! Here's the key difference:\n\n**Leasing:** Lower monthly payments, but you don't own the equipment. At the end of the term, you can return it, purchase it for 10-20% of the original price, or upgrade to new equipment.\n\n**Financing:** Higher monthly payments, but you own the equipment from day one and build equity with each payment. No residual payment at the end.\n\nWhich option sounds more aligned with your needs?",
+        message: "Great question! Here's the key difference:\n\n**Leasing:** Lower monthly payments (typically 20-30% lower), but you don't own the equipment during the term. At the end, you can return it, purchase it for 10-20% of the original price, or upgrade to new equipment. Best for equipment that becomes obsolete quickly.\n\n**Financing:** Higher monthly payments, but you own the equipment from day one and build equity with each payment. No residual payment at the end. Best for long-term equipment needs.\n\nWhich option sounds more aligned with your needs?",
         type: 'text',
         suggestions: [
           'Leasing sounds good',
           'I prefer financing',
-          'Tell me more about rates'
+          'Tell me more about tax benefits'
+        ]
+      };
+    }
+    
+    // Process/How it works queries
+    if (lowerMessage.includes('process') || lowerMessage.includes('work') || lowerMessage.includes('step')) {
+      return {
+        message: "The financing process is straightforward:\n\n1. **Application**: Fill out our simple application with basic information\n2. **Qualification**: We review your credit, income, and business details\n3. **Offers**: You'll receive personalized financing offers\n4. **Selection**: Choose the offer that works best for you\n5. **Approval**: Complete final documentation\n6. **Funding**: Get your equipment!\n\nThe entire process typically takes 1-3 business days. Would you like to start an application?",
+        type: 'text',
+        suggestions: [
+          'Start application',
+          'How long does it take?',
+          'What information do I need?'
         ]
       };
     }
@@ -228,13 +320,13 @@ class AgentAPI {
     // Default response
     console.log('🔄 Returning default response');
     return {
-      message: "Thank you for that information. I'm analyzing your profile to provide the best recommendations. Could you tell me more about your banking needs?",
+      message: "I'm here to help you with equipment financing! I can answer questions about:\n\n• Leasing vs Financing options\n• APR and interest rates\n• Payment terms and calculations\n• Required documents\n• The application process\n• Qualification requirements\n\nWhat would you like to know more about?",
       type: 'text',
       suggestions: [
-        'I need a checking account',
-        'I\'m interested in savings options',
-        'I want to apply for a loan',
-        'I need investment advice'
+        'How does financing work?',
+        'What\'s the difference between lease and finance?',
+        'What documents do I need?',
+        'How is my rate calculated?'
       ]
     };
   }
@@ -359,38 +451,27 @@ Now answer the user's question:
 `;
     
     try {
-      // Use custom base URL if provided, otherwise use public Anthropic API
-      const baseUrl = import.meta.env.VITE_ANTHROPIC_BASE_URL || 'https://api.anthropic.com';
-      const apiUrl = `${baseUrl}/v1/messages`;
+      // Use Anthropic SDK for better reliability
+      const anthropic = new Anthropic({
+        apiKey: apiKey,
+        baseURL: import.meta.env.VITE_ANTHROPIC_BASE_URL || undefined,
+      });
       
       const claudeModel = import.meta.env.VITE_CLAUDE_MODEL || 'claude-3-haiku-20240307';
       
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01'
-        },
-        body: JSON.stringify({
-          model: claudeModel,
-          max_tokens: 500,
-          temperature: 0.7,
-          messages: [
-            {
-              role: 'user',
-              content: `${contextText}\n\nUser question: ${question}`
-            }
-          ]
-        })
+      const message = await anthropic.messages.create({
+        model: claudeModel,
+        max_tokens: 500,
+        temperature: 0.7,
+        messages: [
+          {
+            role: 'user',
+            content: `${contextText}\n\nUser question: ${question}`
+          }
+        ]
       });
       
-      if (!response.ok) {
-        throw new Error(`Claude API error: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      const answer = data.content[0].text;
+      const answer = message.content[0].type === 'text' ? message.content[0].text : 'I apologize, but I encountered an error processing your question.';
       
       // Generate smart suggestions based on the question and context
       let suggestions: string[] = [];
