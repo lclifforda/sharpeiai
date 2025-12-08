@@ -442,7 +442,7 @@ const CheckoutV3 = () => {
                     <span className="font-bold text-foreground">${(setupFee + calculateMonthly()).toLocaleString()}</span>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Includes ${setupFee} setup fee + ${calculateMonthly().toLocaleString()} first month
+                    Includes ${setupFee} setup fee + ${calculateMonthly().toLocaleString()} first month. Then ${calculateMonthly().toLocaleString()}/mo going forward.
                   </p>
                   
                   <Button className="w-full h-14 text-lg" size="lg" onClick={handleApplyNow}>
