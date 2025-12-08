@@ -263,14 +263,22 @@ const Checkout = () => {
                               </DialogHeader>
                               
                               {/* Payment Summary Box */}
-                              <div className="bg-muted rounded-lg p-4 space-y-2 mt-4">
+                              <div className="bg-muted rounded-lg p-4 space-y-3 mt-4">
                                 <div className="flex justify-between items-center">
-                                  <span className="text-muted-foreground">Down Payment</span>
+                                  <div>
+                                    <span className="text-foreground font-medium">Today's Payment</span>
+                                    <p className="text-xs text-muted-foreground">One-time upfront payment</p>
+                                  </div>
                                   <span className="font-semibold text-foreground">${downPayment}</span>
                                 </div>
-                                <div className="flex justify-between items-center">
-                                  <span className="text-muted-foreground">Monthly Payment</span>
-                                  <span className="font-semibold text-foreground">${calculateTotal()}/mo</span>
+                                <div className="border-t border-border pt-3">
+                                  <div className="flex justify-between items-center">
+                                    <div>
+                                      <span className="text-foreground font-medium">Monthly Payment</span>
+                                      <p className="text-xs text-muted-foreground">Fixed for {term} months</p>
+                                    </div>
+                                    <span className="font-semibold text-foreground">${calculateTotal()}/mo</span>
+                                  </div>
                                 </div>
                               </div>
 
@@ -281,9 +289,9 @@ const Checkout = () => {
                                     1
                                   </div>
                                   <div>
-                                    <p className="font-semibold text-foreground">Start Your Lease</p>
+                                    <p className="font-semibold text-foreground">Pay Down Payment</p>
                                     <p className="text-sm text-muted-foreground">
-                                      Pay ${downPayment} today (includes down payment + first month) to start using the equipment immediately.
+                                      Pay ${downPayment} today to secure your equipment. This reduces your financed amount and lowers your monthly payments. Equipment ships immediately after approval.
                                     </p>
                                   </div>
                                 </div>
@@ -293,9 +301,9 @@ const Checkout = () => {
                                     2
                                   </div>
                                   <div>
-                                    <p className="font-semibold text-foreground">Make Monthly Payments</p>
+                                    <p className="font-semibold text-foreground">Fixed Monthly Installments</p>
                                     <p className="text-sm text-muted-foreground">
-                                      Pay ${calculateTotal()}/mo for {term} months. Your payments stay the same throughout the lease term with no hidden fees.
+                                      Pay ${calculateTotal()}/mo for {term} months starting 30 days after delivery. Your rate is locked in—no surprises, no hidden fees, no payment increases.
                                     </p>
                                   </div>
                                 </div>
@@ -305,9 +313,9 @@ const Checkout = () => {
                                     3
                                   </div>
                                   <div>
-                                    <p className="font-semibold text-foreground">Choose Your Outcome</p>
+                                    <p className="font-semibold text-foreground">End-of-Lease Options</p>
                                     <p className="text-sm text-muted-foreground">
-                                      At the end of your lease, choose to keep it at a pre-agreed price, return it with no further obligation, or upgrade to newer equipment.
+                                      When your term ends, you decide: purchase the equipment at a pre-agreed price, return it at no extra cost, or upgrade to the latest model with a new lease.
                                     </p>
                                   </div>
                                 </div>
