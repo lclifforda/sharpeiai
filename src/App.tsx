@@ -16,6 +16,7 @@ import Merchants from "./pages/Merchants";
 import MerchantDetail from "./pages/MerchantDetail";
 import Checkout from "./pages/Checkout";
 import CheckoutV2 from "./pages/CheckoutV2";
+import CheckoutV3 from "./pages/CheckoutV3";
 import ApplicationForm from "./pages/ApplicationForm";
 import NotFound from "./pages/NotFound";
 
@@ -40,6 +41,7 @@ const App = () => (
           <Route element={<PageLayout><MerchantDetail /></PageLayout>} path="/merchants/:id" />
           <Route element={<PageLayout><Checkout /></PageLayout>} path="/checkout" />
           <Route element={<PageLayout><CheckoutV2 /></PageLayout>} path="/checkout-v2" />
+          <Route element={<PageLayout><CheckoutV3 /></PageLayout>} path="/checkout-v3" />
           <Route element={<PageLayout><ApplicationForm /></PageLayout>} path="/application" />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
