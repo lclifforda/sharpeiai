@@ -57,9 +57,9 @@ const Checkout = () => {
   };
 
   const paymentOptions = [
-    { term: "12 months", monthly: "$2,450", apr: "3.5%", total: "$29,400" },
-    { term: "24 months", monthly: "$1,275", apr: "3.9%", total: "$30,600" },
-    { term: "36 months", monthly: "$875", apr: "4.2%", total: "$31,500" },
+    { term: "12 months", monthly: "$1,200", apr: "3.5%", total: "$14,400" },
+    { term: "24 months", monthly: "$800", apr: "3.9%", total: "$19,200" },
+    { term: "36 months", monthly: "$650", apr: "4.2%", total: "$23,400" },
   ];
 
   return (
@@ -267,15 +267,15 @@ const Checkout = () => {
                                 <div className="flex justify-between items-center">
                                   <div>
                                     <span className="text-foreground font-medium">Today's Payment</span>
-                                    <p className="text-xs text-muted-foreground">One-time upfront payment</p>
+                                    <p className="text-xs text-muted-foreground">Down payment + first month</p>
                                   </div>
-                                  <span className="font-semibold text-foreground">${downPayment}</span>
+                                  <span className="font-semibold text-foreground">${downPayment + calculateTotal()}</span>
                                 </div>
                                 <div className="border-t border-border pt-3">
                                   <div className="flex justify-between items-center">
                                     <div>
-                                      <span className="text-foreground font-medium">Monthly Payment</span>
-                                      <p className="text-xs text-muted-foreground">Fixed for {term} months</p>
+                                      <span className="text-foreground font-medium">Then Monthly</span>
+                                      <p className="text-xs text-muted-foreground">Fixed for remaining {parseInt(term) - 1} months</p>
                                     </div>
                                     <span className="font-semibold text-foreground">${calculateTotal()}/mo</span>
                                   </div>
@@ -289,9 +289,9 @@ const Checkout = () => {
                                     1
                                   </div>
                                   <div>
-                                    <p className="font-semibold text-foreground">Pay Down Payment</p>
+                                    <p className="font-semibold text-foreground">Start Leasing</p>
                                     <p className="text-sm text-muted-foreground">
-                                      Pay ${downPayment} today to secure your equipment. This reduces your financed amount and lowers your monthly payments. Equipment ships immediately after approval.
+                                      Pay ${downPayment + calculateTotal()} today (${downPayment} down payment + ${calculateTotal()} first month). Equipment ships immediately after approval.
                                     </p>
                                   </div>
                                 </div>
@@ -301,9 +301,9 @@ const Checkout = () => {
                                     2
                                   </div>
                                   <div>
-                                    <p className="font-semibold text-foreground">Fixed Monthly Installments</p>
+                                    <p className="font-semibold text-foreground">Fixed Monthly Payments</p>
                                     <p className="text-sm text-muted-foreground">
-                                      Pay ${calculateTotal()}/mo for {term} months starting 30 days after delivery. Your rate is locked in—no surprises, no hidden fees, no payment increases.
+                                      Pay ${calculateTotal()}/mo for the remaining {parseInt(term) - 1} months. Your rate is locked—no surprises or hidden fees.
                                     </p>
                                   </div>
                                 </div>
@@ -315,7 +315,7 @@ const Checkout = () => {
                                   <div>
                                     <p className="font-semibold text-foreground">End-of-Lease Options</p>
                                     <p className="text-sm text-muted-foreground">
-                                      When your term ends, you decide: purchase the equipment at a pre-agreed price, return it at no extra cost, or upgrade to the latest model with a new lease.
+                                      When your term ends: keep it at a pre-agreed price, return it at no extra cost, or upgrade to the latest model.
                                     </p>
                                   </div>
                                 </div>
