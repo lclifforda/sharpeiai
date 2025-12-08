@@ -24,7 +24,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Plus, Minus, Info, Check, Circle } from "lucide-react";
+import { Plus, Minus, Info, Check, ArrowLeft, ShoppingCart, ChevronUp, ChevronDown } from "lucide-react";
 import robotImage from "@/assets/humanoid-robot.png";
 import robotAngle1 from "@/assets/robot-angle-1.png";
 import robotAngle2 from "@/assets/robot-angle-2.png";
@@ -38,6 +38,7 @@ const CheckoutV3 = () => {
   const [insurance, setInsurance] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedPlan, setSelectedPlan] = useState("standard");
+  const [showCart, setShowCart] = useState(false);
 
   const productImages = [robotImage, robotAngle1, robotAngle2];
 
@@ -73,6 +74,139 @@ const CheckoutV3 = () => {
       },
     });
   };
+
+  // Cart View
+  if (showCart) {
+    return (
+      <div className="min-h-screen bg-background">
+        {/* Header */}
+        <header className="border-b border-border bg-card">
+          <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <img src={bbvaLogo} alt="BBVA" className="h-8" />
+            <span className="text-sm text-muted-foreground">Secure Checkout</span>
+          </div>
+        </header>
+
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Cart Items */}
+            <div className="lg:col-span-2">
+              <div className="flex items-center justify-between mb-8">
+                <h1 className="text-3xl font-serif italic text-foreground">Your cart</h1>
+                <button 
+                  onClick={() => setShowCart(false)}
+                  className="text-sm text-foreground underline underline-offset-2 hover:text-primary"
+                >
+                  Continue shopping
+                </button>
+              </div>
+
+              {/* Table Header */}
+              <div className="grid grid-cols-12 gap-4 pb-4 border-b border-border text-xs uppercase tracking-wider text-muted-foreground">
+                <div className="col-span-6">Product</div>
+                <div className="col-span-3 text-center">Quantity</div>
+                <div className="col-span-3 text-right">Total</div>
+              </div>
+
+              {/* Cart Item */}
+              <div className="grid grid-cols-12 gap-4 py-6 border-b border-border items-center">
+                <div className="col-span-6 flex gap-4">
+                  <div className="w-20 h-20 bg-muted rounded-lg overflow-hidden flex-shrink-0">
+                    <img src={robotImage} alt="Product" className="w-full h-full object-contain p-2" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-medium text-foreground">Subscription Humanoid Robot F-02</h3>
+                    <p className="text-sm text-muted-foreground">${plans[selectedPlan as keyof typeof plans].monthly}/mo</p>
+                    <p className="text-xs text-muted-foreground">Plan: {plans[selectedPlan as keyof typeof plans].name}</p>
+                    <p className="text-sm text-muted-foreground">Monthly Subscription</p>
+                  </div>
+                </div>
+                <div className="col-span-3 flex justify-center">
+                  <div className="flex items-center border border-border rounded">
+                    <span className="px-4 py-2 text-center min-w-[50px]">{quantity}</span>
+                    <div className="flex flex-col border-l border-border">
+                      <button 
+                        onClick={() => setQuantity(quantity + 1)}
+                        className="px-2 py-1 hover:bg-muted transition-colors"
+                      >
+                        <ChevronUp className="h-3 w-3" />
+                      </button>
+                      <button 
+                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                        className="px-2 py-1 hover:bg-muted transition-colors border-t border-border"
+                      >
+                        <ChevronDown className="h-3 w-3" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-span-3 text-right">
+                  <p className="font-medium text-foreground">${calculateMonthly().toLocaleString()}</p>
+                  <p className="text-sm text-muted-foreground line-through">${originalPrice.toLocaleString()}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Order Summary */}
+            <div className="lg:col-span-1">
+              <div className="bg-muted/30 rounded-xl p-6 space-y-6 sticky top-8">
+                {/* Today's Payment */}
+                <div>
+                  <div className="flex justify-between items-baseline mb-1">
+                    <span className="font-medium text-foreground">Due today:</span>
+                    <span className="text-xl font-bold text-foreground">${(setupFee + calculateMonthly()).toLocaleString()}</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Includes ${setupFee} setup fee + ${calculateMonthly().toLocaleString()} first month
+                  </p>
+                </div>
+
+                {/* Recurring Payment */}
+                <div className="border-t border-border pt-4">
+                  <div className="flex justify-between items-baseline mb-1">
+                    <span className="font-medium text-foreground">Then monthly:</span>
+                    <span className="text-lg font-semibold text-foreground">${calculateMonthly().toLocaleString()}/mo</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Billed automatically each month. Cancel anytime.
+                  </p>
+                </div>
+
+                <p className="text-xs text-muted-foreground">
+                  Taxes, discounts and shipping calculated at checkout.
+                </p>
+
+                {/* Checkout Button */}
+                <Button className="w-full h-12" size="lg" onClick={handleApplyNow}>
+                  <span>CHECKOUT</span>
+                </Button>
+
+                {/* Payment Options */}
+                <div className="flex gap-2">
+                  <Button variant="secondary" className="flex-1 h-10 bg-[#5a31f4] hover:bg-[#4926c7] text-white text-xs font-bold">
+                    shop
+                  </Button>
+                  <Button variant="outline" className="flex-1 h-10 text-xs font-bold">
+                    PayPal
+                  </Button>
+                  <Button variant="outline" className="flex-1 h-10 text-xs font-bold">
+                    G Pay
+                  </Button>
+                </div>
+
+                {/* Subscription Terms */}
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  One or more of the items in your cart is a recurring or deferred purchase. By continuing, I agree to the{" "}
+                  <button className="underline underline-offset-2 hover:text-foreground">cancellation policy</button>{" "}
+                  and authorize you to charge my payment method at the prices, frequency and dates listed on this page until my order is fulfilled or I cancel, if permitted.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -500,10 +634,10 @@ const CheckoutV3 = () => {
                   </p>
                   
                   <div className="flex gap-3">
-                    <Button variant="outline" className="flex-1 h-14 text-lg" size="lg">
+                    <Button variant="outline" className="flex-1 h-14 text-lg" size="lg" onClick={() => setShowCart(true)}>
                       Add to Cart
                     </Button>
-                    <Button className="flex-1 h-14 text-lg" size="lg" onClick={handleApplyNow}>
+                    <Button className="flex-1 h-14 text-lg" size="lg" onClick={() => setShowCart(true)}>
                       Subscribe Now
                     </Button>
                   </div>
