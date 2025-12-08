@@ -351,30 +351,28 @@ const CheckoutV3 = () => {
                         </Tooltip>
                       </div>
 
-                      {/* Plan Selection Inside Card */}
+                      {/* Plan Selection Dropdown */}
                       <div className="border-t border-border pt-4 mt-4">
-                        <p className="text-sm font-medium text-muted-foreground mb-3">Select Plan</p>
-                        <RadioGroup value={selectedPlan} onValueChange={setSelectedPlan} className="space-y-2">
-                          {Object.entries(plans).map(([key, plan]) => (
-                            <label
-                              key={key}
-                              className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-all ${
-                                selectedPlan === key 
-                                  ? "border-primary bg-primary/5" 
-                                  : "border-border hover:border-muted-foreground"
-                              }`}
-                            >
-                              <div className="flex items-center gap-3">
-                                <RadioGroupItem value={key} id={key} />
-                                <div>
-                                  <span className="font-medium text-foreground">{plan.name}</span>
-                                  <p className="text-xs text-muted-foreground">{plan.features.slice(0, 2).join(" • ")}</p>
+                        <p className="text-sm font-medium text-muted-foreground mb-2">Select Plan</p>
+                        <Select value={selectedPlan} onValueChange={setSelectedPlan}>
+                          <SelectTrigger className="w-full h-12 bg-background">
+                            <SelectValue>
+                              <span className="font-medium">
+                                {plans[selectedPlan as keyof typeof plans].name} - ${plans[selectedPlan as keyof typeof plans].monthly}/mo
+                              </span>
+                            </SelectValue>
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.entries(plans).map(([key, plan]) => (
+                              <SelectItem key={key} value={key} className="py-3">
+                                <div className="flex flex-col">
+                                  <span className="font-medium">{plan.name} - ${plan.monthly}/mo</span>
+                                  <span className="text-xs text-muted-foreground">{plan.features.join(" • ")}</span>
                                 </div>
-                              </div>
-                              <span className="font-semibold text-foreground">${plan.monthly}/mo</span>
-                            </label>
-                          ))}
-                        </RadioGroup>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                   </div>
