@@ -499,9 +499,14 @@ const CheckoutV3 = () => {
                     Includes ${setupFee} setup fee + ${calculateMonthly().toLocaleString()} first month. Then ${calculateMonthly().toLocaleString()}/mo going forward.
                   </p>
                   
-                  <Button className="w-full h-14 text-lg" size="lg" onClick={handleApplyNow}>
-                    Subscribe Now
-                  </Button>
+                  <div className="flex gap-3">
+                    <Button variant="outline" className="flex-1 h-14 text-lg" size="lg">
+                      Add to Cart
+                    </Button>
+                    <Button className="flex-1 h-14 text-lg" size="lg" onClick={handleApplyNow}>
+                      Subscribe Now
+                    </Button>
+                  </div>
 
                   <p className="text-xs text-center text-muted-foreground">
                     Subject to credit approval. Equipment remains property of lessor during subscription.
