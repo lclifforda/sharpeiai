@@ -251,37 +251,86 @@ const Checkout = () => {
                           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                             <DialogTrigger asChild>
                               <Button variant="link" className="p-0 h-auto text-xs text-primary">
-                                Learn More →
+                                How does this work? →
                               </Button>
                             </DialogTrigger>
                             <DialogContent className="max-w-md">
                               <DialogHeader>
-                                <DialogTitle>Choose Your Payment Term</DialogTitle>
+                                <DialogTitle>How Leasing Works</DialogTitle>
                                 <DialogDescription>
-                                  Select the monthly payment plan that works best for your business
+                                  Simple, flexible equipment access for your business
                                 </DialogDescription>
                               </DialogHeader>
-                              <div className="space-y-3 mt-4">
-                                {paymentOptions.map((option, index) => (
-                                  <Card key={index} className="hover:border-primary cursor-pointer transition-colors">
-                                    <CardContent className="p-4">
-                                      <div className="flex justify-between items-start">
-                                        <div>
-                                          <p className="font-semibold text-foreground">{option.term}</p>
-                                          <p className="text-2xl font-bold text-primary mt-1">{option.monthly}<span className="text-sm font-normal text-muted-foreground">/mo</span></p>
-                                          <p className="text-xs text-muted-foreground mt-1">{option.apr} APR</p>
-                                        </div>
-                                        <div className="text-right">
-                                          <p className="text-xs text-muted-foreground">Total</p>
-                                          <p className="text-sm font-semibold text-foreground">{option.total}</p>
-                                        </div>
-                                      </div>
-                                    </CardContent>
-                                  </Card>
-                                ))}
+                              
+                              {/* Payment Summary Box */}
+                              <div className="bg-muted rounded-lg p-4 space-y-2 mt-4">
+                                <div className="flex justify-between items-center">
+                                  <span className="text-muted-foreground">Down Payment</span>
+                                  <span className="font-semibold text-foreground">${downPayment}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                  <span className="text-muted-foreground">Monthly Payment</span>
+                                  <span className="font-semibold text-foreground">${calculateTotal()}/mo</span>
+                                </div>
                               </div>
+
+                              {/* Step-by-step Explanation */}
+                              <div className="space-y-4 mt-4">
+                                <div className="flex gap-4">
+                                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold">
+                                    1
+                                  </div>
+                                  <div>
+                                    <p className="font-semibold text-foreground">Start Your Lease</p>
+                                    <p className="text-sm text-muted-foreground">
+                                      Pay ${downPayment} today (includes down payment + first month) to start using the equipment immediately.
+                                    </p>
+                                  </div>
+                                </div>
+
+                                <div className="flex gap-4">
+                                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold">
+                                    2
+                                  </div>
+                                  <div>
+                                    <p className="font-semibold text-foreground">Make Monthly Payments</p>
+                                    <p className="text-sm text-muted-foreground">
+                                      Pay ${calculateTotal()}/mo for {term} months. Your payments stay the same throughout the lease term with no hidden fees.
+                                    </p>
+                                  </div>
+                                </div>
+
+                                <div className="flex gap-4">
+                                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold">
+                                    3
+                                  </div>
+                                  <div>
+                                    <p className="font-semibold text-foreground">Choose Your Outcome</p>
+                                    <p className="text-sm text-muted-foreground">
+                                      At the end of your lease, choose to keep it at a pre-agreed price, return it with no further obligation, or upgrade to newer equipment.
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Payment Options */}
+                              <div className="border-t border-border pt-4 mt-4">
+                                <p className="text-sm font-semibold text-foreground mb-3">Available Terms</p>
+                                <div className="space-y-2">
+                                  {paymentOptions.map((option, index) => (
+                                    <div key={index} className="flex justify-between items-center py-2 px-3 rounded-md hover:bg-muted transition-colors">
+                                      <span className="text-sm text-foreground">{option.term}</span>
+                                      <div className="text-right">
+                                        <span className="text-sm font-semibold text-primary">{option.monthly}/mo</span>
+                                        <span className="text-xs text-muted-foreground ml-2">({option.apr} APR)</span>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+
                               <p className="text-xs text-muted-foreground mt-4">
-                                *Actual terms may vary based on credit approval and available rates at the time of application. Not all applicants will qualify.
+                                *Actual terms may vary based on credit approval. Not all applicants will qualify.
                               </p>
                             </DialogContent>
                           </Dialog>
