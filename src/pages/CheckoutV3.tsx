@@ -186,7 +186,9 @@ const CheckoutV3 = () => {
                 {/* Subscription Option Card */}
                 <div className="border-2 border-primary rounded-xl p-5 bg-card">
                   <div className="flex items-start gap-4">
-                    <RadioGroupItem value="monthly" id="monthly" className="mt-1" checked />
+                    <div className="w-4 h-4 mt-1 rounded-full border-2 border-primary bg-primary flex items-center justify-center">
+                      <div className="w-2 h-2 rounded-full bg-primary-foreground" />
+                    </div>
                     <div className="flex-1 space-y-4">
                       <div className="flex flex-wrap items-baseline justify-between gap-2">
                         <Label htmlFor="monthly" className="text-lg font-semibold text-foreground cursor-pointer">
