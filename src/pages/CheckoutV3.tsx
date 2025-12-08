@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
@@ -19,7 +19,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus, Minus, Info, Check, X } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Plus, Minus, Info, Check, Circle } from "lucide-react";
 import robotImage from "@/assets/humanoid-robot.png";
 import robotAngle1 from "@/assets/robot-angle-1.png";
 import robotAngle2 from "@/assets/robot-angle-2.png";
@@ -27,47 +32,47 @@ import bbvaLogo from "@/assets/bbva-logo.png";
 
 const CheckoutV3 = () => {
   const navigate = useNavigate();
-  const [setupFee, setSetupFee] = useState(500);
-  const [plan, setPlan] = useState("standard");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [maintenance, setMaintenance] = useState(false);
   const [insurance, setInsurance] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [selectedPlan, setSelectedPlan] = useState("standard");
 
   const productImages = [robotImage, robotAngle1, robotAngle2];
+
+  const plans = {
+    basic: { name: "Basic", monthly: 450, features: ["Standard support", "Basic analytics"] },
+    standard: { name: "Standard", monthly: 600, features: ["Priority support", "Advanced analytics", "API access"] },
+    premium: { name: "Premium", monthly: 850, features: ["24/7 support", "Full analytics suite", "API access", "Custom integrations"] },
+  };
+
+  const setupFee = 500;
+  const maintenanceCost = 100;
+  const insuranceCost = 100;
+  const originalPrice = 24000;
+
+  const calculateMonthly = () => {
+    let total = plans[selectedPlan as keyof typeof plans].monthly * quantity;
+    if (maintenance) total += maintenanceCost;
+    if (insurance) total += insuranceCost;
+    return total;
+  };
 
   const handleApplyNow = () => {
     navigate("/application", {
       state: {
         product: "Humanoid Robot F-02",
         quantity,
-        plan,
+        plan: selectedPlan,
         setupFee,
-        monthlyPayment: calculateTotal(),
+        monthlyPayment: calculateMonthly(),
         maintenance,
         insurance,
         paymentType: "subscription",
       },
     });
   };
-
-  const productPrice = 600;
-  const maintenanceCost = 100;
-  const insuranceCost = 100;
-
-  const calculateTotal = () => {
-    let total = productPrice * quantity;
-    if (maintenance) total += maintenanceCost;
-    if (insurance) total += insuranceCost;
-    return total;
-  };
-
-  const subscriptionPlans = [
-    { plan: "Basic", monthly: "$450", features: ["Standard support", "Basic analytics"] },
-    { plan: "Standard", monthly: "$600", features: ["Priority support", "Advanced analytics", "API access"] },
-    { plan: "Premium", monthly: "$850", features: ["24/7 support", "Full analytics suite", "API access", "Custom integrations"] },
-  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -119,8 +124,6 @@ const CheckoutV3 = () => {
               </h1>
               <p className="text-muted-foreground mt-2">
                 Advanced AI-powered humanoid robot for enterprise automation.
-                Perfect for manufacturing, logistics, and customer service
-                applications.
               </p>
             </div>
 
@@ -151,9 +154,7 @@ const CheckoutV3 = () => {
               <TabsContent value="finance" className="space-y-6 mt-6">
                 <div className="bg-card border border-border rounded-xl p-6">
                   <div className="flex justify-between items-center mb-4">
-                    <span className="text-lg text-foreground">
-                      From
-                    </span>
+                    <span className="text-lg text-foreground">From</span>
                     <div className="text-right">
                       <span className="text-3xl font-bold text-foreground">
                         $875
@@ -171,25 +172,215 @@ const CheckoutV3 = () => {
               </TabsContent>
 
               <TabsContent value="subscribe" className="space-y-6 mt-6">
-                {/* Product Summary */}
-                <div className="bg-card border border-border rounded-xl p-6 space-y-4">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="font-semibold text-foreground">
-                        Humanoid Robot F-02
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        Enterprise Subscription
-                      </p>
-                    </div>
-                    <span className="text-xl font-bold text-foreground">
-                      ${productPrice}/mo
-                    </span>
-                  </div>
+                {/* Price Display */}
+                <div className="flex items-baseline gap-3">
+                  <span className="text-4xl font-bold text-primary">
+                    ${calculateMonthly().toLocaleString()}
+                  </span>
+                  <span className="text-lg text-muted-foreground">/month</span>
+                  <span className="text-lg text-muted-foreground line-through ml-2">
+                    ${originalPrice.toLocaleString()}
+                  </span>
+                </div>
 
-                  {/* Quantity */}
-                  <div className="flex items-center justify-between pt-4 border-t border-border">
-                    <span className="text-sm text-foreground">Quantity</span>
+                {/* Subscription Option Card */}
+                <div className="border-2 border-primary rounded-xl p-5 bg-card">
+                  <RadioGroup value="monthly" className="space-y-0">
+                    <div className="flex items-start gap-4">
+                      <RadioGroupItem value="monthly" id="monthly" className="mt-1" />
+                      <div className="flex-1">
+                        <div className="flex flex-wrap items-baseline justify-between gap-2">
+                          <Label htmlFor="monthly" className="text-lg font-semibold text-foreground cursor-pointer">
+                            Monthly Subscription
+                          </Label>
+                          <div className="text-right">
+                            <span className="text-xl font-bold text-foreground">
+                              ${calculateMonthly().toLocaleString()}
+                            </span>
+                            <span className="text-muted-foreground">/every month</span>
+                          </div>
+                        </div>
+                        
+                        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                          <DialogTrigger asChild>
+                            <button className="text-sm text-primary hover:underline mt-1">
+                              + ${setupFee} Setup / Security Fee
+                            </button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-md">
+                            <DialogHeader>
+                              <DialogTitle>How Subscriptions Work</DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-6 pt-4">
+                              {/* Payment Summary */}
+                              <div className="bg-muted rounded-lg p-4 space-y-3">
+                                <div className="flex justify-between items-center">
+                                  <div>
+                                    <span className="text-foreground font-medium">Today's Payment</span>
+                                    <p className="text-xs text-muted-foreground">Setup fee + first month</p>
+                                  </div>
+                                  <span className="font-semibold text-foreground">${(setupFee + calculateMonthly()).toLocaleString()}</span>
+                                </div>
+                                <div className="border-t border-border pt-3">
+                                  <div className="flex justify-between items-center">
+                                    <div>
+                                      <span className="text-foreground font-medium">Then Monthly</span>
+                                      <p className="text-xs text-muted-foreground">Cancel anytime</p>
+                                    </div>
+                                    <span className="font-semibold text-foreground">${calculateMonthly().toLocaleString()}/mo</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Steps */}
+                              <div className="space-y-4">
+                                <div className="flex gap-3">
+                                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
+                                    1
+                                  </div>
+                                  <div>
+                                    <p className="font-semibold text-foreground">Start Your Subscription</p>
+                                    <p className="text-sm text-muted-foreground">
+                                      Pay ${(setupFee + calculateMonthly()).toLocaleString()} today (${setupFee} setup fee + ${calculateMonthly().toLocaleString()} first month). Equipment ships immediately after approval.
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="flex gap-3">
+                                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
+                                    2
+                                  </div>
+                                  <div>
+                                    <p className="font-semibold text-foreground">Monthly Billing</p>
+                                    <p className="text-sm text-muted-foreground">
+                                      Pay ${calculateMonthly().toLocaleString()}/mo billed automatically. Your rate stays the same—no surprises or hidden fees.
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="flex gap-3">
+                                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
+                                    3
+                                  </div>
+                                  <div>
+                                    <p className="font-semibold text-foreground">Cancel Anytime</p>
+                                    <p className="text-sm text-muted-foreground">
+                                      No long-term commitment. Cancel your subscription anytime after the first payment—simply return the equipment.
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Benefits */}
+                              <div className="bg-muted/50 rounded-lg p-4">
+                                <p className="text-sm font-medium text-foreground mb-3">Subscription Benefits</p>
+                                <div className="space-y-2">
+                                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                    <Check className="h-4 w-4 text-green-500" />
+                                    <span>No long-term contracts</span>
+                                  </div>
+                                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                    <Check className="h-4 w-4 text-green-500" />
+                                    <span>Free upgrades to newer models</span>
+                                  </div>
+                                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                    <Check className="h-4 w-4 text-green-500" />
+                                    <span>Includes software updates</span>
+                                  </div>
+                                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                    <Check className="h-4 w-4 text-green-500" />
+                                    <span>Cancel with 30-day notice</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+
+                        <p className="text-sm text-muted-foreground mt-3">
+                          Pay monthly, enjoy the product, and return it when you're done.
+                        </p>
+
+                        <div className="flex items-center gap-2 mt-3">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <button className="text-sm font-medium text-foreground underline underline-offset-2 hover:text-primary transition-colors">
+                                Learn More
+                              </button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-md">
+                              <DialogHeader>
+                                <DialogTitle>About Monthly Subscriptions</DialogTitle>
+                              </DialogHeader>
+                              <div className="space-y-4 pt-4">
+                                <p className="text-muted-foreground">
+                                  Our subscription model gives you flexibility without commitment. Get enterprise-grade robotics without the upfront cost.
+                                </p>
+                                <div className="space-y-3">
+                                  <div className="flex items-start gap-3">
+                                    <Check className="h-5 w-5 text-green-500 mt-0.5" />
+                                    <div>
+                                      <p className="font-medium text-foreground">No Ownership Hassle</p>
+                                      <p className="text-sm text-muted-foreground">We handle maintenance, repairs, and end-of-life disposal.</p>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-start gap-3">
+                                    <Check className="h-5 w-5 text-green-500 mt-0.5" />
+                                    <div>
+                                      <p className="font-medium text-foreground">Always Up-to-Date</p>
+                                      <p className="text-sm text-muted-foreground">Swap for the latest model when upgrades are available.</p>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-start gap-3">
+                                    <Check className="h-5 w-5 text-green-500 mt-0.5" />
+                                    <div>
+                                      <p className="font-medium text-foreground">Flexible Cancellation</p>
+                                      <p className="text-sm text-muted-foreground">Cancel anytime after your first payment with 30-day notice.</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="max-w-xs text-sm">Cancel anytime after first payment. Equipment must be returned in working condition.</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </div>
+                      </div>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                {/* Plan Selection Dropdown */}
+                <div className="border border-border rounded-xl overflow-hidden">
+                  <Select value={selectedPlan} onValueChange={setSelectedPlan}>
+                    <SelectTrigger className="h-14 px-4 border-0 bg-card text-base">
+                      <SelectValue>
+                        <span className="font-medium">
+                          Humanoid Robot F-02 {plans[selectedPlan as keyof typeof plans].name} - ${plans[selectedPlan as keyof typeof plans].monthly}/mo
+                        </span>
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(plans).map(([key, plan]) => (
+                        <SelectItem key={key} value={key} className="py-3">
+                          <div className="flex flex-col">
+                            <span className="font-medium">{plan.name} Plan - ${plan.monthly}/mo</span>
+                            <span className="text-xs text-muted-foreground">{plan.features.join(" • ")}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Quantity & Add-ons */}
+                <div className="space-y-4 border border-border rounded-xl p-5 bg-card">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-foreground">Quantity</span>
                     <div className="flex items-center gap-3">
                       <Button
                         variant="outline"
@@ -199,9 +390,7 @@ const CheckoutV3 = () => {
                       >
                         <Minus className="h-4 w-4" />
                       </Button>
-                      <span className="w-8 text-center font-medium">
-                        {quantity}
-                      </span>
+                      <span className="w-8 text-center font-medium">{quantity}</span>
                       <Button
                         variant="outline"
                         size="icon"
@@ -213,215 +402,57 @@ const CheckoutV3 = () => {
                     </div>
                   </div>
 
-                  {/* Add-ons */}
-                  <div className="space-y-3 pt-4 border-t border-border">
-                    <span className="text-sm font-medium text-foreground">
-                      Add-ons
-                    </span>
+                  <div className="border-t border-border pt-4 space-y-3">
+                    <span className="text-sm font-medium text-muted-foreground">Optional Add-ons</span>
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-3">
                         <Checkbox
                           id="maintenance"
                           checked={maintenance}
-                          onCheckedChange={(checked) =>
-                            setMaintenance(checked as boolean)
-                          }
+                          onCheckedChange={(checked) => setMaintenance(checked as boolean)}
                         />
-                        <Label
-                          htmlFor="maintenance"
-                          className="text-sm cursor-pointer"
-                        >
-                          Maintenance Package
+                        <Label htmlFor="maintenance" className="cursor-pointer">
+                          <span className="font-medium">Maintenance Package</span>
+                          <p className="text-xs text-muted-foreground">Priority repairs & annual servicing</p>
                         </Label>
                       </div>
-                      <span className="text-sm text-muted-foreground">
-                        +${maintenanceCost}/mo
-                      </span>
+                      <span className="text-sm font-medium">+${maintenanceCost}/mo</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-3">
                         <Checkbox
                           id="insurance"
                           checked={insurance}
-                          onCheckedChange={(checked) =>
-                            setInsurance(checked as boolean)
-                          }
+                          onCheckedChange={(checked) => setInsurance(checked as boolean)}
                         />
-                        <Label
-                          htmlFor="insurance"
-                          className="text-sm cursor-pointer"
-                        >
-                          Equipment Insurance
+                        <Label htmlFor="insurance" className="cursor-pointer">
+                          <span className="font-medium">Equipment Insurance</span>
+                          <p className="text-xs text-muted-foreground">Full coverage against damage & theft</p>
                         </Label>
                       </div>
-                      <span className="text-sm text-muted-foreground">
-                        +${insuranceCost}/mo
-                      </span>
+                      <span className="text-sm font-medium">+${insuranceCost}/mo</span>
                     </div>
                   </div>
-
-                  {/* Total */}
-                  <div className="pt-4 border-t border-border">
-                    <div className="flex justify-between items-center">
-                      <span className="font-semibold text-foreground">
-                        Monthly Subscription
-                      </span>
-                      <span className="text-2xl font-bold text-foreground">
-                        ${calculateTotal()}/mo
-                      </span>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      + ${setupFee} one-time setup fee
-                    </p>
-                  </div>
-
-                  {/* Learn More Link */}
-                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <DialogTrigger asChild>
-                      <button className="text-sm text-primary hover:underline flex items-center gap-1">
-                        How does this work? →
-                      </button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-md">
-                      <DialogHeader>
-                        <DialogTitle>How Subscriptions Work</DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-6 pt-4">
-                        {/* Payment Summary */}
-                        <div className="bg-muted rounded-lg p-4 space-y-3">
-                          <div className="flex justify-between items-center">
-                            <div>
-                              <span className="text-foreground font-medium">Today's Payment</span>
-                              <p className="text-xs text-muted-foreground">Setup fee + first month</p>
-                            </div>
-                            <span className="font-semibold text-foreground">${setupFee + calculateTotal()}</span>
-                          </div>
-                          <div className="border-t border-border pt-3">
-                            <div className="flex justify-between items-center">
-                              <div>
-                                <span className="text-foreground font-medium">Then Monthly</span>
-                                <p className="text-xs text-muted-foreground">Cancel anytime</p>
-                              </div>
-                              <span className="font-semibold text-foreground">${calculateTotal()}/mo</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Steps */}
-                        <div className="space-y-4">
-                          <div className="flex gap-3">
-                            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
-                              1
-                            </div>
-                            <div>
-                              <p className="font-semibold text-foreground">Start Your Subscription</p>
-                              <p className="text-sm text-muted-foreground">
-                                Pay ${setupFee + calculateTotal()} today (${setupFee} setup fee + ${calculateTotal()} first month). Equipment ships immediately after approval.
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex gap-3">
-                            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
-                              2
-                            </div>
-                            <div>
-                              <p className="font-semibold text-foreground">Monthly Billing</p>
-                              <p className="text-sm text-muted-foreground">
-                                Pay ${calculateTotal()}/mo billed automatically. Your rate stays the same—no surprises or hidden fees.
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex gap-3">
-                            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
-                              3
-                            </div>
-                            <div>
-                              <p className="font-semibold text-foreground">Cancel Anytime</p>
-                              <p className="text-sm text-muted-foreground">
-                                No long-term commitment. Cancel your subscription anytime after the first payment—simply return the equipment.
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Benefits */}
-                        <div className="bg-muted/50 rounded-lg p-4">
-                          <p className="text-sm font-medium text-foreground mb-3">Subscription Benefits</p>
-                          <div className="space-y-2">
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <Check className="h-4 w-4 text-green-500" />
-                              <span>No long-term contracts</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <Check className="h-4 w-4 text-green-500" />
-                              <span>Free upgrades to newer models</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <Check className="h-4 w-4 text-green-500" />
-                              <span>Includes software updates</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <Check className="h-4 w-4 text-green-500" />
-                              <span>Cancel with 30-day notice</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
                 </div>
 
-                {/* Setup Fee */}
-                <div className="space-y-2">
-                  <Label htmlFor="setupFee">One-Time Setup Fee</Label>
-                  <Input
-                    id="setupFee"
-                    type="number"
-                    value={setupFee}
-                    onChange={(e) => setSetupFee(Number(e.target.value))}
-                    className="bg-background"
-                  />
+                {/* Summary & CTA */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between text-lg">
+                    <span className="font-medium text-foreground">Due Today</span>
+                    <span className="font-bold text-foreground">${(setupFee + calculateMonthly()).toLocaleString()}</span>
+                  </div>
                   <p className="text-xs text-muted-foreground">
-                    Covers delivery, installation, and initial configuration
+                    Includes ${setupFee} setup fee + ${calculateMonthly().toLocaleString()} first month
+                  </p>
+                  
+                  <Button className="w-full h-14 text-lg" size="lg" onClick={handleApplyNow}>
+                    Subscribe Now
+                  </Button>
+
+                  <p className="text-xs text-center text-muted-foreground">
+                    Subject to credit approval. Equipment remains property of lessor during subscription.
                   </p>
                 </div>
-
-                {/* Plan Selection */}
-                <div className="space-y-2">
-                  <Label htmlFor="plan">Subscription Plan</Label>
-                  <Select value={plan} onValueChange={setPlan}>
-                    <SelectTrigger id="plan" className="bg-background">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="basic">Basic - $450/mo</SelectItem>
-                      <SelectItem value="standard">Standard - $600/mo</SelectItem>
-                      <SelectItem value="premium">Premium - $850/mo</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Flexibility Notice */}
-                <div className="bg-muted/50 border border-border rounded-lg p-4">
-                  <div className="flex items-start gap-3">
-                    <Info className="h-5 w-5 text-primary mt-0.5" />
-                    <div>
-                      <p className="font-medium text-foreground">Flexible Subscription</p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Cancel anytime after your first payment. No cancellation fees, no hassle—just return the equipment.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Apply Button */}
-                <Button className="w-full" size="lg" onClick={handleApplyNow}>
-                  Subscribe Now
-                </Button>
-
-                <p className="text-xs text-center text-muted-foreground">
-                  Subject to credit approval. Equipment remains property of lessor during subscription.
-                </p>
               </TabsContent>
             </Tabs>
           </div>
