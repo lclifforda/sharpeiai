@@ -33,6 +33,7 @@ import bbvaLogo from "@/assets/bbva-logo.png";
 const CheckoutV3 = () => {
   const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isFinanceDialogOpen, setIsFinanceDialogOpen] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [maintenance, setMaintenance] = useState(false);
   const [insurance, setInsurance] = useState(false);
@@ -286,8 +287,8 @@ const CheckoutV3 = () => {
               </TabsContent>
 
               <TabsContent value="finance" className="space-y-6 mt-6">
-                <div className="bg-card border border-border rounded-xl p-6">
-                  <div className="flex justify-between items-center mb-4">
+                <div className="bg-card border border-border rounded-xl p-6 space-y-4">
+                  <div className="flex justify-between items-center">
                     <span className="text-lg text-foreground">From</span>
                     <div className="text-right">
                       <span className="text-3xl font-bold text-foreground">
@@ -297,8 +298,88 @@ const CheckoutV3 = () => {
                     </div>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    36-month financing at 4.2% APR
+                    36-month financing • Own it at the end or buy out anytime
                   </p>
+                  <Dialog open={isFinanceDialogOpen} onOpenChange={setIsFinanceDialogOpen}>
+                    <DialogTrigger asChild>
+                      <button className="text-sm text-primary hover:underline">
+                        Learn more
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-md">
+                      <DialogHeader>
+                        <DialogTitle>Subscribe to Own</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-6 pt-4">
+                        {/* Payment Summary */}
+                        <div className="bg-muted rounded-lg p-4 space-y-3">
+                          <div className="flex justify-between items-center">
+                            <span className="text-foreground">Today's Payment</span>
+                            <span className="font-semibold text-foreground">$875.00</span>
+                          </div>
+                          <div className="flex justify-between items-center border-t border-border pt-3">
+                            <span className="text-foreground">Monthly Payment</span>
+                            <span className="font-semibold text-foreground">$875.00</span>
+                          </div>
+                          <div className="flex justify-between items-center border-t border-border pt-3">
+                            <div>
+                              <span className="text-foreground">Buyout Price</span>
+                              <p className="text-xs text-muted-foreground">Full price - payments made</p>
+                            </div>
+                            <span className="font-semibold text-foreground">Varies*</span>
+                          </div>
+                        </div>
+
+                        {/* Steps */}
+                        <div className="space-y-4">
+                          <div className="flex gap-3">
+                            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
+                              1
+                            </div>
+                            <div>
+                              <p className="font-semibold text-foreground">Start Renting</p>
+                              <p className="text-sm text-muted-foreground">
+                                Pay $875/month to start using this product immediately.
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex gap-3">
+                            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
+                              2
+                            </div>
+                            <div>
+                              <p className="font-semibold text-foreground">Complete Your Commitment</p>
+                              <p className="text-sm text-muted-foreground">
+                                Make 12 months of payments - you can't cancel during this period.
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex gap-3">
+                            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
+                              3
+                            </div>
+                            <div>
+                              <p className="font-semibold text-foreground">Own It or Buy Out Anytime</p>
+                              <p className="text-sm text-muted-foreground">
+                                After commitment, continue renting, cancel and return, or buy it out. Buyout price = ${originalPrice.toLocaleString()} - total payments made.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Example */}
+                        <div className="bg-muted/50 rounded-lg p-4 text-sm">
+                          <p className="font-medium text-foreground mb-2">Example Buyout:</p>
+                          <p className="text-muted-foreground">
+                            After 24 months at $875/mo = $21,000 paid<br/>
+                            Buyout price: ${originalPrice.toLocaleString()} - $21,000 = <span className="font-semibold text-foreground">$3,000</span>
+                          </p>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </div>
                 <Button className="w-full" size="lg">
                   Apply for Financing
