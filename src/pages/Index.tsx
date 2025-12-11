@@ -12,6 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useAiAgent } from "@/hooks/useAiAgent";
 import { Card, CardContent } from "@/components/ui/card";
+import { MarkdownText } from "@/components/MarkdownText";
 const dataSources = [
   "Salesforce",
   "Teams",
@@ -134,7 +135,7 @@ const Index = () => {
           </div>
 
           {/* Universal Chat Input */}
-          <div className="w-full max-w-3xl mx-auto space-y-4">
+          <div className="w-full max-w-4xl mx-auto space-y-4">
             {/* Chat Response Display */}
             {showResponse && chatMessages.length > 0 && (
               <Card className="bg-white border border-border shadow-float">
@@ -160,13 +161,16 @@ const Index = () => {
                           className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
                           <div
-                            className={`max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[75%] xl:max-w-[70%] rounded-lg p-4 md:p-5 lg:p-6 ${
+                            className={`max-w-[95%] sm:max-w-[90%] md:max-w-[85%] lg:max-w-[90%] xl:max-w-[85%] 2xl:max-w-[80%] rounded-lg p-4 md:p-5 lg:p-6 ${
                               msg.role === 'user'
                                 ? 'bg-primary text-primary-foreground'
                                 : 'bg-muted text-foreground'
                             }`}
                           >
-                            <p className="text-base md:text-lg lg:text-xl whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                            <MarkdownText 
+                              content={msg.content} 
+                              className="text-base md:text-lg lg:text-xl"
+                            />
                           </div>
                         </div>
                       ))}

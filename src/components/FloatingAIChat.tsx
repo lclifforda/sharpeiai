@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAiAgent } from "@/hooks/useAiAgent";
+import { MarkdownText } from "@/components/MarkdownText";
 
 interface Message {
   role: "user" | "assistant";
@@ -155,7 +156,7 @@ const FloatingAIChat = () => {
 
       {/* Chat Dialog */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 w-[90vw] sm:w-96 md:w-[500px] lg:w-[600px] xl:w-[700px] h-[600px] md:h-[700px] lg:h-[800px] bg-background border border-border rounded-lg shadow-2xl z-50 flex overflow-hidden">
+        <div className="fixed bottom-24 right-6 w-[90vw] sm:w-[450px] md:w-[600px] lg:w-[800px] xl:w-[1000px] 2xl:w-[1200px] h-[600px] md:h-[700px] lg:h-[800px] bg-background border border-border rounded-lg shadow-2xl z-50 flex overflow-hidden">
           {/* History Sidebar */}
           {showHistory && (
             <div className="w-64 border-r border-border flex flex-col">
@@ -235,13 +236,16 @@ const FloatingAIChat = () => {
                     className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`max-w-[85%] sm:max-w-[80%] md:max-w-[75%] lg:max-w-[70%] rounded-lg p-3 md:p-4 ${
+                      className={`max-w-[90%] sm:max-w-[85%] md:max-w-[85%] lg:max-w-[80%] xl:max-w-[75%] 2xl:max-w-[70%] rounded-lg p-3 md:p-4 ${
                         message.role === "user"
                           ? "bg-primary text-primary-foreground"
                           : "bg-muted text-foreground"
                       }`}
                     >
-                      <p className="text-sm md:text-base lg:text-lg whitespace-pre-wrap leading-relaxed">{message.content}</p>
+                      <MarkdownText 
+                        content={message.content} 
+                        className="text-sm md:text-base lg:text-lg"
+                      />
                       {/* Suggestion buttons for AI messages */}
                       {message.role === "assistant" && message.suggestions && message.suggestions.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-2">

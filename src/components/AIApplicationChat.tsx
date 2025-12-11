@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Send, Bot, User } from "lucide-react";
+import { ArrowLeft, Send, Bot, User, Upload, FileCheck, File, X } from "lucide-react";
 import robotImage from "@/assets/humanoid-robot.png";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAiAgent } from "@/hooks/useAiAgent";
@@ -13,10 +13,11 @@ import { simulateResiduals } from "@/services/ai/offerEngine";
 import { generateCryptoId } from "@/lib/idGenerator";
 import OfferCard from "@/components/OfferCard";
 import ContractCard from "@/components/ContractCard";
+import { MarkdownText } from "@/components/MarkdownText";
 
 interface ChatMessage {
   id: string;
-  type: 'user' | 'ai' | 'system' | 'offer' | 'contract' | 'comparison' | 'completion';
+  type: 'user' | 'ai' | 'system' | 'offer' | 'contract' | 'comparison' | 'completion' | 'document_upload';
   content: string;
   timestamp: Date;
   suggestions?: string[];
@@ -98,6 +99,39 @@ const AIApplicationChat = () => {
   
   // Application step tracking for business customers
   const [applicationStep, setApplicationStep] = useState<ApplicationStep>('info');
+  
+  // Document upload state
+  const [uploadedDocs, setUploadedDocs] = useState<Record<string, File | null>>({
+    businessLicense: null,
+    articlesOfIncorporation: null,
+    taxReturn: null,
+    profitLoss: null,
+    bankStatements: null,
+    equipmentQuote: null,
+    personalGuarantee: null,
+    insuranceCertificate: null,
+  });
+  
+  // Document verification state (OCR results)
+  const [documentVerification, setDocumentVerification] = useState<Record<string, {
+    status: 'pending' | 'processing' | 'verified' | 'rejected';
+    extractedData?: Record<string, any>;
+    verificationNotes?: string[];
+  }>>({});
+  
+  // Track upload attempts per document (for retry logic)
+  const [uploadAttempts, setUploadAttempts] = useState<Record<string, number>>({});
+
+  const requiredDocuments = [
+    { id: "businessLicense", name: "Business License", description: "Valid business license or registration certificate" },
+    { id: "articlesOfIncorporation", name: "Articles of Incorporation", description: "Certificate of incorporation or formation documents" },
+    { id: "taxReturn", name: "Tax Return", description: "Most recent business tax return (Form 1120, 1120S, or 1065)" },
+    { id: "profitLoss", name: "Profit & Loss Statement", description: "Current year P&L statement or income statement" },
+    { id: "bankStatements", name: "Bank Statements", description: "Last 3 months of business bank statements" },
+    { id: "equipmentQuote", name: "Equipment Quote", description: "Invoice or quote for the equipment being financed" },
+    { id: "personalGuarantee", name: "Personal Guarantee", description: "Personal guarantee form (if required)" },
+    { id: "insuranceCertificate", name: "Insurance Certificate", description: "Certificate of insurance for the equipment" },
+  ];
 
   const monthlyRate = 800;
   const maintenanceCost = 150;
@@ -461,6 +495,266 @@ const AIApplicationChat = () => {
     }
   };
   
+  // Simulate OCR processing and document verification
+  const processDocumentOCR = async (docId: string, file: File, attemptNumber: number): Promise<{
+    status: 'verified' | 'rejected';
+    extractedData?: Record<string, any>;
+    verificationNotes?: string[];
+  }> => {
+    // Simulate processing delay
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Map document IDs to document types for verification
+    const docTypeMap: Record<string, string> = {
+      businessLicense: 'business_license',
+      articlesOfIncorporation: 'articles_of_incorporation',
+      taxReturn: 'tax_return_year1',
+      profitLoss: 'profit_loss',
+      bankStatements: 'bank_statement',
+      equipmentQuote: 'equipment_quote',
+      personalGuarantee: 'personal_guarantee',
+      insuranceCertificate: 'insurance_cert',
+    };
+    
+    const docType = docTypeMap[docId];
+    const fileName = file.name.toLowerCase();
+    
+    // Simulate OCR extraction based on document type
+    let extractedData: Record<string, any> = {};
+    let verificationNotes: string[] = [];
+    let status: 'verified' | 'rejected' = 'verified';
+    
+    // Simulate OCR confidence (random between 85-98%)
+    const ocrConfidence = Math.floor(Math.random() * 13) + 85;
+    verificationNotes.push(`OCR confidence: ${ocrConfidence}%`);
+    
+    // RETRY LOGIC: First attempt is strict, second attempt is lenient
+    const isStrictValidation = attemptNumber === 1;
+    const isLenientValidation = attemptNumber >= 2;
+    
+    // Document-specific validation and extraction
+    if (docId === 'businessLicense') {
+      // First attempt: Strict - check filename
+      // Second attempt: Lenient - accept any file
+      if (isLenientValidation || fileName.includes('license') || fileName.includes('permit') || fileName.includes('registration')) {
+        extractedData = {
+          licenseNumber: `BL-${Math.random().toString(36).substring(2, 9).toUpperCase()}`,
+          state: 'California',
+          expiryDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        };
+        verificationNotes.push('✓ Document validated successfully');
+        verificationNotes.push('Extracted: 3 fields');
+        if (isLenientValidation) {
+          verificationNotes.push('✓ Accepted on retry - manual review may be required');
+        }
+      } else {
+        status = 'rejected';
+        verificationNotes.push('⚠ Document type mismatch - expected Business License');
+        verificationNotes.push('💡 Tip: Try uploading again with a file that includes "license", "permit", or "registration" in the filename');
+      }
+    } else if (docId === 'articlesOfIncorporation') {
+      if (isLenientValidation || fileName.includes('incorporation') || fileName.includes('articles') || fileName.includes('formation')) {
+        extractedData = {
+          incorporationDate: '2020-03-15',
+          entityType: 'Corporation',
+          state: 'Delaware',
+        };
+        verificationNotes.push('✓ Document validated successfully');
+        if (isLenientValidation) {
+          verificationNotes.push('✓ Accepted on retry - manual review may be required');
+        }
+      } else {
+        status = 'rejected';
+        verificationNotes.push('⚠ Document type mismatch - expected Articles of Incorporation');
+      }
+    } else if (docId === 'taxReturn') {
+      if (isLenientValidation || fileName.includes('tax') || fileName.includes('return') || fileName.includes('1120') || fileName.includes('1065')) {
+        extractedData = {
+          taxYear: '2024',
+          grossRevenue: Math.floor(Math.random() * 5000000) + 1000000,
+          netIncome: Math.floor(Math.random() * 1000000) + 100000,
+        };
+        verificationNotes.push('✓ Document validated successfully');
+        verificationNotes.push('Extracted: 3 fields');
+        if (isLenientValidation) {
+          verificationNotes.push('✓ Accepted on retry - manual review may be required');
+        }
+      } else {
+        status = 'rejected';
+        verificationNotes.push('⚠ Document type mismatch - expected Tax Return');
+      }
+    } else if (docId === 'profitLoss') {
+      if (isLenientValidation || fileName.includes('profit') || fileName.includes('loss') || fileName.includes('p&l') || fileName.includes('income')) {
+        extractedData = {
+          period: '2024 YTD',
+          revenue: Math.floor(Math.random() * 3000000) + 500000,
+          expenses: Math.floor(Math.random() * 2000000) + 300000,
+        };
+        verificationNotes.push('✓ Document validated successfully');
+        if (isLenientValidation) {
+          verificationNotes.push('✓ Accepted on retry - manual review may be required');
+        }
+      } else {
+        status = 'rejected';
+        verificationNotes.push('⚠ Document type mismatch - expected Profit & Loss Statement');
+      }
+    } else if (docId === 'bankStatements') {
+      if (isLenientValidation || fileName.includes('bank') || fileName.includes('statement') || fileName.includes('account')) {
+        extractedData = {
+          accountType: 'Business Checking',
+          averageBalance: Math.floor(Math.random() * 500000) + 10000,
+          statementPeriod: 'Last 3 months',
+        };
+        verificationNotes.push('✓ Document validated successfully');
+        if (isLenientValidation) {
+          verificationNotes.push('✓ Accepted on retry - manual review may be required');
+        }
+      } else {
+        status = 'rejected';
+        verificationNotes.push('⚠ Document type mismatch - expected Bank Statements');
+      }
+    } else if (docId === 'equipmentQuote') {
+      if (isLenientValidation || fileName.includes('quote') || fileName.includes('invoice') || fileName.includes('purchase') || fileName.includes('order')) {
+        extractedData = {
+          vendor: 'Equipment Supplier',
+          totalAmount: cartTotal,
+          quoteDate: new Date().toISOString().split('T')[0],
+        };
+        verificationNotes.push('✓ Document validated successfully');
+        if (isLenientValidation) {
+          verificationNotes.push('✓ Accepted on retry - manual review may be required');
+        }
+      } else {
+        status = 'rejected';
+        verificationNotes.push('⚠ Document type mismatch - expected Equipment Quote/Invoice');
+      }
+    } else if (docId === 'personalGuarantee') {
+      if (isLenientValidation || fileName.includes('guarantee') || fileName.includes('guarantor') || fileName.includes('personal')) {
+        extractedData = {
+          guarantorName: (workingDataRef.current as any).representativeName || 'N/A',
+          signedDate: new Date().toISOString().split('T')[0],
+        };
+        verificationNotes.push('✓ Document validated successfully');
+        if (isLenientValidation) {
+          verificationNotes.push('✓ Accepted on retry - manual review may be required');
+        }
+      } else {
+        status = 'rejected';
+        verificationNotes.push('⚠ Document type mismatch - expected Personal Guarantee');
+      }
+    } else if (docId === 'insuranceCertificate') {
+      if (isLenientValidation || fileName.includes('insurance') || fileName.includes('certificate') || fileName.includes('coverage')) {
+        extractedData = {
+          coverageAmount: '$1,000,000',
+          policyNumber: `POL-${Math.random().toString(36).substring(2, 9).toUpperCase()}`,
+          expiryDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        };
+        verificationNotes.push('✓ Document validated successfully');
+        if (isLenientValidation) {
+          verificationNotes.push('✓ Accepted on retry - manual review may be required');
+        }
+      } else {
+        status = 'rejected';
+        verificationNotes.push('⚠ Document type mismatch - expected Insurance Certificate');
+      }
+    } else {
+      // Generic validation for unknown types
+      verificationNotes.push('✓ Document uploaded successfully');
+    }
+    
+    return { status, extractedData, verificationNotes };
+  };
+
+  const handleFileUpload = async (docId: string, file: File | null) => {
+    if (!file) {
+      setUploadedDocs(prev => ({ ...prev, [docId]: null }));
+      setDocumentVerification(prev => {
+        const newState = { ...prev };
+        delete newState[docId];
+        return newState;
+      });
+      setUploadAttempts(prev => {
+        const newState = { ...prev };
+        delete newState[docId];
+        return newState;
+      });
+      return;
+    }
+    
+    // Increment upload attempt counter
+    const attemptNumber = (uploadAttempts[docId] || 0) + 1;
+    setUploadAttempts(prev => ({ ...prev, [docId]: attemptNumber }));
+    
+    // Set file immediately
+    setUploadedDocs(prev => ({ ...prev, [docId]: file }));
+    
+    // Set status to processing
+    setDocumentVerification(prev => ({
+      ...prev,
+      [docId]: {
+        status: 'processing',
+      }
+    }));
+    
+    // Process document with OCR (pass attempt number for retry logic)
+    try {
+      const result = await processDocumentOCR(docId, file, attemptNumber);
+      setDocumentVerification(prev => ({
+        ...prev,
+        [docId]: result
+      }));
+      
+      // Show feedback message
+      if (result.status === 'verified') {
+        if (attemptNumber > 1) {
+          pushAI(`✓ **${requiredDocuments.find(d => d.id === docId)?.name || 'Document'}** verified on retry! The document has been accepted.\n\n${result.verificationNotes?.join('\n') || ''}`, []);
+        } else {
+          pushAI(`✓ **${requiredDocuments.find(d => d.id === docId)?.name || 'Document'}** verified successfully!\n\n${result.verificationNotes?.join('\n') || ''}`, []);
+        }
+      } else {
+        pushAI(`⚠ **${requiredDocuments.find(d => d.id === docId)?.name || 'Document'}** verification failed. ${attemptNumber === 1 ? 'Try uploading again - we\'ll be more lenient on the second attempt.' : 'Please ensure this is the correct document type.'}`, []);
+      }
+    } catch (error) {
+      setDocumentVerification(prev => ({
+        ...prev,
+        [docId]: {
+          status: 'rejected',
+          verificationNotes: ['Error processing document. Please try again.']
+        }
+      }));
+      pushAI(`❌ Error processing document. Please try uploading again.`, []);
+    }
+  };
+
+  const handleRemoveFile = (docId: string) => {
+    setUploadedDocs(prev => ({ ...prev, [docId]: null }));
+  };
+
+  const initiateDocumentUpload = () => {
+    const offer = lastOffer;
+    if (!offer) return;
+
+    setCurrentPrompt('document_upload');
+    setIsTyping(true);
+    
+    setTimeout(() => {
+      setIsTyping(false);
+      
+      const uploadMessage: ChatMessage = {
+        id: generateCryptoId(),
+        type: 'document_upload',
+        content: 'Great! Now I need you to upload some required documents to complete your application. You can upload them one by one using the buttons below.',
+        timestamp: new Date(),
+        suggestions: ['Continue to contract', 'What documents do I need?']
+      };
+      setMessages((prev) => [...prev, uploadMessage]);
+      
+      setTimeout(() => {
+        pushAI('Please upload at least one document to proceed. You can upload more documents later if needed.');
+      }, 500);
+    }, 800);
+  };
+
   const initiateContractSignature = () => {
     const offer = lastOffer;
     if (!offer) return;
@@ -813,10 +1107,56 @@ const AIApplicationChat = () => {
       return;
     }
     
-    // Apply button for business customers
+    // Apply button for business customers - transition to document upload
     if ((currentPrompt === 'done' || currentPrompt === 'ready_for_docs') && lower.includes('apply')) {
-      initiateContractSignature();
+      initiateDocumentUpload();
       return;
+    }
+    
+    // Document upload handlers
+    if (currentPrompt === 'document_upload') {
+      if (lower.includes('continue') || lower.includes('proceed') || lower.includes('next') || lower.includes('contract')) {
+        const atLeastOneDoc = Object.values(uploadedDocs).some(doc => doc !== null);
+        if (!atLeastOneDoc) {
+          pushAI('Please upload at least one document before continuing. You can use the upload buttons above to add your documents.', ['Upload documents']);
+          return;
+        }
+        
+        // Check if any documents are still processing
+        const isProcessing = Object.values(documentVerification).some(v => v.status === 'processing');
+        if (isProcessing) {
+          pushAI('Please wait for all documents to finish processing before continuing.', []);
+          return;
+        }
+        
+        // Allow proceeding even with rejected documents (user can proceed with warnings)
+        const rejectedDocs = Object.entries(documentVerification).filter(([_, v]) => v.status === 'rejected');
+        if (rejectedDocs.length > 0) {
+          const rejectedNames = rejectedDocs.map(([docId, _]) => 
+            requiredDocuments.find(d => d.id === docId)?.name
+          ).filter(Boolean).join(', ');
+          pushAI(`⚠ Note: Some documents failed verification (${rejectedNames}). You can still proceed, but these documents may require manual review. Would you like to continue?`, ['Yes, continue to contract', 'Upload documents again']);
+          return;
+        }
+        
+        initiateContractSignature();
+        return;
+      }
+      
+      // Handle "Yes, continue to contract" response
+      if (lower.includes('yes') && (lower.includes('continue') || lower.includes('contract'))) {
+        initiateContractSignature();
+        return;
+      }
+      if (lower.includes('upload') || (lower.includes('document') && !lower.includes('need'))) {
+        pushAI('You can upload documents using the upload buttons above. Click "Upload" next to each document type you want to submit.', ['Continue to contract', 'What documents do I need?']);
+        return;
+      }
+      if (lower.includes('what') && lower.includes('document') && lower.includes('need')) {
+        const docList = requiredDocuments.map((doc, idx) => `${idx + 1}. **${doc.name}** - ${doc.description}`).join('\n');
+        pushAI(`Here are the documents we typically need for your application:\n\n${docList}\n\nYou can upload them one at a time using the upload buttons above. At minimum, please upload at least one document to proceed.`, ['Continue to contract', 'How do I upload?']);
+        return;
+      }
     }
     
     // Contract signature handlers
@@ -872,7 +1212,7 @@ const AIApplicationChat = () => {
 
   return (
     <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-[95vw] xl:max-w-[98vw] 2xl:max-w-[1600px] mx-auto">
         <Button 
           variant="ghost" 
           onClick={() => navigate(-1)}
@@ -887,7 +1227,7 @@ const AIApplicationChat = () => {
           <p className="text-muted-foreground">Complete your leasing application through conversation</p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
+        <div className="grid lg:grid-cols-3 gap-6 max-w-[95vw] xl:max-w-[98vw] 2xl:max-w-[1600px] mx-auto">
           {/* Chat Area */}
           <div className="lg:col-span-2">
             <Card className="h-[600px] md:h-[700px] lg:h-[800px] xl:h-[900px] flex flex-col">
@@ -905,7 +1245,10 @@ const AIApplicationChat = () => {
                                 <Bot className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-primary-foreground" />
                               </div>
                               <div className="bg-muted text-foreground rounded-2xl p-4 md:p-5 lg:p-6 max-w-[85%] sm:max-w-[80%] md:max-w-[75%] lg:max-w-[70%] xl:max-w-[65%]">
-                                <p className="text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                                <MarkdownText 
+                                content={message.content} 
+                                className="text-sm md:text-base lg:text-lg xl:text-xl"
+                              />
                               </div>
                             </div>
                             <OfferCard offer={message.offerData} />
@@ -933,7 +1276,10 @@ const AIApplicationChat = () => {
                                 <Bot className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-primary-foreground" />
                               </div>
                               <div className="bg-muted text-foreground rounded-2xl p-4 md:p-5 lg:p-6 max-w-[85%] sm:max-w-[80%] md:max-w-[75%] lg:max-w-[70%] xl:max-w-[65%]">
-                                <p className="text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                                <MarkdownText 
+                                content={message.content} 
+                                className="text-sm md:text-base lg:text-lg xl:text-xl"
+                              />
                               </div>
                             </div>
                             <ContractCard 
@@ -1026,7 +1372,10 @@ const AIApplicationChat = () => {
                                 <Bot className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-primary-foreground" />
                               </div>
                               <div className="bg-muted text-foreground rounded-2xl p-4 md:p-5 lg:p-6 max-w-[85%] sm:max-w-[80%] md:max-w-[75%] lg:max-w-[70%] xl:max-w-[65%]">
-                                <p className="text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                                <MarkdownText 
+                                content={message.content} 
+                                className="text-sm md:text-base lg:text-lg xl:text-xl"
+                              />
                               </div>
                             </div>
                             <div className="grid md:grid-cols-2 gap-4 mb-4">
@@ -1132,8 +1481,241 @@ const AIApplicationChat = () => {
                           </div>
                         )}
                         
+                        {/* Document Upload View */}
+                        {message.type === 'document_upload' && (
+                          <div className="mb-4">
+                            <div className="flex gap-3 mb-4">
+                              <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                                <Bot className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-primary-foreground" />
+                              </div>
+                              <div className="bg-muted text-foreground rounded-2xl p-4 md:p-5 lg:p-6 max-w-[85%] sm:max-w-[80%] md:max-w-[75%] lg:max-w-[70%] xl:max-w-[65%]">
+                                <MarkdownText 
+                                  content={message.content} 
+                                  className="text-sm md:text-base lg:text-lg xl:text-xl"
+                                />
+                              </div>
+                            </div>
+                            
+                            {/* Document Upload Cards */}
+                            <div className="space-y-3 mb-4">
+                              {requiredDocuments.map((doc, index) => {
+                                const isUploaded = !!uploadedDocs[doc.id];
+                                const verification = documentVerification[doc.id];
+                                const isProcessing = verification?.status === 'processing';
+                                const isVerified = verification?.status === 'verified';
+                                const isRejected = verification?.status === 'rejected';
+                                
+                                return (
+                                  <div
+                                    key={doc.id}
+                                    className={`rounded-lg border-2 transition-all duration-300 ${
+                                      isVerified
+                                        ? 'border-green-500 bg-green-500/5 shadow-sm' 
+                                        : isRejected
+                                        ? 'border-red-500 bg-red-500/5 shadow-sm'
+                                        : isProcessing
+                                        ? 'border-blue-500 bg-blue-500/5 shadow-sm'
+                                        : isUploaded 
+                                        ? 'border-primary bg-primary/5 shadow-sm' 
+                                        : 'border-border hover:border-primary/50 hover:bg-accent/50'
+                                    }`}
+                                  >
+                                    <div className="p-4">
+                                      <div className="flex items-start gap-4">
+                                        {/* Icon/Status */}
+                                        <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 ${
+                                          isVerified
+                                            ? 'bg-green-500 text-white' 
+                                            : isRejected
+                                            ? 'bg-red-500 text-white'
+                                            : isProcessing
+                                            ? 'bg-blue-500 text-white animate-pulse'
+                                            : isUploaded 
+                                            ? 'bg-primary text-primary-foreground' 
+                                            : 'bg-muted text-muted-foreground'
+                                        }`}>
+                                          {isProcessing ? (
+                                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                          ) : isVerified ? (
+                                            <FileCheck className="w-5 h-5" />
+                                          ) : isRejected ? (
+                                            <X className="w-5 h-5" />
+                                          ) : isUploaded ? (
+                                            <FileCheck className="w-5 h-5" />
+                                          ) : (
+                                            <File className="w-5 h-5" />
+                                          )}
+                                        </div>
+
+                                        {/* Content */}
+                                        <div className="flex-1 min-w-0">
+                                          <div className="flex items-center gap-2 mb-1">
+                                            <span className="text-xs font-semibold text-muted-foreground">
+                                              {index + 1} / {requiredDocuments.length}
+                                            </span>
+                                            <h3 className="font-semibold text-foreground">{doc.name}</h3>
+                                          </div>
+                                          <p className="text-sm text-muted-foreground mb-2">{doc.description}</p>
+                                          
+                                          {isUploaded ? (
+                                            <div className="space-y-2">
+                                              <div className="flex items-center gap-2">
+                                                <div className="flex-1 flex items-center gap-2 px-3 py-2 bg-background rounded-md border border-border">
+                                                  <File className="w-4 h-4 text-primary flex-shrink-0" />
+                                                  <span className="text-sm text-foreground truncate">{uploadedDocs[doc.id]?.name}</span>
+                                                  <span className="text-xs text-muted-foreground flex-shrink-0">
+                                                    {uploadedDocs[doc.id] && (uploadedDocs[doc.id]!.size / 1024).toFixed(1)} KB
+                                                  </span>
+                                                </div>
+                                                <Button
+                                                  type="button"
+                                                  variant="ghost"
+                                                  size="icon"
+                                                  onClick={() => handleRemoveFile(doc.id)}
+                                                  className="h-9 w-9 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                                                >
+                                                  <X className="w-4 h-4" />
+                                                </Button>
+                                              </div>
+                                              
+                                              {/* Verification Status */}
+                                              {verification && (
+                                                <div className="space-y-2">
+                                                  {isProcessing && (
+                                                    <div className="text-xs text-blue-600 dark:text-blue-400">
+                                                      🔄 Processing document with OCR...
+                                                    </div>
+                                                  )}
+                                                  
+                                                  {isVerified && (
+                                                    <div className="space-y-2">
+                                                      <div className="text-xs font-semibold text-green-600 dark:text-green-400">
+                                                        ✓ Document verified
+                                                      </div>
+                                                      
+                                                      {/* Extracted Data */}
+                                                      {verification.extractedData && Object.keys(verification.extractedData).length > 0 && (
+                                                        <div className="bg-muted/50 p-3 rounded-md">
+                                                          <p className="text-xs font-semibold mb-2">Extracted Data (OCR):</p>
+                                                          <div className="grid grid-cols-2 gap-2">
+                                                            {Object.entries(verification.extractedData).map(([key, value]) => (
+                                                              <div key={key} className="text-xs">
+                                                                <span className="text-muted-foreground">{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</span>
+                                                                <span className="ml-1 font-medium text-foreground">{String(value)}</span>
+                                                              </div>
+                                                            ))}
+                                                          </div>
+                                                        </div>
+                                                      )}
+                                                      
+                                                      {/* Verification Notes */}
+                                                      {verification.verificationNotes && verification.verificationNotes.length > 0 && (
+                                                        <div className="space-y-1">
+                                                          {verification.verificationNotes.map((note, idx) => (
+                                                            <div
+                                                              key={idx}
+                                                              className={`text-xs p-2 rounded ${
+                                                                note.includes('✓') ? 'bg-green-500/10 text-green-700 dark:text-green-400' :
+                                                                note.includes('OCR') ? 'bg-blue-500/10 text-blue-700 dark:text-blue-400' :
+                                                                'bg-muted'
+                                                              }`}
+                                                            >
+                                                              {note}
+                                                            </div>
+                                                          ))}
+                                                        </div>
+                                                      )}
+                                                    </div>
+                                                  )}
+                                                  
+                                                  {isRejected && (
+                                                    <div className="space-y-1">
+                                                      <div className="text-xs font-semibold text-red-600 dark:text-red-400">
+                                                        ⚠ Document verification failed
+                                                      </div>
+                                                      {verification.verificationNotes && verification.verificationNotes.map((note, idx) => (
+                                                        <div key={idx} className="text-xs p-2 rounded bg-red-500/10 text-red-700 dark:text-red-400">
+                                                          {note}
+                                                        </div>
+                                                      ))}
+                                                    </div>
+                                                  )}
+                                                </div>
+                                              )}
+                                            </div>
+                                          ) : (
+                                            <div className="text-xs text-muted-foreground">
+                                              PDF, DOC, DOCX, JPG, PNG • Max 10MB
+                                            </div>
+                                          )}
+                                        </div>
+
+                                        {/* Upload Button */}
+                                        <label htmlFor={`file-${doc.id}`} className="cursor-pointer">
+                                          {!isUploaded ? (
+                                            <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 hover:scale-105 shadow-sm">
+                                              <Upload className="w-4 h-4" />
+                                              <span className="text-sm font-medium">Upload</span>
+                                            </div>
+                                          ) : (
+                                            <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-background hover:bg-accent transition-colors">
+                                              <Upload className="w-4 h-4 text-muted-foreground" />
+                                              <span className="text-sm font-medium text-foreground">Replace</span>
+                                            </div>
+                                          )}
+                                          <input
+                                            id={`file-${doc.id}`}
+                                            type="file"
+                                            className="hidden"
+                                            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                                            onChange={(e) => handleFileUpload(doc.id, e.target.files?.[0] || null)}
+                                          />
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                            
+                            {/* Continue Button */}
+                            <div className="flex items-center gap-2 mb-4">
+                              <Button
+                                onClick={() => {
+                                  const atLeastOneDoc = Object.values(uploadedDocs).some(doc => doc !== null);
+                                  if (atLeastOneDoc) {
+                                    handleSendMessage('Continue to contract');
+                                  } else {
+                                    pushAI('Please upload at least one document before continuing.', ['Upload documents']);
+                                  }
+                                }}
+                                className="bg-primary text-primary-foreground hover:bg-primary/90"
+                              >
+                                Continue to Contract
+                              </Button>
+                              <span className="text-sm text-muted-foreground">
+                                {Object.values(uploadedDocs).filter(Boolean).length} of {requiredDocuments.length} documents uploaded
+                              </span>
+                            </div>
+                            
+                            {message.suggestions && message.suggestions.length > 0 && (
+                              <div className="flex flex-wrap gap-2 mt-3">
+                                {message.suggestions.map((suggestion, idx) => (
+                                  <button
+                                    key={idx}
+                                    onClick={() => handleSendMessage(suggestion)}
+                                    className="px-3 py-1.5 md:px-4 md:py-2 lg:px-5 lg:py-2.5 text-xs md:text-sm lg:text-base border border-border rounded-lg hover:bg-accent transition-colors bg-background"
+                                  >
+                                    {suggestion}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                        
                         {/* Regular messages */}
-                        {message.type !== 'offer' && message.type !== 'contract' && message.type !== 'comparison' && message.type !== 'completion' && (
+                        {message.type !== 'offer' && message.type !== 'contract' && message.type !== 'comparison' && message.type !== 'completion' && message.type !== 'document_upload' && (
                           <div className={`flex gap-3 ${message.type === "user" ? "justify-end" : ""}`}>
                             {message.type === "ai" && (
                               <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
@@ -1141,13 +1723,16 @@ const AIApplicationChat = () => {
                               </div>
                             )}
                             <div
-                              className={`max-w-[85%] sm:max-w-[80%] md:max-w-[75%] lg:max-w-[70%] xl:max-w-[65%] rounded-2xl p-4 md:p-5 lg:p-6 ${
+                              className={`max-w-[90%] sm:max-w-[85%] md:max-w-[85%] lg:max-w-[80%] xl:max-w-[75%] 2xl:max-w-[70%] rounded-2xl p-4 md:p-5 lg:p-6 ${
                                 message.type === "ai"
                                   ? "bg-muted text-foreground"
                                   : "bg-primary text-primary-foreground"
                               }`}
                             >
-                              <p className="text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                              <MarkdownText 
+                                content={message.content} 
+                                className="text-sm md:text-base lg:text-lg xl:text-xl"
+                              />
                               
                               {/* Suggestion buttons for AI messages */}
                               {message.type === "ai" && message.suggestions && message.suggestions.length > 0 && (

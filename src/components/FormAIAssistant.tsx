@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { agentAPI } from "@/services/ai/agentAPI";
 import { generateCryptoId } from "@/lib/idGenerator";
+import { MarkdownText } from "@/components/MarkdownText";
 
 interface Message {
   id: string;
@@ -166,7 +167,7 @@ const FormAIAssistant: React.FC<FormAIAssistantProps> = ({ currentStep, formCont
           />
           
           {/* Chat Panel */}
-          <div className="fixed top-0 right-0 h-full w-[90vw] sm:w-[450px] md:w-[500px] lg:w-[600px] xl:w-[700px] bg-background border-l border-border shadow-2xl z-50 flex flex-col animate-in slide-in-from-right duration-300">
+          <div className="fixed top-0 right-0 h-full w-[90vw] sm:w-[550px] md:w-[600px] lg:w-[800px] xl:w-[1000px] 2xl:w-[1200px] bg-background border-l border-border shadow-2xl z-50 flex flex-col animate-in slide-in-from-right duration-300">
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-primary to-blue-600">
               <div className="flex items-center gap-3">
@@ -196,13 +197,16 @@ const FormAIAssistant: React.FC<FormAIAssistantProps> = ({ currentStep, formCont
                     className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[75%] rounded-lg p-3 md:p-4 lg:p-5 ${
+                      className={`max-w-[95%] sm:max-w-[90%] md:max-w-[85%] lg:max-w-[85%] xl:max-w-[80%] 2xl:max-w-[75%] rounded-lg p-3 md:p-4 lg:p-5 ${
                         message.role === "user"
                           ? "bg-primary text-primary-foreground"
                           : "bg-muted text-foreground"
                       }`}
                     >
-                      <p className="text-sm md:text-base lg:text-lg whitespace-pre-wrap leading-relaxed">{message.content}</p>
+                      <MarkdownText 
+                        content={message.content} 
+                        className="text-sm md:text-base lg:text-lg"
+                      />
                     </div>
                   </div>
                 ))}
