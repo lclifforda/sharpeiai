@@ -138,8 +138,8 @@ const Index = () => {
             {/* Chat Response Display */}
             {showResponse && chatMessages.length > 0 && (
               <Card className="bg-white border border-border shadow-float">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-4">
+                <CardContent className="p-6 flex flex-col overflow-hidden">
+                  <div className="flex items-center justify-between mb-4 flex-shrink-0">
                     <h3 className="font-semibold text-base text-foreground">Chat Response</h3>
                     <button
                       onClick={() => {
@@ -151,21 +151,22 @@ const Index = () => {
                       <X className="w-5 h-5 text-muted-foreground" />
                     </button>
                   </div>
-                  <ScrollArea className="max-h-[500px] min-h-[400px]">
-                    <div className="space-y-4 pr-4">
+                  <ScrollArea className="h-[500px] md:h-[600px] lg:h-[700px]">
+                    <div className="pr-4">
+                      <div className="space-y-4">
                       {chatMessages.map((msg, idx) => (
                         <div
                           key={idx}
                           className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
                           <div
-                            className={`max-w-[85%] rounded-lg p-4 ${
+                            className={`max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[75%] xl:max-w-[70%] rounded-lg p-4 md:p-5 lg:p-6 ${
                               msg.role === 'user'
                                 ? 'bg-primary text-primary-foreground'
                                 : 'bg-muted text-foreground'
                             }`}
                           >
-                            <p className="text-base whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                            <p className="text-base md:text-lg lg:text-xl whitespace-pre-wrap leading-relaxed">{msg.content}</p>
                           </div>
                         </div>
                       ))}
@@ -180,6 +181,7 @@ const Index = () => {
                           </div>
                         </div>
                       )}
+                      </div>
                     </div>
                   </ScrollArea>
                 </CardContent>

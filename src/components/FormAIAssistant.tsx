@@ -166,7 +166,7 @@ const FormAIAssistant: React.FC<FormAIAssistantProps> = ({ currentStep, formCont
           />
           
           {/* Chat Panel */}
-          <div className="fixed top-0 right-0 h-full w-[450px] bg-background border-l border-border shadow-2xl z-50 flex flex-col animate-in slide-in-from-right duration-300">
+          <div className="fixed top-0 right-0 h-full w-[90vw] sm:w-[450px] md:w-[500px] lg:w-[600px] xl:w-[700px] bg-background border-l border-border shadow-2xl z-50 flex flex-col animate-in slide-in-from-right duration-300">
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-primary to-blue-600">
               <div className="flex items-center gap-3">
@@ -187,21 +187,22 @@ const FormAIAssistant: React.FC<FormAIAssistantProps> = ({ currentStep, formCont
             </div>
 
             {/* Messages */}
-            <ScrollArea className="flex-1 p-4">
-              <div className="space-y-4">
+            <ScrollArea className="flex-1 min-h-0">
+              <div className="p-4 md:p-5 lg:p-6">
+                <div className="space-y-4 md:space-y-5 lg:space-y-6">
                 {messages.map((message) => (
                   <div
                     key={message.id}
                     className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`max-w-[85%] rounded-lg p-3 ${
+                      className={`max-w-[90%] sm:max-w-[85%] md:max-w-[80%] lg:max-w-[75%] rounded-lg p-3 md:p-4 lg:p-5 ${
                         message.role === "user"
                           ? "bg-primary text-primary-foreground"
                           : "bg-muted text-foreground"
                       }`}
                     >
-                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                      <p className="text-sm md:text-base lg:text-lg whitespace-pre-wrap leading-relaxed">{message.content}</p>
                     </div>
                   </div>
                 ))}
@@ -216,11 +217,12 @@ const FormAIAssistant: React.FC<FormAIAssistantProps> = ({ currentStep, formCont
                     </div>
                   </div>
                 )}
+                </div>
               </div>
             </ScrollArea>
 
             {/* Quick Questions */}
-            <div className="px-4 py-2 border-t border-border bg-muted/30">
+            <div className="px-4 py-2 border-t border-border bg-muted/30 flex-shrink-0">
               <p className="text-xs text-muted-foreground mb-2">Quick questions:</p>
               <div className="flex flex-wrap gap-2">
                 {getQuickQuestions().map((question, idx) => (
@@ -228,7 +230,7 @@ const FormAIAssistant: React.FC<FormAIAssistantProps> = ({ currentStep, formCont
                     key={idx}
                     onClick={() => handleSend(question)}
                     disabled={isLoading}
-                    className="px-3 py-1.5 text-xs border border-border rounded-lg hover:bg-accent transition-colors bg-background disabled:opacity-50"
+                    className="px-3 py-1.5 md:px-4 md:py-2 lg:px-5 lg:py-2.5 text-xs md:text-sm lg:text-base border border-border rounded-lg hover:bg-accent transition-colors bg-background disabled:opacity-50"
                   >
                     {question}
                   </button>
@@ -237,7 +239,7 @@ const FormAIAssistant: React.FC<FormAIAssistantProps> = ({ currentStep, formCont
             </div>
 
             {/* Input */}
-            <div className="p-4 border-t border-border">
+            <div className="p-4 border-t border-border flex-shrink-0">
               <div className="flex gap-2">
                 <Input
                   value={input}
