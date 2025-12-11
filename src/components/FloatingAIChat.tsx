@@ -155,7 +155,7 @@ const FloatingAIChat = () => {
 
       {/* Chat Dialog */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 w-96 h-[600px] bg-background border border-border rounded-lg shadow-2xl z-50 flex">
+        <div className="fixed bottom-24 right-6 w-[90vw] sm:w-96 md:w-[500px] lg:w-[600px] xl:w-[700px] h-[600px] md:h-[700px] lg:h-[800px] bg-background border border-border rounded-lg shadow-2xl z-50 flex overflow-hidden">
           {/* History Sidebar */}
           {showHistory && (
             <div className="w-64 border-r border-border flex flex-col">
@@ -194,9 +194,9 @@ const FloatingAIChat = () => {
           )}
 
           {/* Main Chat Area */}
-          <div className="flex-1 flex flex-col">
+          <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-border gradient-sharpei">
+            <div className="flex items-center justify-between p-4 border-b border-border gradient-sharpei flex-shrink-0">
               <div className="flex items-center gap-2">
                 <MessageCircle className="w-5 h-5 text-white" />
                 <h3 className="font-semibold text-white">AI Assistant</h3>
@@ -226,21 +226,22 @@ const FloatingAIChat = () => {
             </div>
 
             {/* Messages */}
-            <ScrollArea className="flex-1 p-4">
-              <div className="space-y-4">
+            <ScrollArea className="flex-1 min-h-0">
+              <div className="p-4 md:p-5 lg:p-6">
+                <div className="space-y-4 md:space-y-5 lg:space-y-6">
                 {currentConversation.messages.map((message, index) => (
                   <div
                     key={index}
                     className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`max-w-[80%] rounded-lg p-3 ${
+                      className={`max-w-[85%] sm:max-w-[80%] md:max-w-[75%] lg:max-w-[70%] rounded-lg p-3 md:p-4 ${
                         message.role === "user"
                           ? "bg-primary text-primary-foreground"
                           : "bg-muted text-foreground"
                       }`}
                     >
-                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                      <p className="text-sm md:text-base lg:text-lg whitespace-pre-wrap leading-relaxed">{message.content}</p>
                       {/* Suggestion buttons for AI messages */}
                       {message.role === "assistant" && message.suggestions && message.suggestions.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-2">
@@ -253,7 +254,7 @@ const FloatingAIChat = () => {
                                 setTimeout(() => handleSend(), 100);
                               }}
                               disabled={isActuallyProcessing}
-                              className="px-2 py-1 text-xs border border-border rounded hover:bg-accent transition-colors bg-background disabled:opacity-50"
+                              className="px-2 py-1 md:px-3 md:py-1.5 text-xs md:text-sm border border-border rounded hover:bg-accent transition-colors bg-background disabled:opacity-50"
                             >
                               {suggestion}
                             </button>
@@ -274,12 +275,13 @@ const FloatingAIChat = () => {
                     </div>
                   </div>
                 )}
+                </div>
               </div>
             </ScrollArea>
 
             {/* Predefined Questions */}
             {currentConversation.messages.length <= 1 && (
-              <div className="px-4 py-2 border-t border-border bg-muted/30">
+              <div className="px-4 py-2 border-t border-border bg-muted/30 flex-shrink-0">
                 <p className="text-xs text-muted-foreground mb-2">Common questions:</p>
                 <div className="flex flex-wrap gap-2">
                   {predefinedQuestions.map((question, idx) => (
@@ -291,7 +293,7 @@ const FloatingAIChat = () => {
                         setTimeout(() => handleSend(), 100);
                       }}
                       disabled={isActuallyProcessing}
-                      className="px-3 py-1.5 text-xs border border-border rounded-lg hover:bg-accent transition-colors bg-background disabled:opacity-50"
+                      className="px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm border border-border rounded-lg hover:bg-accent transition-colors bg-background disabled:opacity-50"
                     >
                       {question}
                     </button>
@@ -301,7 +303,7 @@ const FloatingAIChat = () => {
             )}
 
             {/* Input */}
-            <div className="p-4 border-t border-border">
+            <div className="p-4 border-t border-border flex-shrink-0">
               <div className="flex gap-2">
                 <Textarea
                   value={input}

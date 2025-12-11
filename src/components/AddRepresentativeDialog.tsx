@@ -272,3 +272,4 @@ export function AddRepresentativeDialog({ onAdd }: AddRepresentativeDialogProps)
     </Dialog>
   );
 }
+

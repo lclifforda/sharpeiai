@@ -890,21 +890,22 @@ const AIApplicationChat = () => {
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Chat Area */}
           <div className="lg:col-span-2">
-            <Card className="h-[600px] flex flex-col">
-              <CardContent className="p-0 flex-1 flex flex-col overflow-hidden">
-                <ScrollArea className="flex-1 min-h-0 p-6">
-                  <div className="space-y-4">
+            <Card className="h-[600px] md:h-[700px] lg:h-[800px] xl:h-[900px] flex flex-col">
+              <CardContent className="p-0 flex-1 flex flex-col overflow-hidden min-h-0">
+                <ScrollArea className="flex-1 min-h-0">
+                  <div className="p-6 md:p-8 lg:p-10">
+                    <div className="space-y-4 md:space-y-5 lg:space-y-6">
                     {messages.map((message, index) => (
                       <div key={message.id || index}>
                         {/* Offer Card */}
                         {message.type === 'offer' && message.offerData && (
                           <div className="mb-4">
                             <div className="flex gap-3 mb-2">
-                              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                                <Bot className="w-5 h-5 text-primary-foreground" />
+                              <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                                <Bot className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-primary-foreground" />
                               </div>
-                              <div className="bg-muted text-foreground rounded-2xl p-4 max-w-[80%]">
-                                <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                              <div className="bg-muted text-foreground rounded-2xl p-4 md:p-5 lg:p-6 max-w-[85%] sm:max-w-[80%] md:max-w-[75%] lg:max-w-[70%] xl:max-w-[65%]">
+                                <p className="text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed whitespace-pre-wrap">{message.content}</p>
                               </div>
                             </div>
                             <OfferCard offer={message.offerData} />
@@ -914,7 +915,7 @@ const AIApplicationChat = () => {
                                   <button
                                     key={idx}
                                     onClick={() => handleSendMessage(suggestion)}
-                                    className="px-3 py-1.5 text-xs border border-border rounded-lg hover:bg-accent transition-colors bg-background"
+                                    className="px-3 py-1.5 md:px-4 md:py-2 lg:px-5 lg:py-2.5 text-xs md:text-sm lg:text-base border border-border rounded-lg hover:bg-accent transition-colors bg-background"
                                   >
                                     {suggestion}
                                   </button>
@@ -928,11 +929,11 @@ const AIApplicationChat = () => {
                         {message.type === 'contract' && message.contractData && (
                           <div className="mb-4">
                             <div className="flex gap-3 mb-2">
-                              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                                <Bot className="w-5 h-5 text-primary-foreground" />
+                              <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                                <Bot className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-primary-foreground" />
                               </div>
-                              <div className="bg-muted text-foreground rounded-2xl p-4 max-w-[80%]">
-                                <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                              <div className="bg-muted text-foreground rounded-2xl p-4 md:p-5 lg:p-6 max-w-[85%] sm:max-w-[80%] md:max-w-[75%] lg:max-w-[70%] xl:max-w-[65%]">
+                                <p className="text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed whitespace-pre-wrap">{message.content}</p>
                               </div>
                             </div>
                             <ContractCard 
@@ -954,7 +955,7 @@ const AIApplicationChat = () => {
                                   <button
                                     key={idx}
                                     onClick={() => handleSendMessage(suggestion)}
-                                    className="px-3 py-1.5 text-xs border border-border rounded-lg hover:bg-accent transition-colors bg-background"
+                                    className="px-3 py-1.5 md:px-4 md:py-2 lg:px-5 lg:py-2.5 text-xs md:text-sm lg:text-base border border-border rounded-lg hover:bg-accent transition-colors bg-background"
                                   >
                                     {suggestion}
                                   </button>
@@ -1021,11 +1022,11 @@ const AIApplicationChat = () => {
                         {message.type === 'comparison' && message.comparisonData && (
                           <div className="mb-4">
                             <div className="flex gap-3 mb-4">
-                              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                                <Bot className="w-5 h-5 text-primary-foreground" />
+                              <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                                <Bot className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-primary-foreground" />
                               </div>
-                              <div className="bg-muted text-foreground rounded-2xl p-4 max-w-[80%]">
-                                <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                              <div className="bg-muted text-foreground rounded-2xl p-4 md:p-5 lg:p-6 max-w-[85%] sm:max-w-[80%] md:max-w-[75%] lg:max-w-[70%] xl:max-w-[65%]">
+                                <p className="text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed whitespace-pre-wrap">{message.content}</p>
                               </div>
                             </div>
                             <div className="grid md:grid-cols-2 gap-4 mb-4">
@@ -1121,7 +1122,7 @@ const AIApplicationChat = () => {
                                         handleSendMessage(suggestion);
                                       }
                                     }}
-                                    className="px-3 py-1.5 text-xs border border-border rounded-lg hover:bg-accent transition-colors bg-background"
+                                    className="px-3 py-1.5 md:px-4 md:py-2 lg:px-5 lg:py-2.5 text-xs md:text-sm lg:text-base border border-border rounded-lg hover:bg-accent transition-colors bg-background"
                                   >
                                     {suggestion}
                                   </button>
@@ -1135,18 +1136,18 @@ const AIApplicationChat = () => {
                         {message.type !== 'offer' && message.type !== 'contract' && message.type !== 'comparison' && message.type !== 'completion' && (
                           <div className={`flex gap-3 ${message.type === "user" ? "justify-end" : ""}`}>
                             {message.type === "ai" && (
-                              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                                <Bot className="w-5 h-5 text-primary-foreground" />
+                              <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                                <Bot className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-primary-foreground" />
                               </div>
                             )}
                             <div
-                              className={`max-w-[80%] rounded-2xl p-4 ${
+                              className={`max-w-[85%] sm:max-w-[80%] md:max-w-[75%] lg:max-w-[70%] xl:max-w-[65%] rounded-2xl p-4 md:p-5 lg:p-6 ${
                                 message.type === "ai"
                                   ? "bg-muted text-foreground"
                                   : "bg-primary text-primary-foreground"
                               }`}
                             >
-                              <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                              <p className="text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed whitespace-pre-wrap">{message.content}</p>
                               
                               {/* Suggestion buttons for AI messages */}
                               {message.type === "ai" && message.suggestions && message.suggestions.length > 0 && (
@@ -1155,7 +1156,7 @@ const AIApplicationChat = () => {
                                     <button
                                       key={idx}
                                       onClick={() => handleSendMessage(suggestion)}
-                                      className="px-3 py-1.5 text-xs border border-border rounded-lg hover:bg-accent transition-colors bg-background"
+                                      className="px-3 py-1.5 md:px-4 md:py-2 lg:px-5 lg:py-2.5 text-xs md:text-sm lg:text-base border border-border rounded-lg hover:bg-accent transition-colors bg-background"
                                     >
                                       {suggestion}
                                     </button>
@@ -1164,8 +1165,8 @@ const AIApplicationChat = () => {
                               )}
                             </div>
                             {message.type === "user" && (
-                              <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
-                                <User className="w-5 h-5 text-foreground" />
+                              <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
+                                <User className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-foreground" />
                               </div>
                             )}
                           </div>
@@ -1173,9 +1174,9 @@ const AIApplicationChat = () => {
                       </div>
                     ))}
                     {isTyping && (
-                      <div className="flex gap-3">
-                        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                          <Bot className="w-5 h-5 text-primary-foreground" />
+                          <div className="flex gap-3 md:gap-4 lg:gap-5">
+                        <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                          <Bot className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-primary-foreground" />
                         </div>
                         <div className="bg-muted rounded-2xl p-4">
                           <div className="flex gap-1">
@@ -1187,6 +1188,7 @@ const AIApplicationChat = () => {
                       </div>
                     )}
                     <div ref={messagesEndRef} />
+                    </div>
                   </div>
                 </ScrollArea>
 
