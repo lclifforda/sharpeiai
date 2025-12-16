@@ -1,6 +1,6 @@
 import { NavLink } from "@/components/NavLink";
 import { MessageSquare, LayoutDashboard, Building2, ShoppingCart, FileText, CreditCard, Package, Settings, LogOut, Headphones, Store, BookOpen, HelpCircle, Mail, Smartphone } from "lucide-react";
-import bbvaLogo from "@/assets/bbva-logo.png";
+import ilsLogo from "@/assets/ils-logo.png";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, SidebarHeader, useSidebar } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 const previewItem = {
@@ -52,11 +52,11 @@ export function AppSidebar() {
           <div className={`flex items-center ${open ? 'gap-3 w-full' : 'justify-center'}`}>
             {open ? (
               <>
-                <div className="flex-shrink-0 w-16 h-8">
+                <div className="flex-shrink-0 h-10">
                   <img 
-                    src={bbvaLogo} 
-                    alt="BBVA" 
-                    className="w-full h-full object-contain"
+                    src={ilsLogo} 
+                    alt="Innovative Lease Services" 
+                    className="h-full object-contain"
                   />
                 </div>
                 <div className="border-l border-border/50 h-8 ml-1" />
@@ -64,8 +64,8 @@ export function AppSidebar() {
             ) : (
               <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0 overflow-hidden p-1">
                 <img 
-                  src={bbvaLogo} 
-                  alt="BBVA" 
+                  src={ilsLogo} 
+                  alt="ILS" 
                   className="w-full h-full object-contain"
                 />
               </div>
