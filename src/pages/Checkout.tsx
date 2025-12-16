@@ -11,6 +11,7 @@ import { ShoppingCart, CheckCircle2, RotateCcw, ArrowUpCircle, Info, Plus, Minus
 import robotImage from "@/assets/humanoid-robot.png";
 import robotAngle1 from "@/assets/robot-angle-1.png";
 import robotAngle2 from "@/assets/robot-angle-2.png";
+import ilsLogo from "@/assets/ils-logo.png";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -385,7 +386,7 @@ const Checkout = () => {
                         <div className="flex items-center justify-center gap-2 pt-2">
                           <span className="text-xs text-muted-foreground">Powered by</span>
                           <img 
-                            src="/src/assets/ils-logo.png" 
+                            src={ilsLogo} 
                             alt="ILS" 
                             className="h-4"
                           />
