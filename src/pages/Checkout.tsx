@@ -67,7 +67,7 @@ const Checkout = () => {
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-foreground">Merchant Checkout Preview</h1>
-          <p className="text-muted-foreground mt-2">See how BBVA Commercial Leasing appears in your checkout</p>
+          <p className="text-muted-foreground mt-2">See how ILS Commercial Leasing appears in your checkout</p>
         </div>
 
         <div className="max-w-6xl mx-auto">
