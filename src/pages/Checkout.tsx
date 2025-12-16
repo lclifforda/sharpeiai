@@ -385,8 +385,8 @@ const Checkout = () => {
                         <div className="flex items-center justify-center gap-2 pt-2">
                           <span className="text-xs text-muted-foreground">Powered by</span>
                           <img 
-                            src="/src/assets/bbva-logo.png" 
-                            alt="BBVA" 
+                            src="/src/assets/ils-logo.png" 
+                            alt="ILS" 
                             className="h-4"
                           />
                         </div>
