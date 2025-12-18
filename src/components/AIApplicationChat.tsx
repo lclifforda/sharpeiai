@@ -1216,49 +1216,49 @@ const AIApplicationChat = () => {
         <Button 
           variant="ghost" 
           onClick={() => navigate(-1)}
-          className="mb-6"
+          className="mb-4 text-sm h-8"
         >
-          <ArrowLeft className="w-4 h-4 mr-2" />
+          <ArrowLeft className="w-3.5 h-3.5 mr-2" />
           Back
         </Button>
 
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-foreground mb-2">AI-Guided Application</h1>
-          <p className="text-muted-foreground">Complete your leasing application through conversation</p>
+        <div className="mb-4">
+          <h1 className="text-2xl font-bold text-foreground mb-1">AI-Guided Application</h1>
+          <p className="text-sm text-muted-foreground">Complete your leasing application through conversation</p>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6 max-w-[95vw] xl:max-w-[98vw] 2xl:max-w-[1600px] mx-auto">
           {/* Chat Area */}
           <div className="lg:col-span-2">
-            <Card className="h-[600px] md:h-[700px] lg:h-[800px] xl:h-[900px] flex flex-col">
+            <Card className="h-[calc(100vh-200px)] flex flex-col">
               <CardContent className="p-0 flex-1 flex flex-col overflow-hidden min-h-0">
                 <ScrollArea className="flex-1 min-h-0">
-                  <div className="p-6 md:p-8 lg:p-10">
-                    <div className="space-y-4 md:space-y-5 lg:space-y-6">
+                  <div className="p-4 md:p-5 lg:p-6">
+                    <div className="space-y-3 md:space-y-4">
                     {messages.map((message, index) => (
                       <div key={message.id || index}>
                         {/* Offer Card */}
                         {message.type === 'offer' && message.offerData && (
-                          <div className="mb-4">
-                            <div className="flex gap-3 mb-2">
-                              <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                                <Bot className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-primary-foreground" />
+                          <div className="mb-3">
+                            <div className="flex gap-2 mb-2">
+                              <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                                <Bot className="w-4 h-4 md:w-5 md:h-5 text-primary-foreground" />
                               </div>
-                              <div className="bg-muted text-foreground rounded-2xl p-4 md:p-5 lg:p-6 max-w-[85%] sm:max-w-[80%] md:max-w-[75%] lg:max-w-[70%] xl:max-w-[65%]">
+                              <div className="bg-muted text-foreground rounded-2xl p-3 md:p-4 max-w-[85%] sm:max-w-[80%] md:max-w-[75%] lg:max-w-[70%] xl:max-w-[65%]">
                                 <MarkdownText 
                                 content={message.content} 
-                                className="text-sm md:text-base lg:text-lg xl:text-xl"
+                                className="text-xs md:text-sm"
                               />
                               </div>
                             </div>
                             <OfferCard offer={message.offerData} />
                             {message.suggestions && message.suggestions.length > 0 && (
-                              <div className="flex flex-wrap gap-2 mt-3">
+                              <div className="flex flex-wrap gap-1.5 mt-2">
                                 {message.suggestions.map((suggestion, idx) => (
                                   <button
                                     key={idx}
                                     onClick={() => handleSendMessage(suggestion)}
-                                    className="px-3 py-1.5 md:px-4 md:py-2 lg:px-5 lg:py-2.5 text-xs md:text-sm lg:text-base border border-border rounded-lg hover:bg-accent transition-colors bg-background"
+                                    className="px-2 py-1 md:px-3 md:py-1.5 text-xs md:text-sm border border-border rounded-lg hover:bg-accent transition-colors bg-background"
                                   >
                                     {suggestion}
                                   </button>
@@ -1270,15 +1270,15 @@ const AIApplicationChat = () => {
                         
                         {/* Contract Card */}
                         {message.type === 'contract' && message.contractData && (
-                          <div className="mb-4">
-                            <div className="flex gap-3 mb-2">
-                              <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                                <Bot className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-primary-foreground" />
+                          <div className="mb-3">
+                            <div className="flex gap-2 mb-2">
+                              <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                                <Bot className="w-4 h-4 md:w-5 md:h-5 text-primary-foreground" />
                               </div>
-                              <div className="bg-muted text-foreground rounded-2xl p-4 md:p-5 lg:p-6 max-w-[85%] sm:max-w-[80%] md:max-w-[75%] lg:max-w-[70%] xl:max-w-[65%]">
+                              <div className="bg-muted text-foreground rounded-2xl p-3 md:p-4 max-w-[85%] sm:max-w-[80%] md:max-w-[75%] lg:max-w-[70%] xl:max-w-[65%]">
                                 <MarkdownText 
                                 content={message.content} 
-                                className="text-sm md:text-base lg:text-lg xl:text-xl"
+                                className="text-xs md:text-sm"
                               />
                               </div>
                             </div>
@@ -1296,12 +1296,12 @@ const AIApplicationChat = () => {
                               onSign={() => handleSendMessage('Sign contract')}
                             />
                             {message.suggestions && message.suggestions.length > 0 && (
-                              <div className="flex flex-wrap gap-2 mt-3">
+                              <div className="flex flex-wrap gap-1.5 mt-2">
                                 {message.suggestions.map((suggestion, idx) => (
                                   <button
                                     key={idx}
                                     onClick={() => handleSendMessage(suggestion)}
-                                    className="px-3 py-1.5 md:px-4 md:py-2 lg:px-5 lg:py-2.5 text-xs md:text-sm lg:text-base border border-border rounded-lg hover:bg-accent transition-colors bg-background"
+                                    className="px-2 py-1 md:px-3 md:py-1.5 text-xs md:text-sm border border-border rounded-lg hover:bg-accent transition-colors bg-background"
                                   >
                                     {suggestion}
                                   </button>
@@ -1313,30 +1313,30 @@ const AIApplicationChat = () => {
                         
                         {/* Completion View */}
                         {message.type === 'completion' && message.data && (
-                          <div className="mb-4">
+                          <div className="mb-3">
                             <div className="rounded-xl overflow-hidden border-2 shadow-xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 border-green-500 animate-in fade-in slide-in-from-bottom-4 duration-300">
-                              <div className="p-8 space-y-6 text-center bg-card">
-                                <div className="space-y-4">
-                                  <div className="w-20 h-20 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto">
-                                    <svg className="w-10 h-10 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <div className="p-4 md:p-6 space-y-4 text-center bg-card">
+                                <div className="space-y-2">
+                                  <div className="w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto">
+                                    <svg className="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                     </svg>
                                   </div>
                                   
-                                  <h2 className="text-3xl font-bold text-foreground">Thank You for Your Order!</h2>
-                                  <p className="text-lg text-muted-foreground max-w-md mx-auto">
+                                  <h2 className="text-xl font-bold text-foreground">Thank You for Your Order!</h2>
+                                  <p className="text-sm text-muted-foreground max-w-md mx-auto">
                                     Your order has been successfully placed and your financing is approved.
                                   </p>
                                 </div>
 
-                                <div className="bg-accent/50 rounded-lg p-6 space-y-3 text-left">
-                                  <h3 className="font-semibold text-lg">Delivery Information</h3>
-                                  <div className="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-700 rounded-lg p-4">
-                                    <p className="text-lg font-bold text-blue-800 dark:text-blue-300">
+                                <div className="bg-accent/50 rounded-lg p-4 space-y-2 text-left">
+                                  <h3 className="font-semibold text-sm">Delivery Information</h3>
+                                  <div className="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-700 rounded-lg p-3">
+                                    <p className="text-sm font-bold text-blue-800 dark:text-blue-300">
                                       🚚 You should receive your products in 5-7 business days
                                     </p>
                                   </div>
-                                  <ul className="space-y-2 text-muted-foreground mt-4">
+                                  <ul className="space-y-1.5 text-xs text-muted-foreground mt-3">
                                     <li className="flex items-start gap-2">
                                       <span className="text-green-500 font-bold">✓</span>
                                       <span>Confirmation email sent to your inbox</span>
@@ -1352,11 +1352,11 @@ const AIApplicationChat = () => {
                                   </ul>
                                 </div>
 
-                                <div className="space-y-3">
-                                  <div className="text-sm text-muted-foreground">
+                                <div className="space-y-2">
+                                  <div className="text-xs text-muted-foreground">
                                     <p className="font-semibold">Your Selected Offer:</p>
                                     <p>{message.data.offerType === 'financing' ? 'Financing' : 'Lease'} - {message.data.term} months</p>
-                                    <p className="text-xl font-bold text-primary mt-1">${message.data.monthlyPayment}/month</p>
+                                    <p className="text-lg font-bold text-primary mt-1">${message.data.monthlyPayment}/month</p>
                                   </div>
                                 </div>
                               </div>
@@ -1366,45 +1366,45 @@ const AIApplicationChat = () => {
                         
                         {/* Comparison View */}
                         {message.type === 'comparison' && message.comparisonData && (
-                          <div className="mb-4">
-                            <div className="flex gap-3 mb-4">
-                              <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                                <Bot className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-primary-foreground" />
+                          <div className="mb-3">
+                            <div className="flex gap-2 mb-3">
+                              <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                                <Bot className="w-4 h-4 md:w-5 md:h-5 text-primary-foreground" />
                               </div>
-                              <div className="bg-muted text-foreground rounded-2xl p-4 md:p-5 lg:p-6 max-w-[85%] sm:max-w-[80%] md:max-w-[75%] lg:max-w-[70%] xl:max-w-[65%]">
+                              <div className="bg-muted text-foreground rounded-2xl p-3 md:p-4 max-w-[85%] sm:max-w-[80%] md:max-w-[75%] lg:max-w-[70%] xl:max-w-[65%]">
                                 <MarkdownText 
                                 content={message.content} 
-                                className="text-sm md:text-base lg:text-lg xl:text-xl"
+                                className="text-xs md:text-sm"
                               />
                               </div>
                             </div>
-                            <div className="grid md:grid-cols-2 gap-4 mb-4">
+                            <div className="grid md:grid-cols-2 gap-3 mb-3">
                               {/* Financing Column */}
                               <div className="rounded-xl overflow-hidden border-2 shadow-lg bg-gradient-to-br from-primary/10 to-blue-500/10 border-primary">
-                                <div className="bg-gradient-to-r from-primary to-blue-600 px-6 py-4">
-                                  <h3 className="text-white text-lg font-bold">Equipment Financing</h3>
-                                  <p className="text-primary-foreground/80 text-sm">{message.comparisonData.financing.lender}</p>
+                                <div className="bg-gradient-to-r from-primary to-blue-600 px-4 py-3">
+                                  <h3 className="text-white text-sm font-bold">Equipment Financing</h3>
+                                  <p className="text-primary-foreground/80 text-xs">{message.comparisonData.financing.lender}</p>
                                 </div>
-                                <div className="p-6 bg-card">
-                                  <div className="space-y-4">
+                                <div className="p-4 bg-card">
+                                  <div className="space-y-3">
                                     <div>
-                                      <p className="text-2xl font-bold text-foreground">${message.comparisonData.financing.monthlyPayment.toLocaleString()}</p>
-                                      <p className="text-sm text-muted-foreground">per month</p>
+                                      <p className="text-xl font-bold text-foreground">${message.comparisonData.financing.monthlyPayment.toLocaleString()}</p>
+                                      <p className="text-xs text-muted-foreground">per month</p>
                                     </div>
-                                    <div className="space-y-2 pt-4 border-t border-border">
-                                      <div className="flex justify-between text-sm">
+                                    <div className="space-y-1.5 pt-3 border-t border-border">
+                                      <div className="flex justify-between text-xs">
                                         <span className="text-muted-foreground">Down Payment</span>
                                         <span className="font-medium text-foreground">${message.comparisonData.financing.downPayment.toLocaleString()}</span>
                                       </div>
-                                      <div className="flex justify-between text-sm">
+                                      <div className="flex justify-between text-xs">
                                         <span className="text-muted-foreground">APR</span>
                                         <span className="font-medium text-foreground">{message.comparisonData.financing.apr}%</span>
                                       </div>
-                                      <div className="flex justify-between text-sm">
+                                      <div className="flex justify-between text-xs">
                                         <span className="text-muted-foreground">Term</span>
                                         <span className="font-medium text-foreground">{message.comparisonData.term} months</span>
                                       </div>
-                                      <div className="flex justify-between text-sm pt-2 border-t border-border">
+                                      <div className="flex justify-between text-xs pt-1.5 border-t border-border">
                                         <span className="font-semibold text-foreground">Total Cost</span>
                                         <span className="font-bold text-primary">${message.comparisonData.financing.totalCost.toLocaleString()}</span>
                                       </div>
@@ -1415,30 +1415,30 @@ const AIApplicationChat = () => {
                               
                               {/* Lease Column */}
                               <div className="rounded-xl overflow-hidden border-2 shadow-lg bg-gradient-to-br from-green-500/10 to-emerald-500/10 border-green-500">
-                                <div className="bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-4">
-                                  <h3 className="text-white text-lg font-bold">Equipment Lease</h3>
-                                  <p className="text-white/80 text-sm">{message.comparisonData.lease.lender}</p>
+                                <div className="bg-gradient-to-r from-green-600 to-emerald-600 px-4 py-3">
+                                  <h3 className="text-white text-sm font-bold">Equipment Lease</h3>
+                                  <p className="text-white/80 text-xs">{message.comparisonData.lease.lender}</p>
                                 </div>
-                                <div className="p-6 bg-card">
-                                  <div className="space-y-4">
+                                <div className="p-4 bg-card">
+                                  <div className="space-y-3">
                                     <div>
-                                      <p className="text-2xl font-bold text-foreground">${message.comparisonData.lease.monthlyPayment.toLocaleString()}</p>
-                                      <p className="text-sm text-muted-foreground">per month</p>
+                                      <p className="text-xl font-bold text-foreground">${message.comparisonData.lease.monthlyPayment.toLocaleString()}</p>
+                                      <p className="text-xs text-muted-foreground">per month</p>
                                     </div>
-                                    <div className="space-y-2 pt-4 border-t border-border">
-                                      <div className="flex justify-between text-sm">
+                                    <div className="space-y-1.5 pt-3 border-t border-border">
+                                      <div className="flex justify-between text-xs">
                                         <span className="text-muted-foreground">Down Payment</span>
                                         <span className="font-medium text-foreground">${message.comparisonData.lease.downPayment.toLocaleString()}</span>
                                       </div>
-                                      <div className="flex justify-between text-sm">
+                                      <div className="flex justify-between text-xs">
                                         <span className="text-muted-foreground">APR</span>
                                         <span className="font-medium text-foreground">N/A</span>
                                       </div>
-                                      <div className="flex justify-between text-sm">
+                                      <div className="flex justify-between text-xs">
                                         <span className="text-muted-foreground">Term</span>
                                         <span className="font-medium text-foreground">{message.comparisonData.term} months</span>
                                       </div>
-                                      <div className="flex justify-between text-sm pt-2 border-t border-border">
+                                      <div className="flex justify-between text-xs pt-1.5 border-t border-border">
                                         <span className="font-semibold text-foreground">Total Cost</span>
                                         <span className="font-bold text-green-600">${message.comparisonData.lease.totalCost.toLocaleString()}</span>
                                       </div>
@@ -1449,12 +1449,12 @@ const AIApplicationChat = () => {
                             </div>
                             
                             {/* Difference Summary */}
-                            <div className="bg-muted/50 rounded-lg p-4 mb-4">
-                              <p className="text-sm font-semibold text-foreground text-center">{message.comparisonData.difference}</p>
+                            <div className="bg-muted/50 rounded-lg p-3 mb-3">
+                              <p className="text-xs font-semibold text-foreground text-center">{message.comparisonData.difference}</p>
                             </div>
                             
                             {message.suggestions && message.suggestions.length > 0 && (
-                              <div className="flex flex-wrap gap-2">
+                              <div className="flex flex-wrap gap-1.5">
                                 {message.suggestions.map((suggestion, idx) => (
                                   <button
                                     key={idx}
@@ -1471,7 +1471,7 @@ const AIApplicationChat = () => {
                                         handleSendMessage(suggestion);
                                       }
                                     }}
-                                    className="px-3 py-1.5 md:px-4 md:py-2 lg:px-5 lg:py-2.5 text-xs md:text-sm lg:text-base border border-border rounded-lg hover:bg-accent transition-colors bg-background"
+                                    className="px-2 py-1 md:px-3 md:py-1.5 text-xs md:text-sm border border-border rounded-lg hover:bg-accent transition-colors bg-background"
                                   >
                                     {suggestion}
                                   </button>
@@ -1483,21 +1483,21 @@ const AIApplicationChat = () => {
                         
                         {/* Document Upload View */}
                         {message.type === 'document_upload' && (
-                          <div className="mb-4">
-                            <div className="flex gap-3 mb-4">
-                              <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                                <Bot className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-primary-foreground" />
+                          <div className="mb-3">
+                            <div className="flex gap-2 mb-3">
+                              <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                                <Bot className="w-4 h-4 md:w-5 md:h-5 text-primary-foreground" />
                               </div>
-                              <div className="bg-muted text-foreground rounded-2xl p-4 md:p-5 lg:p-6 max-w-[85%] sm:max-w-[80%] md:max-w-[75%] lg:max-w-[70%] xl:max-w-[65%]">
+                              <div className="bg-muted text-foreground rounded-2xl p-3 md:p-4 max-w-[85%] sm:max-w-[80%] md:max-w-[75%] lg:max-w-[70%] xl:max-w-[65%]">
                                 <MarkdownText 
                                   content={message.content} 
-                                  className="text-sm md:text-base lg:text-lg xl:text-xl"
+                                  className="text-xs md:text-sm"
                                 />
                               </div>
                             </div>
                             
                             {/* Document Upload Cards */}
-                            <div className="space-y-3 mb-4">
+                            <div className="space-y-2 mb-3">
                               {requiredDocuments.map((doc, index) => {
                                 const isUploaded = !!uploadedDocs[doc.id];
                                 const verification = documentVerification[doc.id];
@@ -1520,10 +1520,10 @@ const AIApplicationChat = () => {
                                         : 'border-border hover:border-primary/50 hover:bg-accent/50'
                                     }`}
                                   >
-                                    <div className="p-4">
-                                      <div className="flex items-start gap-4">
+                                    <div className="p-3">
+                                      <div className="flex items-start gap-3">
                                         {/* Icon/Status */}
-                                        <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 ${
+                                        <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${
                                           isVerified
                                             ? 'bg-green-500 text-white' 
                                             : isRejected
@@ -1535,15 +1535,15 @@ const AIApplicationChat = () => {
                                             : 'bg-muted text-muted-foreground'
                                         }`}>
                                           {isProcessing ? (
-                                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                                           ) : isVerified ? (
-                                            <FileCheck className="w-5 h-5" />
+                                            <FileCheck className="w-4 h-4" />
                                           ) : isRejected ? (
-                                            <X className="w-5 h-5" />
+                                            <X className="w-4 h-4" />
                                           ) : isUploaded ? (
-                                            <FileCheck className="w-5 h-5" />
+                                            <FileCheck className="w-4 h-4" />
                                           ) : (
-                                            <File className="w-5 h-5" />
+                                            <File className="w-4 h-4" />
                                           )}
                                         </div>
 
@@ -1553,9 +1553,9 @@ const AIApplicationChat = () => {
                                             <span className="text-xs font-semibold text-muted-foreground">
                                               {index + 1} / {requiredDocuments.length}
                                             </span>
-                                            <h3 className="font-semibold text-foreground">{doc.name}</h3>
+                                            <h3 className="text-sm font-semibold text-foreground">{doc.name}</h3>
                                           </div>
-                                          <p className="text-sm text-muted-foreground mb-2">{doc.description}</p>
+                                          <p className="text-xs text-muted-foreground mb-2">{doc.description}</p>
                                           
                                           {isUploaded ? (
                                             <div className="space-y-2">
@@ -1653,14 +1653,14 @@ const AIApplicationChat = () => {
                                         {/* Upload Button */}
                                         <label htmlFor={`file-${doc.id}`} className="cursor-pointer">
                                           {!isUploaded ? (
-                                            <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 hover:scale-105 shadow-sm">
-                                              <Upload className="w-4 h-4" />
-                                              <span className="text-sm font-medium">Upload</span>
+                                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 hover:scale-105 shadow-sm">
+                                              <Upload className="w-3.5 h-3.5" />
+                                              <span className="text-xs font-medium">Upload</span>
                                             </div>
                                           ) : (
-                                            <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-border bg-background hover:bg-accent transition-colors">
-                                              <Upload className="w-4 h-4 text-muted-foreground" />
-                                              <span className="text-sm font-medium text-foreground">Replace</span>
+                                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-background hover:bg-accent transition-colors">
+                                              <Upload className="w-3.5 h-3.5 text-muted-foreground" />
+                                              <span className="text-xs font-medium text-foreground">Replace</span>
                                             </div>
                                           )}
                                           <input
@@ -1699,12 +1699,12 @@ const AIApplicationChat = () => {
                             </div>
                             
                             {message.suggestions && message.suggestions.length > 0 && (
-                              <div className="flex flex-wrap gap-2 mt-3">
+                              <div className="flex flex-wrap gap-1.5 mt-2">
                                 {message.suggestions.map((suggestion, idx) => (
                                   <button
                                     key={idx}
                                     onClick={() => handleSendMessage(suggestion)}
-                                    className="px-3 py-1.5 md:px-4 md:py-2 lg:px-5 lg:py-2.5 text-xs md:text-sm lg:text-base border border-border rounded-lg hover:bg-accent transition-colors bg-background"
+                                    className="px-2 py-1 md:px-3 md:py-1.5 text-xs md:text-sm border border-border rounded-lg hover:bg-accent transition-colors bg-background"
                                   >
                                     {suggestion}
                                   </button>
@@ -1716,14 +1716,14 @@ const AIApplicationChat = () => {
                         
                         {/* Regular messages */}
                         {message.type !== 'offer' && message.type !== 'contract' && message.type !== 'comparison' && message.type !== 'completion' && message.type !== 'document_upload' && (
-                          <div className={`flex gap-3 ${message.type === "user" ? "justify-end" : ""}`}>
+                          <div className={`flex gap-2 ${message.type === "user" ? "justify-end" : ""}`}>
                             {message.type === "ai" && (
-                              <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                                <Bot className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-primary-foreground" />
+                              <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                                <Bot className="w-4 h-4 md:w-5 md:h-5 text-primary-foreground" />
                               </div>
                             )}
                             <div
-                              className={`max-w-[90%] sm:max-w-[85%] md:max-w-[85%] lg:max-w-[80%] xl:max-w-[75%] 2xl:max-w-[70%] rounded-2xl p-4 md:p-5 lg:p-6 ${
+                              className={`max-w-[90%] sm:max-w-[85%] md:max-w-[85%] lg:max-w-[80%] xl:max-w-[75%] 2xl:max-w-[70%] rounded-2xl p-3 md:p-4 ${
                                 message.type === "ai"
                                   ? "bg-muted text-foreground"
                                   : "bg-primary text-primary-foreground"
@@ -1731,17 +1731,17 @@ const AIApplicationChat = () => {
                             >
                               <MarkdownText 
                                 content={message.content} 
-                                className="text-sm md:text-base lg:text-lg xl:text-xl"
+                                className="text-xs md:text-sm"
                               />
                               
                               {/* Suggestion buttons for AI messages */}
                               {message.type === "ai" && message.suggestions && message.suggestions.length > 0 && (
-                                <div className="flex flex-wrap gap-2 mt-3">
+                                <div className="flex flex-wrap gap-1.5 mt-2">
                                   {message.suggestions.map((suggestion, idx) => (
                                     <button
                                       key={idx}
                                       onClick={() => handleSendMessage(suggestion)}
-                                      className="px-3 py-1.5 md:px-4 md:py-2 lg:px-5 lg:py-2.5 text-xs md:text-sm lg:text-base border border-border rounded-lg hover:bg-accent transition-colors bg-background"
+                                      className="px-2 py-1 md:px-3 md:py-1.5 text-xs md:text-sm border border-border rounded-lg hover:bg-accent transition-colors bg-background"
                                     >
                                       {suggestion}
                                     </button>
@@ -1750,8 +1750,8 @@ const AIApplicationChat = () => {
                               )}
                             </div>
                             {message.type === "user" && (
-                              <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
-                                <User className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-foreground" />
+                              <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
+                                <User className="w-4 h-4 md:w-5 md:h-5 text-foreground" />
                               </div>
                             )}
                           </div>
@@ -1759,11 +1759,11 @@ const AIApplicationChat = () => {
                       </div>
                     ))}
                     {isTyping && (
-                          <div className="flex gap-3 md:gap-4 lg:gap-5">
-                        <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                          <Bot className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-primary-foreground" />
+                          <div className="flex gap-2">
+                        <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                          <Bot className="w-4 h-4 md:w-5 md:h-5 text-primary-foreground" />
                         </div>
-                        <div className="bg-muted rounded-2xl p-4">
+                        <div className="bg-muted rounded-2xl p-3">
                           <div className="flex gap-1">
                             <div className="w-2 h-2 rounded-full bg-foreground/40 animate-bounce" style={{ animationDelay: "0ms" }} />
                             <div className="w-2 h-2 rounded-full bg-foreground/40 animate-bounce" style={{ animationDelay: "150ms" }} />
@@ -1778,14 +1778,14 @@ const AIApplicationChat = () => {
                 </ScrollArea>
 
                 {/* Input Area */}
-                <div className="border-t border-border p-4 flex-shrink-0">
+                <div className="border-t border-border p-3 flex-shrink-0">
                   <div className="flex gap-2">
                     <Input
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
                       onKeyPress={handleKeyPress}
                       placeholder="Type your message..."
-                      className="flex-1"
+                      className="flex-1 text-sm"
                       disabled={isTyping}
                     />
                     <Button 
@@ -1796,8 +1796,9 @@ const AIApplicationChat = () => {
                       }} 
                       disabled={!inputValue.trim() || isTyping}
                       size="icon"
+                      className="h-9 w-9"
                     >
-                      <Send className="w-4 h-4" />
+                      <Send className="w-3.5 h-3.5" />
                     </Button>
                   </div>
                 </div>
