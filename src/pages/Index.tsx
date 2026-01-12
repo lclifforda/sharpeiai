@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { MessageSquare, Paperclip, RefreshCw, FileSearch, History, FilePlus, Plus, Home, ChevronDown, Sparkles, User } from "lucide-react";
 import SharpeiOrb from "@/components/SharpeiOrb";
@@ -33,6 +34,7 @@ interface Message {
 }
 
 const Index = () => {
+  const { t } = useTranslation();
   const [isLeaseQuoteOpen, setIsLeaseQuoteOpen] = useState(false);
   const [isRenewalOfferOpen, setIsRenewalOfferOpen] = useState(false);
   const [selectedSources, setSelectedSources] = useState<string[]>([]);
@@ -76,7 +78,7 @@ const Index = () => {
 
     // Simulate AI response based on query
     setTimeout(() => {
-      let responseContent = "I understand you're asking about equipment financing. Let me help you with that. Based on your query, I can provide detailed information about lease terms, rates, and options available for your specific needs.";
+      let responseContent = t("index.aiResponse");
 
       // Mock response for contracts ending this month
       if (query.includes('contract') && (query.includes('ending') || query.includes('expir'))) {
@@ -136,11 +138,11 @@ Would you like me to generate renewal offers for any of these contracts?`;
         setIsRenewalOfferOpen(true);
         break;
       case 'review':
-        setInputValue("Review a lease contract - analyze terms, conditions, and obligations");
+        setInputValue(t("index.quickActions.review") + " - " + t("index.quickActions.reviewDesc"));
         inputRef.current?.focus();
         break;
       case 'history':
-        setInputValue("Search asset history - track equipment lifecycle and maintenance");
+        setInputValue(t("index.quickActions.history") + " - " + t("index.quickActions.historyDesc"));
         inputRef.current?.focus();
         break;
       case 'quote':
@@ -157,7 +159,7 @@ Would you like me to generate renewal offers for any of these contracts?`;
           <Button variant="ghost" className="w-full justify-start gap-2 border border-transparent bg-gradient-to-r from-gradient-start to-gradient-end bg-origin-border p-[1px] hover:shadow-glow transition-all">
             <span className="w-full flex items-center gap-2 bg-background px-3 py-2 rounded-[calc(0.5rem-1px)]">
               <Plus className="w-4 h-4 text-gradient-start" />
-              New Chat
+              {t("index.newChat")}
             </span>
           </Button>
         </div>
@@ -166,12 +168,12 @@ Would you like me to generate renewal offers for any of these contracts?`;
           <nav className="px-2 space-y-1">
             <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-foreground hover:bg-accent rounded-lg transition-colors">
               <Home className="w-4 h-4 flex-shrink-0" />
-              <span>Home</span>
+              <span>{t("index.home")}</span>
             </button>
             
             <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:bg-accent rounded-lg transition-colors">
               <History className="w-4 h-4 flex-shrink-0" />
-              <span>History</span>
+              <span>{t("index.history")}</span>
             </button>
           </nav>
         </ScrollArea>
@@ -191,11 +193,11 @@ Would you like me to generate renewal offers for any of these contracts?`;
                   
                   <div className="space-y-2">
                     <h1 className="text-3xl font-semibold text-foreground">
-                      Hey! I'm Sharpei AI, your equipment-financing copilot
+                      {t("index.greeting")}
                       <span className="inline-block w-0.5 h-8 bg-gradient-start ml-1 animate-pulse" />
                     </h1>
                     <p className="text-muted-foreground text-lg">
-                      I help banks, lenders, and leasing teams streamline workflows with audit-ready AI assistance.
+                      {t("index.description")}
                     </p>
                   </div>
                 </div>
@@ -203,16 +205,16 @@ Would you like me to generate renewal offers for any of these contracts?`;
                 {/* Quick Actions */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                   <div onClick={() => handleQuickAction('renewal')}>
-                    <QuickActionCard icon={<RefreshCw className="w-6 h-6 text-gradient-start" />} title="Generate a renewal / EoT quote" description="for existing leases and end-of-term options" />
+                    <QuickActionCard icon={<RefreshCw className="w-6 h-6 text-gradient-start" />} title={t("index.quickActions.renewal")} description={t("index.quickActions.renewalDesc")} />
                   </div>
                   <div onClick={() => handleQuickAction('review')}>
-                    <QuickActionCard icon={<FileSearch className="w-6 h-6 text-gradient-blue" />} title="Review a lease contract" description="analyze terms, conditions, and obligations" />
+                    <QuickActionCard icon={<FileSearch className="w-6 h-6 text-gradient-blue" />} title={t("index.quickActions.review")} description={t("index.quickActions.reviewDesc")} />
                   </div>
                   <div onClick={() => handleQuickAction('history')}>
-                    <QuickActionCard icon={<History className="w-6 h-6 text-gradient-purple" />} title="Search asset history" description="track equipment lifecycle and maintenance" />
+                    <QuickActionCard icon={<History className="w-6 h-6 text-gradient-purple" />} title={t("index.quickActions.history")} description={t("index.quickActions.historyDesc")} />
                   </div>
                   <div onClick={() => handleQuickAction('quote')}>
-                    <QuickActionCard icon={<FilePlus className="w-6 h-6 text-gradient-end" />} title="Generate a new lease quote" description="for any equipment within seconds" />
+                    <QuickActionCard icon={<FilePlus className="w-6 h-6 text-gradient-end" />} title={t("index.quickActions.quote")} description={t("index.quickActions.quoteDesc")} />
                   </div>
                 </div>
               </div>
@@ -228,8 +230,8 @@ Would you like me to generate renewal offers for any of these contracts?`;
                     </div>
                   </div>
                   <div className="flex-1">
-                    <h2 className="text-sm font-medium text-foreground">Sharpei AI</h2>
-                    <p className="text-xs text-muted-foreground">Equipment financing copilot</p>
+                    <h2 className="text-sm font-medium text-foreground">{t("index.chatHeader")}</h2>
+                    <p className="text-xs text-muted-foreground">{t("index.chatSubheader")}</p>
                   </div>
                   
                   {/* Collapsed Quick Actions Menu */}
@@ -237,7 +239,7 @@ Would you like me to generate renewal offers for any of these contracts?`;
                     <DropdownMenuTrigger asChild>
                       <Button variant="outline" size="sm" className="gap-2">
                         <Sparkles className="w-4 h-4" />
-                        Quick Actions
+                        {t("index.quickActionsBtn")}
                         <ChevronDown className="w-3 h-3" />
                       </Button>
                     </DropdownMenuTrigger>
@@ -245,29 +247,29 @@ Would you like me to generate renewal offers for any of these contracts?`;
                       <DropdownMenuItem onClick={() => handleQuickAction('renewal')} className="gap-3 py-3">
                         <RefreshCw className="w-4 h-4 text-gradient-start" />
                         <div>
-                          <p className="font-medium text-sm">Renewal / EoT Quote</p>
-                          <p className="text-xs text-muted-foreground">End-of-term options</p>
+                          <p className="font-medium text-sm">{t("index.renewalEot")}</p>
+                          <p className="text-xs text-muted-foreground">{t("index.endOfTermOptions")}</p>
                         </div>
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleQuickAction('review')} className="gap-3 py-3">
                         <FileSearch className="w-4 h-4 text-gradient-blue" />
                         <div>
-                          <p className="font-medium text-sm">Review Contract</p>
-                          <p className="text-xs text-muted-foreground">Analyze terms</p>
+                          <p className="font-medium text-sm">{t("index.reviewContract")}</p>
+                          <p className="text-xs text-muted-foreground">{t("index.analyzeTerms")}</p>
                         </div>
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleQuickAction('history')} className="gap-3 py-3">
                         <History className="w-4 h-4 text-gradient-purple" />
                         <div>
-                          <p className="font-medium text-sm">Search Asset History</p>
-                          <p className="text-xs text-muted-foreground">Track lifecycle</p>
+                          <p className="font-medium text-sm">{t("index.searchAssetHistory")}</p>
+                          <p className="text-xs text-muted-foreground">{t("index.trackLifecycle")}</p>
                         </div>
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleQuickAction('quote')} className="gap-3 py-3">
                         <FilePlus className="w-4 h-4 text-gradient-end" />
                         <div>
-                          <p className="font-medium text-sm">New Lease Quote</p>
-                          <p className="text-xs text-muted-foreground">Generate quickly</p>
+                          <p className="font-medium text-sm">{t("index.newLeaseQuote")}</p>
+                          <p className="text-xs text-muted-foreground">{t("index.generateQuickly")}</p>
                         </div>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -339,13 +341,13 @@ Would you like me to generate renewal offers for any of these contracts?`;
                       <button className="flex items-center gap-1.5 px-3 py-2 hover:bg-muted/50 rounded-full transition-colors">
                         <Plus className="w-4 h-4 text-muted-foreground" />
                         <span className="text-sm text-muted-foreground font-medium">
-                          Sources {selectedSources.length > 0 && `(${selectedSources.length})`}
+                          {t("index.sources")} {selectedSources.length > 0 && `(${selectedSources.length})`}
                         </span>
                       </button>
                     </PopoverTrigger>
                     <PopoverContent className="w-64 bg-white z-50" align="start">
                       <div className="space-y-3">
-                        <h4 className="font-medium text-sm text-foreground">Select Data Sources</h4>
+                        <h4 className="font-medium text-sm text-foreground">{t("index.selectDataSources")}</h4>
                         <div className="space-y-3">
                           {dataSources.map((source) => (
                             <div key={source} className="flex items-center space-x-2">
@@ -371,7 +373,7 @@ Would you like me to generate renewal offers for any of these contracts?`;
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    placeholder="Ask me anything about equipment financing, risk, contracts, or assets…" 
+                    placeholder={t("index.inputPlaceholder")} 
                     className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground" 
                   />
                   <button 
