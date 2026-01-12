@@ -4,7 +4,7 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import en from './locales/en.json';
 import es from './locales/es.json';
 
-i18n
+const initI18n = i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
@@ -12,11 +12,15 @@ i18n
       en: { translation: en },
       es: { translation: es }
     },
-    lng: 'en', // Default language
+    lng: 'en',
     fallbackLng: 'en',
     interpolation: {
       escapeValue: false
+    },
+    react: {
+      useSuspense: false
     }
   });
 
+export { initI18n };
 export default i18n;
