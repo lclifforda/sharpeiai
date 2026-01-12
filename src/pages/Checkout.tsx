@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -12,9 +13,11 @@ import robotImage from "@/assets/humanoid-robot.png";
 import robotAngle1 from "@/assets/robot-angle-1.png";
 import robotAngle2 from "@/assets/robot-angle-2.png";
 import ilsLogo from "@/assets/ils-logo.png";
+import ibercajaLogo from "@/assets/ibercaja-logo.png";
 
 const Checkout = () => {
   const navigate = useNavigate();
+  const { i18n } = useTranslation();
   const [downPayment, setDownPayment] = useState(299);
   const [term, setTerm] = useState("24");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -386,8 +389,8 @@ const Checkout = () => {
                         <div className="flex items-center justify-center gap-2 pt-2">
                           <span className="text-xs text-muted-foreground">Powered by</span>
                           <img 
-                            src={ilsLogo} 
-                            alt="ILS" 
+                            src={i18n.language === 'es' ? ibercajaLogo : ilsLogo} 
+                            alt={i18n.language === 'es' ? 'Ibercaja' : 'ILS'} 
                             className="h-4"
                           />
                         </div>
