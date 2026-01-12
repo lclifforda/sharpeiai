@@ -1,6 +1,7 @@
 import { NavLink } from "@/components/NavLink";
 import { MessageSquare, LayoutDashboard, Building2, ShoppingCart, FileText, CreditCard, Package, Settings, LogOut, Headphones, Store, BookOpen, HelpCircle, Mail, Smartphone } from "lucide-react";
 import ilsLogo from "@/assets/ils-logo.png";
+import ibercajaLogo from "@/assets/ibercaja-logo.png";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, SidebarHeader, useSidebar } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { useTranslation } from "react-i18next";
@@ -17,7 +18,10 @@ const getNavigationItems = (t: (key: string) => string) => [
 ];
 export function AppSidebar() {
   const { open } = useSidebar();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  
+  const currentLogo = i18n.language === 'es' ? ibercajaLogo : ilsLogo;
+  const logoAlt = i18n.language === 'es' ? 'Ibercaja' : 'ILS';
   
   const previewItem = {
     name: t("nav.checkoutPreview"),
@@ -34,8 +38,8 @@ export function AppSidebar() {
               <>
                 <div className="flex-shrink-0 h-10">
                   <img 
-                    src={ilsLogo} 
-                    alt="Innovative Lease Services" 
+                    src={currentLogo} 
+                    alt={logoAlt} 
                     className="h-full object-contain"
                   />
                 </div>
@@ -44,8 +48,8 @@ export function AppSidebar() {
             ) : (
               <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0 overflow-hidden p-1">
                 <img 
-                  src={ilsLogo} 
-                  alt="ILS" 
+                  src={currentLogo} 
+                  alt={logoAlt} 
                   className="w-full h-full object-contain"
                 />
               </div>
