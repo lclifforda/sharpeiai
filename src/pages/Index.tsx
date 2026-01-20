@@ -39,6 +39,30 @@ const Index = () => {
     );
   };
 
+  const handleSearchAssetHistory = async () => {
+    const message = "Show me a list of all active lease contracts and underlying assets, highlight which leases end in the next 6 months, and recommend which customers to target with renewal or upgrade offers.";
+
+    // Show the user's quick action in the chat
+    setChatMessages(prev => [...prev, { role: 'user', content: message }]);
+    setShowResponse(true);
+
+    try {
+      await sendMessage(message, {
+        source: 'index-chat',
+        selectedSources: selectedSources,
+      });
+    } catch (error) {
+      console.error('Failed to send asset history request:', error);
+      setChatMessages(prev => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: 'Sorry, I could not fetch the asset history right now. Please try again.',
+        },
+      ]);
+    }
+  };
+
   // Handle AI responses
   useEffect(() => {
     if (lastMessage) {
@@ -128,7 +152,9 @@ const Index = () => {
               <QuickActionCard icon={<RefreshCw className="w-6 h-6 text-gradient-start" />} title="Generate a renewal / EoT quote" description="for existing leases and end-of-term options" />
             </div>
             <QuickActionCard icon={<FileSearch className="w-6 h-6 text-gradient-blue" />} title="Review a lease contract" description="analyze terms, conditions, and obligations" />
-            <QuickActionCard icon={<History className="w-6 h-6 text-gradient-purple" />} title="Search asset history" description="track equipment lifecycle and maintenance" />
+            <div onClick={handleSearchAssetHistory}>
+              <QuickActionCard icon={<History className="w-6 h-6 text-gradient-purple" />} title="Search asset history" description="track equipment lifecycle and maintenance" />
+            </div>
             <div onClick={() => setIsLeaseQuoteOpen(true)}>
               <QuickActionCard icon={<FilePlus className="w-6 h-6 text-gradient-end" />} title="Generate a new lease quote" description="for any equipment within seconds" />
             </div>
