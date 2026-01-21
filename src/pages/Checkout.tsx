@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Store, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -66,19 +67,37 @@ const Checkout = () => {
     { term: "36 months", monthly: "$650", apr: "4.2%", total: "$23,400" },
   ];
 
+  const currentLogo = i18n.language === 'es' ? ibercajaLogo : ilsLogo;
+  const logoAlt = i18n.language === 'es' ? 'Ibercaja' : 'Innovative Lease Services';
+
   return (
     <div className="min-h-screen p-6 space-y-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-foreground">Merchant Checkout Preview</h1>
-          <p className="text-muted-foreground mt-2">See how ILS Commercial Leasing appears in your checkout</p>
+          <h1 className="text-3xl font-bold text-foreground">Checkout Preview</h1>
+          <p className="text-muted-foreground mt-2">Preview how the checkout experience appears to end users</p>
         </div>
 
-        <div className="max-w-6xl mx-auto">
-          {/* Main Checkout Area */}
-          <div className="space-y-6">
-            {/* Product Card */}
-            <Card>
+        {/* Preview Type Tabs */}
+        <Tabs defaultValue="merchant" className="w-full">
+          <TabsList className="mb-6">
+            <TabsTrigger value="merchant" className="gap-2">
+              <Store className="h-4 w-4" />
+              Merchant Preview
+            </TabsTrigger>
+            <TabsTrigger value="bank" className="gap-2">
+              <Building2 className="h-4 w-4" />
+              Bank Landing Preview
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Merchant Preview Tab */}
+          <TabsContent value="merchant">
+            <div className="max-w-6xl mx-auto">
+              {/* Main Checkout Area */}
+              <div className="space-y-6">
+                {/* Product Card */}
+                <Card>
               <CardContent className="p-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   {/* Product Image Gallery */}
@@ -404,8 +423,83 @@ const Checkout = () => {
                 </div>
               </CardContent>
             </Card>
-          </div>
-        </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* Bank Landing Preview Tab */}
+          <TabsContent value="bank">
+            <div className="max-w-4xl mx-auto">
+              <Card className="overflow-hidden">
+                <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-8 text-center border-b border-border">
+                  <img 
+                    src={currentLogo} 
+                    alt={logoAlt} 
+                    className="h-12 mx-auto mb-6"
+                  />
+                  <h2 className="text-3xl font-bold text-foreground mb-2">Equipment Leasing Made Simple</h2>
+                  <p className="text-muted-foreground max-w-xl mx-auto">
+                    Access the equipment your business needs with flexible leasing options. Apply online in minutes.
+                  </p>
+                </div>
+                <CardContent className="p-8">
+                  <div className="grid md:grid-cols-3 gap-6 mb-8">
+                    <div className="text-center p-4">
+                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                        <CheckCircle2 className="h-6 w-6 text-primary" />
+                      </div>
+                      <h3 className="font-semibold text-foreground mb-1">Quick Approval</h3>
+                      <p className="text-sm text-muted-foreground">Get approved in as fast as 24 hours</p>
+                    </div>
+                    <div className="text-center p-4">
+                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                        <ShoppingCart className="h-6 w-6 text-primary" />
+                      </div>
+                      <h3 className="font-semibold text-foreground mb-1">Flexible Terms</h3>
+                      <p className="text-sm text-muted-foreground">12 to 48 month lease options</p>
+                    </div>
+                    <div className="text-center p-4">
+                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                        <ArrowUpCircle className="h-6 w-6 text-primary" />
+                      </div>
+                      <h3 className="font-semibold text-foreground mb-1">End-of-Lease Options</h3>
+                      <p className="text-sm text-muted-foreground">Keep, return, or upgrade</p>
+                    </div>
+                  </div>
+
+                  <div className="bg-muted rounded-lg p-6 mb-6">
+                    <h3 className="font-semibold text-foreground mb-4">What equipment are you looking for?</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      {['Industrial Robots', 'Medical Equipment', 'IT Hardware', 'Manufacturing', 'Construction', 'Agriculture', 'Vehicles', 'Other'].map((category) => (
+                        <Button 
+                          key={category}
+                          variant="outline" 
+                          className="h-auto py-3 text-sm"
+                          onClick={() => navigate('/application')}
+                        >
+                          {category}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="text-center">
+                    <Button 
+                      size="lg" 
+                      className="px-12"
+                      onClick={() => navigate('/application')}
+                    >
+                      Start Your Application
+                    </Button>
+                    <p className="text-xs text-muted-foreground mt-3">
+                      No impact on your credit score to check rates
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
