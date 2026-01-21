@@ -3,13 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Store, Building2, MessageSquare, FileText, ArrowLeft } from "lucide-react";
+import { Store, Building2, MessageSquare, FileText, ArrowLeft, Phone, Mail, Clock, Shield, Zap, Users, Sparkles, BadgeCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CheckCircle2, RotateCcw, ArrowUpCircle, Plus, Minus } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import robotImage from "@/assets/humanoid-robot.png";
 import robotAngle1 from "@/assets/robot-angle-1.png";
 import robotAngle2 from "@/assets/robot-angle-2.png";
@@ -432,360 +433,481 @@ const Checkout = () => {
           {/* Bank Landing Preview Tab */}
           <TabsContent value="bank">
             <div className="max-w-6xl mx-auto">
-              {/* Header */}
-              <div className="flex justify-between items-start mb-6 bg-card rounded-t-lg p-4 border border-border">
-                <img 
-                  src={currentLogo} 
-                  alt={logoAlt} 
-                  className="h-10"
-                />
-                <div className="text-right">
-                  <p className="text-primary font-bold text-lg">Apply Now!</p>
-                  <p className="text-sm text-muted-foreground">Questions?</p>
-                  <p className="text-sm">Call: <span className="text-primary">800-438-1470</span></p>
-                  <p className="text-sm">Text: <span className="text-primary">562-236-1470</span></p>
+              {/* Premium Header */}
+              <div className="relative overflow-hidden rounded-t-2xl bg-gradient-to-r from-primary via-primary/95 to-primary/90 p-6 mb-0">
+                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
+                <div className="relative flex justify-between items-center">
+                  <div className="flex items-center gap-4">
+                    <div className="bg-white rounded-xl p-2 shadow-lg">
+                      <img 
+                        src={currentLogo} 
+                        alt={logoAlt} 
+                        className="h-8"
+                      />
+                    </div>
+                    <div className="hidden md:block">
+                      <p className="text-primary-foreground/80 text-sm">Business Financing Solutions</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-6">
+                    <div className="hidden md:flex items-center gap-4 text-primary-foreground/90 text-sm">
+                      <div className="flex items-center gap-1.5">
+                        <Phone className="h-4 w-4" />
+                        <span>800-438-1470</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Mail className="h-4 w-4" />
+                        <span>apply@ils.com</span>
+                      </div>
+                    </div>
+                    <Badge variant="secondary" className="bg-white/20 text-primary-foreground border-0 backdrop-blur-sm">
+                      <Sparkles className="h-3 w-3 mr-1" />
+                      Fast Approval
+                    </Badge>
+                  </div>
                 </div>
               </div>
 
-              {/* Hero Banner */}
-              <div className="w-full h-48 bg-gradient-to-r from-primary/20 to-primary/10 rounded-lg mb-6 flex items-center justify-center overflow-hidden">
-                <div className="text-center">
-                  <h2 className="text-2xl font-bold text-foreground">Get Fast, Flexible Business Financing!</h2>
-                  <p className="text-muted-foreground mt-2">Secure working capital or finance equipment with a quick, simple application</p>
+              {/* Hero Section */}
+              <div className="relative bg-gradient-to-br from-muted via-background to-muted/50 border-x border-border p-8 md:p-12">
+                <div className="max-w-3xl mx-auto text-center">
+                  <Badge variant="outline" className="mb-4 border-primary/30 text-primary">
+                    <Clock className="h-3 w-3 mr-1" />
+                    Apply in under 5 minutes
+                  </Badge>
+                  <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                    Get Fast, Flexible Business Financing
+                  </h2>
+                  <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                    Secure working capital or finance equipment with our streamlined application process. 
+                    Get decisions in as little as 24 hours.
+                  </p>
+                  
+                  {/* Trust Indicators */}
+                  <div className="flex flex-wrap justify-center gap-6 mt-8">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Shield className="h-4 w-4 text-primary" />
+                      </div>
+                      <span>Bank-Level Security</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Zap className="h-4 w-4 text-primary" />
+                      </div>
+                      <span>24hr Decisions</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Users className="h-4 w-4 text-primary" />
+                      </div>
+                      <span>10,000+ Businesses Served</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* Application Method Selection */}
-              {bankApplicationMethod === "select" && (
-                <div className="grid md:grid-cols-3 gap-6">
-                  {/* Left Sidebar - Info */}
-                  <div className="space-y-6">
-                    <Card>
-                      <CardContent className="p-4">
-                        <h3 className="font-bold text-primary mb-3">Why Choose {i18n.language === 'es' ? 'Ibercaja' : 'ILS'}?</h3>
-                        <ul className="space-y-2 text-sm text-muted-foreground">
-                          <li className="flex items-start gap-2">
-                            <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                            Approvals in as little as 24 hours
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                            Lease as little as $1,500
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                            Simple, secure online application
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                            We work with nearly all industries
-                          </li>
-                        </ul>
-                      </CardContent>
-                    </Card>
+              {/* Main Content Area */}
+              <div className="bg-background border border-t-0 border-border rounded-b-2xl">
+                {/* Application Method Selection */}
+                {bankApplicationMethod === "select" && (
+                  <div className="p-6 md:p-10">
+                    <div className="grid lg:grid-cols-12 gap-8">
+                      {/* Left Sidebar - Benefits */}
+                      <div className="lg:col-span-4 space-y-6">
+                        <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+                          <CardContent className="p-5">
+                            <div className="flex items-center gap-2 mb-4">
+                              <BadgeCheck className="h-5 w-5 text-primary" />
+                              <h3 className="font-semibold text-foreground">Why Choose {i18n.language === 'es' ? 'Ibercaja' : 'ILS'}?</h3>
+                            </div>
+                            <ul className="space-y-3">
+                              {[
+                                { icon: Clock, text: "Approvals in as little as 24 hours" },
+                                { icon: Shield, text: "Lease as little as $1,500" },
+                                { icon: Zap, text: "Simple, secure online application" },
+                                { icon: Users, text: "We work with nearly all industries" },
+                              ].map((item, idx) => (
+                                <li key={idx} className="flex items-start gap-3">
+                                  <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <item.icon className="h-3 w-3 text-primary" />
+                                  </div>
+                                  <span className="text-sm text-muted-foreground">{item.text}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </CardContent>
+                        </Card>
 
-                    <Card>
-                      <CardContent className="p-4">
-                        <h3 className="font-bold text-primary mb-3">Application Process:</h3>
-                        <ul className="space-y-2 text-sm text-muted-foreground">
-                          <li>1. Choose your application method</li>
-                          <li>2. Speak with your dedicated Finance Specialist</li>
-                          <li>3. Get your funding</li>
-                        </ul>
-                      </CardContent>
-                    </Card>
-                  </div>
+                        <Card className="border-border/50">
+                          <CardContent className="p-5">
+                            <h3 className="font-semibold text-foreground mb-4">How It Works</h3>
+                            <div className="space-y-4">
+                              {[
+                                { step: "1", title: "Choose method", desc: "AI chat or form" },
+                                { step: "2", title: "Complete application", desc: "Takes ~5 minutes" },
+                                { step: "3", title: "Get funded", desc: "As fast as 24 hours" },
+                              ].map((item, idx) => (
+                                <div key={idx} className="flex items-start gap-3">
+                                  <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-semibold flex-shrink-0">
+                                    {item.step}
+                                  </div>
+                                  <div>
+                                    <p className="text-sm font-medium text-foreground">{item.title}</p>
+                                    <p className="text-xs text-muted-foreground">{item.desc}</p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
 
-                  {/* Right Side - Application Method Selection */}
-                  <div className="md:col-span-2">
-                    <div className="text-center mb-8">
-                      <h3 className="text-2xl font-bold text-foreground mb-2">Choose Your Application Method</h3>
-                      <p className="text-muted-foreground">Select how you'd like to complete your leasing application</p>
+                      {/* Right Side - Application Method Selection */}
+                      <div className="lg:col-span-8">
+                        <div className="text-center mb-8">
+                          <h3 className="text-2xl font-bold text-foreground mb-2">Choose Your Application Method</h3>
+                          <p className="text-muted-foreground">Select the experience that works best for you</p>
+                        </div>
+
+                        <div className="grid md:grid-cols-2 gap-6">
+                          {/* AI Chat Option */}
+                          <Card 
+                            className="group relative overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-primary bg-gradient-to-br from-background to-muted/30" 
+                            onClick={() => setBankApplicationMethod("ai")}
+                          >
+                            <div className="absolute top-3 right-3">
+                              <Badge className="bg-primary/10 text-primary border-0 text-xs">
+                                <Sparkles className="h-3 w-3 mr-1" />
+                                Recommended
+                              </Badge>
+                            </div>
+                            <CardContent className="p-6 pt-10 h-full flex flex-col">
+                              <div className="w-16 h-16 rounded-2xl gradient-sharpei flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                                <MessageSquare className="w-8 h-8 text-white" />
+                              </div>
+                              
+                              <h4 className="text-xl font-bold text-foreground mb-2">AI Chat Assistant</h4>
+                              <p className="text-muted-foreground mb-5 flex-grow">
+                                Complete your application through a guided conversation with our AI assistant. Get instant help at every step.
+                              </p>
+                              
+                              <div className="space-y-2 mb-5">
+                                {["Conversational & intuitive", "Real-time assistance", "Personalized guidance"].map((text, idx) => (
+                                  <div key={idx} className="flex items-center gap-2">
+                                    <CheckCircle2 className="h-4 w-4 text-primary" />
+                                    <p className="text-sm text-muted-foreground">{text}</p>
+                                  </div>
+                                ))}
+                              </div>
+
+                              <Button className="w-full group-hover:shadow-md transition-shadow" size="lg">
+                                <MessageSquare className="h-4 w-4 mr-2" />
+                                Start AI Chat
+                              </Button>
+                            </CardContent>
+                          </Card>
+
+                          {/* Traditional Form Option */}
+                          <Card 
+                            className="group relative overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-primary bg-gradient-to-br from-background to-muted/30" 
+                            onClick={() => setBankApplicationMethod("traditional")}
+                          >
+                            <CardContent className="p-6 pt-10 h-full flex flex-col">
+                              <div className="w-16 h-16 rounded-2xl bg-accent flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-lg border border-border">
+                                <FileText className="w-8 h-8 text-foreground" />
+                              </div>
+                              
+                              <h4 className="text-xl font-bold text-foreground mb-2">Traditional Form</h4>
+                              <p className="text-muted-foreground mb-5 flex-grow">
+                                Complete your application using a structured form. Perfect if you prefer to see all fields at once.
+                              </p>
+                              
+                              <div className="space-y-2 mb-5">
+                                {["Clear, structured layout", "See all requirements upfront", "Save and continue later"].map((text, idx) => (
+                                  <div key={idx} className="flex items-center gap-2">
+                                    <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
+                                    <p className="text-sm text-muted-foreground">{text}</p>
+                                  </div>
+                                ))}
+                              </div>
+
+                              <Button variant="outline" className="w-full group-hover:shadow-md transition-shadow" size="lg">
+                                <FileText className="h-4 w-4 mr-2" />
+                                Use Traditional Form
+                              </Button>
+                            </CardContent>
+                          </Card>
+                        </div>
+
+                        {/* Security Note */}
+                        <div className="mt-8 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                          <Shield className="h-4 w-4" />
+                          <span>Your information is encrypted and secure. We never share your data.</span>
+                        </div>
+                      </div>
                     </div>
-
-                    <div className="grid md:grid-cols-2 gap-6">
-                      {/* AI Chat Option */}
-                      <Card 
-                        className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-2 hover:border-primary" 
-                        onClick={() => setBankApplicationMethod("ai")}
-                      >
-                        <CardContent className="p-6 h-full flex flex-col">
-                          <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                            <MessageSquare className="w-7 h-7 text-primary" />
-                          </div>
-                          
-                          <h4 className="text-xl font-bold text-foreground mb-2">AI Chat Assistant</h4>
-                          <p className="text-muted-foreground mb-4 flex-grow text-sm">
-                            Complete your application through a guided conversation with our AI assistant.
-                          </p>
-                          
-                          <div className="space-y-1.5 mb-4">
-                            <div className="flex items-start gap-2">
-                              <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5" />
-                              <p className="text-xs text-muted-foreground">Conversational and intuitive</p>
-                            </div>
-                            <div className="flex items-start gap-2">
-                              <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5" />
-                              <p className="text-xs text-muted-foreground">Real-time assistance</p>
-                            </div>
-                            <div className="flex items-start gap-2">
-                              <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5" />
-                              <p className="text-xs text-muted-foreground">Adaptive to your responses</p>
-                            </div>
-                          </div>
-
-                          <Button className="w-full">
-                            Start AI Chat
-                          </Button>
-                        </CardContent>
-                      </Card>
-
-                      {/* Traditional Form Option */}
-                      <Card 
-                        className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-2 hover:border-primary" 
-                        onClick={() => setBankApplicationMethod("traditional")}
-                      >
-                        <CardContent className="p-6 h-full flex flex-col">
-                          <div className="w-14 h-14 rounded-2xl bg-accent flex items-center justify-center mb-4 group-hover:bg-accent/80 transition-colors">
-                            <FileText className="w-7 h-7 text-foreground" />
-                          </div>
-                          
-                          <h4 className="text-xl font-bold text-foreground mb-2">Traditional Form</h4>
-                          <p className="text-muted-foreground mb-4 flex-grow text-sm">
-                            Complete your application using a structured form at your own pace.
-                          </p>
-                          
-                          <div className="space-y-1.5 mb-4">
-                            <div className="flex items-start gap-2">
-                              <div className="w-1.5 h-1.5 rounded-full bg-foreground/50 mt-1.5" />
-                              <p className="text-xs text-muted-foreground">Clear, structured layout</p>
-                            </div>
-                            <div className="flex items-start gap-2">
-                              <div className="w-1.5 h-1.5 rounded-full bg-foreground/50 mt-1.5" />
-                              <p className="text-xs text-muted-foreground">See all requirements upfront</p>
-                            </div>
-                            <div className="flex items-start gap-2">
-                              <div className="w-1.5 h-1.5 rounded-full bg-foreground/50 mt-1.5" />
-                              <p className="text-xs text-muted-foreground">Save and continue later</p>
-                            </div>
-                          </div>
-
-                          <Button variant="outline" className="w-full">
-                            Use Traditional Form
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* AI Chat Application */}
-              {bankApplicationMethod === "ai" && (
-                <div className="space-y-4">
-                  <Button 
-                    variant="ghost" 
-                    onClick={() => setBankApplicationMethod("select")}
-                    className="gap-2"
-                  >
-                    <ArrowLeft className="h-4 w-4" />
-                    Back to options
-                  </Button>
-                  <AIApplicationChat />
-                </div>
-              )}
-
-              {/* Traditional Form Application */}
-              {bankApplicationMethod === "traditional" && (
-                <div className="grid md:grid-cols-3 gap-6">
-                  {/* Left Sidebar - Info */}
-                  <div className="space-y-6">
+                {/* AI Chat Application */}
+                {bankApplicationMethod === "ai" && (
+                  <div className="p-6">
                     <Button 
                       variant="ghost" 
                       onClick={() => setBankApplicationMethod("select")}
-                      className="gap-2 w-full justify-start"
+                      className="gap-2 mb-4"
                     >
                       <ArrowLeft className="h-4 w-4" />
                       Back to options
                     </Button>
-
-                    <Card>
-                      <CardContent className="p-4">
-                        <h3 className="font-bold text-primary mb-3">Why Choose {i18n.language === 'es' ? 'Ibercaja' : 'ILS'}?</h3>
-                        <ul className="space-y-2 text-sm text-muted-foreground">
-                          <li className="flex items-start gap-2">
-                            <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                            Approvals in as little as 24 hours
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                            Lease as little as $1,500
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                            Simple, secure online application
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                            We work with nearly all industries
-                          </li>
-                        </ul>
-                      </CardContent>
-                    </Card>
-
-                    <Card>
-                      <CardContent className="p-4">
-                        <h3 className="font-bold text-primary mb-3">Application Process:</h3>
-                        <ul className="space-y-2 text-sm text-muted-foreground">
-                          <li>1. Fill out the form</li>
-                          <li>2. Speak with your dedicated Finance Specialist</li>
-                          <li>3. Get your funding</li>
-                        </ul>
-                      </CardContent>
-                    </Card>
+                    <AIApplicationChat />
                   </div>
+                )}
 
-                  {/* Right Side - Application Form */}
-                  <div className="md:col-span-2">
-                    <Card>
-                      <CardContent className="p-6 space-y-4">
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium text-foreground">Product Interest *</label>
-                            <Select>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select product type" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="equipment">Equipment Lease</SelectItem>
-                                <SelectItem value="working-capital">Working Capital</SelectItem>
-                                <SelectItem value="vehicle">Vehicle Lease</SelectItem>
-                                <SelectItem value="technology">Technology</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium text-foreground">Amount Needed</label>
-                            <Input placeholder="Numbers only (no symbols or characters)" />
-                          </div>
-                        </div>
-
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium text-foreground">Company *</label>
-                            <Input />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium text-foreground">DBA</label>
-                            <Input />
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-foreground">Business Address *</label>
-                          <Input placeholder="Include City, State & Zip" />
-                        </div>
-
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium text-foreground">Business Phone *</label>
-                            <Input placeholder="Enter numbers only (no spaces, dashes or periods)" />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium text-foreground">Email *</label>
-                            <Input type="email" />
-                          </div>
-                        </div>
-
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium text-foreground">Time in Business *</label>
-                            <Input placeholder="Years under Current Ownership (enter numbers only)" />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium text-foreground">Annual Revenue</label>
-                            <Input />
-                          </div>
-                        </div>
-
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium text-foreground">State of Incorporation</label>
-                            <Input />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium text-foreground">Federal Tax ID #</label>
-                            <Input />
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-foreground">Number of Business Owners</label>
-                          <Input />
-                        </div>
-
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium text-foreground">Are you an Owner? *</label>
-                            <Select>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="yes">Yes</SelectItem>
-                                <SelectItem value="no">No</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium text-foreground">Social Security # *</label>
-                            <Input placeholder="Enter numbers only (no spaces, symbols or letters)" />
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-foreground">Is there a Secondary Owner? *</label>
-                          <Select>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="yes">Yes</SelectItem>
-                              <SelectItem value="no">No</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-
-                        <div className="space-y-3 pt-4 border-t border-border">
-                          <div className="flex items-start gap-2">
-                            <Checkbox id="authorize" />
-                            <label htmlFor="authorize" className="text-sm text-muted-foreground">
-                              <span className="font-medium">Authorize Soft Credit Inquiry *</span><br />
-                              By clicking submit I authorize {i18n.language === 'es' ? 'Ibercaja' : 'Innovative Lease Services, Inc.'} to perform a soft credit inquiry.
-                            </label>
-                          </div>
-                        </div>
-
-                        <div className="bg-muted p-3 rounded-md">
-                          <p className="text-xs text-muted-foreground">
-                            <span className="font-medium">SMS:</span> By submitting this application, you agree to receive SMS text message notifications from {i18n.language === 'es' ? 'Ibercaja' : 'Innovative Lease Services, Inc.'} to the number provided at the time of enrollment purposes, lease application status, document requests and approval updates. Reply "STOP" to opt-out at any time or "HELP" for more information. Message frequency may vary. Msg & data rates may apply.
-                          </p>
-                        </div>
-
-                        <div className="flex items-center gap-4 p-3 bg-muted rounded-md">
-                          <Checkbox id="recaptcha" />
-                          <label htmlFor="recaptcha" className="text-sm text-muted-foreground">I'm not a robot</label>
-                          <div className="ml-auto text-xs text-muted-foreground">reCAPTCHA</div>
-                        </div>
-
-                        <Button className="w-full" size="lg">
-                          Submit
+                {/* Traditional Form Application */}
+                {bankApplicationMethod === "traditional" && (
+                  <div className="p-6 md:p-10">
+                    <div className="grid lg:grid-cols-12 gap-8">
+                      {/* Left Sidebar - Info */}
+                      <div className="lg:col-span-4 space-y-4">
+                        <Button 
+                          variant="ghost" 
+                          onClick={() => setBankApplicationMethod("select")}
+                          className="gap-2 w-full justify-start mb-2"
+                        >
+                          <ArrowLeft className="h-4 w-4" />
+                          Back to options
                         </Button>
-                      </CardContent>
-                    </Card>
+
+                        <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+                          <CardContent className="p-5">
+                            <div className="flex items-center gap-2 mb-4">
+                              <BadgeCheck className="h-5 w-5 text-primary" />
+                              <h3 className="font-semibold text-foreground">Why Choose {i18n.language === 'es' ? 'Ibercaja' : 'ILS'}?</h3>
+                            </div>
+                            <ul className="space-y-3">
+                              {[
+                                "Approvals in as little as 24 hours",
+                                "Lease as little as $1,500",
+                                "Simple, secure online application",
+                                "We work with nearly all industries",
+                              ].map((text, idx) => (
+                                <li key={idx} className="flex items-start gap-2">
+                                  <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                                  <span className="text-sm text-muted-foreground">{text}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="border-border/50">
+                          <CardContent className="p-5">
+                            <h3 className="font-semibold text-foreground mb-4">Application Process</h3>
+                            <div className="space-y-3">
+                              {[
+                                { step: "1", text: "Fill out the form" },
+                                { step: "2", text: "Speak with your Finance Specialist" },
+                                { step: "3", text: "Get your funding" },
+                              ].map((item, idx) => (
+                                <div key={idx} className="flex items-center gap-3">
+                                  <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-semibold">
+                                    {item.step}
+                                  </div>
+                                  <span className="text-sm text-muted-foreground">{item.text}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </CardContent>
+                        </Card>
+
+                        <div className="bg-muted/50 rounded-lg p-4 text-center">
+                          <p className="text-sm text-muted-foreground mb-1">Need help?</p>
+                          <p className="font-semibold text-foreground">800-438-1470</p>
+                        </div>
+                      </div>
+
+                      {/* Right Side - Application Form */}
+                      <div className="lg:col-span-8">
+                        <Card className="shadow-sm">
+                          <CardContent className="p-6 md:p-8">
+                            <div className="mb-6">
+                              <h3 className="text-xl font-semibold text-foreground mb-1">Business Information</h3>
+                              <p className="text-sm text-muted-foreground">Complete the form below to start your application</p>
+                            </div>
+                            
+                            <div className="space-y-6">
+                              {/* Product & Amount */}
+                              <div className="grid md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <label className="text-sm font-medium text-foreground">Product Interest *</label>
+                                  <Select>
+                                    <SelectTrigger className="h-11">
+                                      <SelectValue placeholder="Select product type" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="equipment">Equipment Lease</SelectItem>
+                                      <SelectItem value="working-capital">Working Capital</SelectItem>
+                                      <SelectItem value="vehicle">Vehicle Lease</SelectItem>
+                                      <SelectItem value="technology">Technology</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-sm font-medium text-foreground">Amount Needed</label>
+                                  <div className="relative">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                                    <Input className="h-11 pl-7" placeholder="Enter amount" />
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Company Info */}
+                              <div className="pt-4 border-t border-border">
+                                <p className="text-sm font-medium text-foreground mb-4">Company Details</p>
+                                <div className="grid md:grid-cols-2 gap-4">
+                                  <div className="space-y-2">
+                                    <label className="text-sm font-medium text-foreground">Company Name *</label>
+                                    <Input className="h-11" />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <label className="text-sm font-medium text-foreground">DBA (if different)</label>
+                                    <Input className="h-11" />
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-foreground">Business Address *</label>
+                                <Input className="h-11" placeholder="Street address, City, State, ZIP" />
+                              </div>
+
+                              <div className="grid md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <label className="text-sm font-medium text-foreground">Business Phone *</label>
+                                  <Input className="h-11" placeholder="(555) 555-5555" />
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-sm font-medium text-foreground">Email *</label>
+                                  <Input className="h-11" type="email" placeholder="you@company.com" />
+                                </div>
+                              </div>
+
+                              {/* Business Details */}
+                              <div className="pt-4 border-t border-border">
+                                <p className="text-sm font-medium text-foreground mb-4">Business Details</p>
+                                <div className="grid md:grid-cols-2 gap-4">
+                                  <div className="space-y-2">
+                                    <label className="text-sm font-medium text-foreground">Years in Business *</label>
+                                    <Input className="h-11" placeholder="e.g., 5" />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <label className="text-sm font-medium text-foreground">Annual Revenue</label>
+                                    <Select>
+                                      <SelectTrigger className="h-11">
+                                        <SelectValue placeholder="Select range" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="under-100k">Under $100K</SelectItem>
+                                        <SelectItem value="100k-500k">$100K - $500K</SelectItem>
+                                        <SelectItem value="500k-1m">$500K - $1M</SelectItem>
+                                        <SelectItem value="1m-5m">$1M - $5M</SelectItem>
+                                        <SelectItem value="over-5m">Over $5M</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="grid md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <label className="text-sm font-medium text-foreground">State of Incorporation</label>
+                                  <Input className="h-11" />
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-sm font-medium text-foreground">Federal Tax ID (EIN)</label>
+                                  <Input className="h-11" placeholder="XX-XXXXXXX" />
+                                </div>
+                              </div>
+
+                              {/* Owner Information */}
+                              <div className="pt-4 border-t border-border">
+                                <p className="text-sm font-medium text-foreground mb-4">Owner Information</p>
+                                <div className="grid md:grid-cols-2 gap-4">
+                                  <div className="space-y-2">
+                                    <label className="text-sm font-medium text-foreground">Are you an Owner? *</label>
+                                    <Select>
+                                      <SelectTrigger className="h-11">
+                                        <SelectValue placeholder="Select" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="yes">Yes</SelectItem>
+                                        <SelectItem value="no">No</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <div className="space-y-2">
+                                    <label className="text-sm font-medium text-foreground">Social Security # *</label>
+                                    <Input className="h-11" placeholder="XXX-XX-XXXX" type="password" />
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-foreground">Number of Business Owners</label>
+                                <Select>
+                                  <SelectTrigger className="h-11 w-full md:w-1/2">
+                                    <SelectValue placeholder="Select" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="1">1</SelectItem>
+                                    <SelectItem value="2">2</SelectItem>
+                                    <SelectItem value="3">3</SelectItem>
+                                    <SelectItem value="4+">4 or more</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+
+                              {/* Authorizations */}
+                              <div className="pt-4 border-t border-border space-y-4">
+                                <div className="flex items-start gap-3 p-4 rounded-lg bg-muted/50">
+                                  <Checkbox id="authorize" className="mt-0.5" />
+                                  <label htmlFor="authorize" className="text-sm text-muted-foreground leading-relaxed">
+                                    <span className="font-medium text-foreground">Authorize Soft Credit Inquiry *</span><br />
+                                    By clicking submit I authorize {i18n.language === 'es' ? 'Ibercaja' : 'Innovative Lease Services, Inc.'} to perform a soft credit inquiry. This will not affect your credit score.
+                                  </label>
+                                </div>
+
+                                <div className="p-4 rounded-lg bg-muted/30 border border-border">
+                                  <p className="text-xs text-muted-foreground leading-relaxed">
+                                    <span className="font-medium">SMS Consent:</span> By submitting this application, you agree to receive SMS text message notifications from {i18n.language === 'es' ? 'Ibercaja' : 'Innovative Lease Services, Inc.'} regarding your application status. Reply "STOP" to opt-out at any time.
+                                  </p>
+                                </div>
+
+                                <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg border border-border">
+                                  <Checkbox id="recaptcha" />
+                                  <label htmlFor="recaptcha" className="text-sm text-muted-foreground">I'm not a robot</label>
+                                  <div className="ml-auto text-xs text-muted-foreground">reCAPTCHA</div>
+                                </div>
+                              </div>
+
+                              <Button className="w-full h-12 text-base" size="lg">
+                                Submit Application
+                              </Button>
+
+                              <p className="text-xs text-center text-muted-foreground">
+                                <Shield className="h-3 w-3 inline mr-1" />
+                                Your information is encrypted and secure
+                              </p>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </TabsContent>
         </Tabs>
