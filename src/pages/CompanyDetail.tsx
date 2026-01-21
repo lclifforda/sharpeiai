@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Mail, Phone, UserPlus, MapPin, Building2, Calendar, Package, DollarSign, CreditCard, FileText, Briefcase, AlertCircle, Landmark } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -37,6 +37,7 @@ interface Contract {
 
 const CompanyDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   // Mock data - in production, fetch from API
   const initialCompanyData: any = {
@@ -185,6 +186,11 @@ const CompanyDetail = () => {
         representatives: [...(prev[companyId]?.representatives || []), newRepresentative],
       },
     }));
+  };
+
+  const handleCreateContract = () => {
+    const companyId = id || '1';
+    navigate(`/contracts/new?companyId=${companyId}`);
   };
 
   return (
@@ -432,6 +438,13 @@ const CompanyDetail = () => {
 
         <TabsContent value="contracts" className="mt-6">
           <Card>
+            <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+              <CardTitle>Contracts</CardTitle>
+              <Button onClick={handleCreateContract}>
+                <FileText className="w-4 h-4 mr-2" />
+                Create New Contract
+              </Button>
+            </CardHeader>
             <CardContent className="pt-6">
               <div className="overflow-x-auto">
                 <table className="w-full">

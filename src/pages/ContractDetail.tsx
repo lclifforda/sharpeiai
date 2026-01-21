@@ -1,8 +1,9 @@
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, FileText, Calendar, DollarSign, Building2, AlertCircle, Package, CheckCircle } from "lucide-react";
+import { ArrowLeft, FileText, Calendar, DollarSign, Building2, AlertCircle, Package, CheckCircle, Link2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 interface PaymentSchedule {
   id: string;
@@ -22,6 +23,7 @@ interface Equipment {
 
 const ContractDetail = () => {
   const { id } = useParams();
+  const { toast } = useToast();
 
   // Mock contract data
   const contractData: any = {
@@ -88,6 +90,23 @@ const ContractDetail = () => {
 
   const contract = contractData[id || 'CNT-2025-001'] || contractData['CNT-2025-001'];
 
+  const handleCopySigningLink = async () => {
+    try {
+      const signingLink = `https://docusign.com/sign/${encodeURIComponent(contract.id)}`;
+      await navigator.clipboard.writeText(signingLink);
+      toast({
+        title: "Signing link copied",
+        description: "Share this link with the customer to complete and sign the contract.",
+      });
+    } catch (error) {
+      toast({
+        title: "Unable to copy link",
+        description: "Your browser may not support clipboard access. Please try copying the URL manually.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const daysRemaining = Math.ceil(
     (new Date(contract.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
   );
@@ -126,10 +145,16 @@ const ContractDetail = () => {
                 </div>
               </div>
             </div>
-            <Button variant="outline" size="sm">
-              <FileText className="w-4 h-4 mr-2" />
-              View Contract
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Button variant="outline" size="sm">
+                <FileText className="w-4 h-4 mr-2" />
+                View Contract
+              </Button>
+              <Button size="sm" onClick={handleCopySigningLink}>
+                <Link2 className="w-4 h-4 mr-2" />
+                Copy Signing Link
+              </Button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

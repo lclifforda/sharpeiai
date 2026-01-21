@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -118,12 +118,14 @@ type ContractFormData = z.infer<typeof contractSchema>;
 
 const ContractCreate = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const defaultCompanyId = searchParams.get("companyId") || "";
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(1);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState<Partial<ContractFormData>>({
-    companyId: "",
+    companyId: defaultCompanyId,
     contractType: "Equipment Lease",
     startDate: undefined,
     termMonths: 12,

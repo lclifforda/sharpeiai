@@ -12,6 +12,7 @@ import robotImage from "@/assets/humanoid-robot.png";
 import robotAngle1 from "@/assets/robot-angle-1.png";
 import robotAngle2 from "@/assets/robot-angle-2.png";
 import sharpeiLogo from "@/assets/sharpei-logo.png";
+import figureLogo from "@/assets/figure-logo.png";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -121,6 +122,22 @@ const Checkout = () => {
             {/* Product Card */}
             <Card>
               <CardContent className="p-6">
+                {/* Merchant header inside checkout preview */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-9 w-9 rounded-md bg-background flex items-center justify-center border border-border overflow-hidden">
+                      <img
+                        src={figureLogo}
+                        alt="FIGURE"
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-semibold text-foreground tracking-[0.18em] uppercase">FIGURE</span>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="grid md:grid-cols-2 gap-6">
                   {/* Product Image Gallery */}
                   <div className="space-y-3">
