@@ -429,74 +429,209 @@ const Checkout = () => {
 
           {/* Bank Landing Preview Tab */}
           <TabsContent value="bank">
-            <div className="max-w-4xl mx-auto">
-              <Card className="overflow-hidden">
-                <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-8 text-center border-b border-border">
-                  <img 
-                    src={currentLogo} 
-                    alt={logoAlt} 
-                    className="h-12 mx-auto mb-6"
-                  />
-                  <h2 className="text-3xl font-bold text-foreground mb-2">Equipment Leasing Made Simple</h2>
-                  <p className="text-muted-foreground max-w-xl mx-auto">
-                    Access the equipment your business needs with flexible leasing options. Apply online in minutes.
-                  </p>
+            <div className="max-w-6xl mx-auto">
+              {/* Header */}
+              <div className="flex justify-between items-start mb-6 bg-card rounded-t-lg p-4 border border-border">
+                <img 
+                  src={currentLogo} 
+                  alt={logoAlt} 
+                  className="h-10"
+                />
+                <div className="text-right">
+                  <p className="text-primary font-bold text-lg">Apply Now!</p>
+                  <p className="text-sm text-muted-foreground">Questions?</p>
+                  <p className="text-sm">Call: <span className="text-primary">800-438-1470</span></p>
+                  <p className="text-sm">Text: <span className="text-primary">562-236-1470</span></p>
                 </div>
-                <CardContent className="p-8">
-                  <div className="grid md:grid-cols-3 gap-6 mb-8">
-                    <div className="text-center p-4">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                        <CheckCircle2 className="h-6 w-6 text-primary" />
-                      </div>
-                      <h3 className="font-semibold text-foreground mb-1">Quick Approval</h3>
-                      <p className="text-sm text-muted-foreground">Get approved in as fast as 24 hours</p>
-                    </div>
-                    <div className="text-center p-4">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                        <ShoppingCart className="h-6 w-6 text-primary" />
-                      </div>
-                      <h3 className="font-semibold text-foreground mb-1">Flexible Terms</h3>
-                      <p className="text-sm text-muted-foreground">12 to 48 month lease options</p>
-                    </div>
-                    <div className="text-center p-4">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                        <ArrowUpCircle className="h-6 w-6 text-primary" />
-                      </div>
-                      <h3 className="font-semibold text-foreground mb-1">End-of-Lease Options</h3>
-                      <p className="text-sm text-muted-foreground">Keep, return, or upgrade</p>
-                    </div>
-                  </div>
+              </div>
 
-                  <div className="bg-muted rounded-lg p-6 mb-6">
-                    <h3 className="font-semibold text-foreground mb-4">What equipment are you looking for?</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      {['Industrial Robots', 'Medical Equipment', 'IT Hardware', 'Manufacturing', 'Construction', 'Agriculture', 'Vehicles', 'Other'].map((category) => (
-                        <Button 
-                          key={category}
-                          variant="outline" 
-                          className="h-auto py-3 text-sm"
-                          onClick={() => navigate('/application')}
-                        >
-                          {category}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
+              {/* Hero Banner */}
+              <div className="w-full h-48 bg-gradient-to-r from-primary/20 to-primary/10 rounded-lg mb-6 flex items-center justify-center overflow-hidden">
+                <div className="text-center">
+                  <h2 className="text-2xl font-bold text-foreground">Get Fast, Flexible Business Financing!</h2>
+                  <p className="text-muted-foreground mt-2">Secure working capital or finance equipment with a quick, simple application</p>
+                </div>
+              </div>
 
-                  <div className="text-center">
-                    <Button 
-                      size="lg" 
-                      className="px-12"
-                      onClick={() => navigate('/application')}
-                    >
-                      Start Your Application
-                    </Button>
-                    <p className="text-xs text-muted-foreground mt-3">
-                      No impact on your credit score to check rates
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="grid md:grid-cols-3 gap-6">
+                {/* Left Sidebar - Info */}
+                <div className="space-y-6">
+                  <Card>
+                    <CardContent className="p-4">
+                      <h3 className="font-bold text-primary mb-3">Why Choose ILS?</h3>
+                      <ul className="space-y-2 text-sm text-muted-foreground">
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                          Approvals in as little as 24 hours
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                          Lease as little as $1,500
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                          Simple, secure online application
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                          We work with nearly all industries
+                        </li>
+                      </ul>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardContent className="p-4">
+                      <h3 className="font-bold text-primary mb-3">Application Process:</h3>
+                      <ul className="space-y-2 text-sm text-muted-foreground">
+                        <li>1. Fill out the form</li>
+                        <li>2. Speak with your dedicated Finance Specialist</li>
+                        <li>3. Get your funding</li>
+                      </ul>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Right Side - Application Form */}
+                <div className="md:col-span-2">
+                  <Card>
+                    <CardContent className="p-6 space-y-4">
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-foreground">Product Interest *</label>
+                          <Select>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select product type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="equipment">Equipment Lease</SelectItem>
+                              <SelectItem value="working-capital">Working Capital</SelectItem>
+                              <SelectItem value="vehicle">Vehicle Lease</SelectItem>
+                              <SelectItem value="technology">Technology</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-foreground">Amount Needed</label>
+                          <Input placeholder="Numbers only (no symbols or characters)" />
+                        </div>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-foreground">Company *</label>
+                          <Input />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-foreground">DBA</label>
+                          <Input />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-foreground">Business Address *</label>
+                        <Input placeholder="Include City, State & Zip" />
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-foreground">Business Phone *</label>
+                          <Input placeholder="Enter numbers only (no spaces, dashes or periods)" />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-foreground">Email *</label>
+                          <Input type="email" />
+                        </div>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-foreground">Time in Business *</label>
+                          <Input placeholder="Years under Current Ownership (enter numbers only)" />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-foreground">Annual Revenue</label>
+                          <Input />
+                        </div>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-foreground">State of Incorporation</label>
+                          <Input />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-foreground">Federal Tax ID #</label>
+                          <Input />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-foreground">Number of Business Owners</label>
+                        <Input />
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-foreground">Are you an Owner? *</label>
+                          <Select>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="yes">Yes</SelectItem>
+                              <SelectItem value="no">No</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-foreground">Social Security # *</label>
+                          <Input placeholder="Enter numbers only (no spaces, symbols or letters)" />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium text-foreground">Is there a Secondary Owner? *</label>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="yes">Yes</SelectItem>
+                            <SelectItem value="no">No</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-3 pt-4 border-t border-border">
+                        <div className="flex items-start gap-2">
+                          <Checkbox id="authorize" />
+                          <label htmlFor="authorize" className="text-sm text-muted-foreground">
+                            <span className="font-medium">Authorize Soft Credit Inquiry *</span><br />
+                            By clicking submit I authorize Innovative Lease Services, Inc. to perform a soft credit inquiry.
+                          </label>
+                        </div>
+                      </div>
+
+                      <div className="bg-muted p-3 rounded-md">
+                        <p className="text-xs text-muted-foreground">
+                          <span className="font-medium">SMS:</span> By submitting this application, you agree to receive SMS text message notifications from Innovative Lease Services, Inc. to the number provided at the time of enrollment purposes, lease application status, document requests and approval updates. Reply "STOP" to opt-out at any time or "HELP" for more information. Message frequency may vary. Msg & data rates may apply.
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-4 p-3 bg-muted rounded-md">
+                        <Checkbox id="recaptcha" />
+                        <label htmlFor="recaptcha" className="text-sm text-muted-foreground">I'm not a robot</label>
+                        <div className="ml-auto text-xs text-muted-foreground">reCAPTCHA</div>
+                      </div>
+
+                      <Button className="w-full" size="lg">
+                        Submit
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
             </div>
           </TabsContent>
         </Tabs>
