@@ -384,123 +384,163 @@ const Checkout = () => {
 
           {/* Bank Landing Preview Tab */}
           <TabsContent value="bank">
-            <div className="max-w-6xl mx-auto">
-              {/* Premium Header */}
-              <div className="relative overflow-hidden rounded-t-2xl bg-gradient-to-r from-primary via-primary/95 to-primary/90 p-6 mb-0">
-                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
-                <div className="relative flex justify-between items-center">
-                  <div className="flex items-center gap-4">
-                    <div className="bg-white rounded-xl p-2 shadow-lg">
-                      <img src={currentLogo} alt={logoAlt} className="h-8" />
-                    </div>
-                    <div className="hidden md:block">
-                      <p className="text-primary-foreground/80 text-sm">Business Financing Solutions</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-6">
-                    <div className="hidden md:flex items-center gap-4 text-primary-foreground/90 text-sm">
-                      <div className="flex items-center gap-1.5">
-                        <Phone className="h-4 w-4" />
-                        <span>800-438-1470</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <Mail className="h-4 w-4" />
-                        <span>apply@ils.com</span>
-                      </div>
-                    </div>
-                    <Badge variant="secondary" className="bg-white/20 text-primary-foreground border-0 backdrop-blur-sm">
-                      <Sparkles className="h-3 w-3 mr-1" />
-                      Fast Approval
-                    </Badge>
-                  </div>
+            <div className="max-w-5xl mx-auto">
+              {/* Immersive Hero with Orb */}
+              <div className="relative overflow-hidden rounded-t-2xl">
+                {/* Gradient Background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
+                
+                {/* Animated Grid Pattern */}
+                <div className="absolute inset-0 opacity-20">
+                  <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:40px_40px]" />
                 </div>
-              </div>
-
-              {/* Hero Section */}
-              <div className="relative bg-gradient-to-br from-muted via-background to-muted/50 border-x border-border p-8 md:p-12">
-                <div className="max-w-3xl mx-auto text-center">
-                  <Badge variant="outline" className="mb-4 border-primary/30 text-primary">
-                    <Clock className="h-3 w-3 mr-1" />
-                    Apply in under 5 minutes
-                  </Badge>
-                  <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                    Get Fast, Flexible Business Financing
-                  </h2>
-                  <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                    Secure working capital or finance equipment with our streamlined application process. 
-                    Get decisions in as little as 24 hours.
-                  </p>
+                
+                {/* Gradient Orbs Background */}
+                <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 blur-3xl" />
+                <div className="absolute bottom-0 right-1/4 w-80 h-80 rounded-full bg-gradient-to-br from-cyan-500/20 to-blue-500/20 blur-3xl" />
+                
+                {/* Content */}
+                <div className="relative z-10 px-6 py-8 md:px-12 md:py-12">
+                  {/* Top Bar */}
+                  <div className="flex justify-between items-center mb-12">
+                    <div className="flex items-center gap-4">
+                      <div className="bg-white/10 backdrop-blur-md rounded-xl p-2.5 border border-white/10">
+                        <img src={currentLogo} alt={logoAlt} className="h-7 brightness-0 invert" />
+                      </div>
+                      <div className="hidden md:block">
+                        <p className="text-white/60 text-sm font-medium">Business Financing</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="hidden md:flex items-center gap-4 text-white/70 text-sm">
+                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
+                          <Phone className="h-3.5 w-3.5" />
+                          <span>800-438-1470</span>
+                        </div>
+                      </div>
+                      <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white border-0 shadow-lg">
+                        <Sparkles className="h-3 w-3 mr-1" />
+                        AI-Powered
+                      </Badge>
+                    </div>
+                  </div>
                   
-                  {/* Trust Indicators */}
-                  <div className="flex flex-wrap justify-center gap-6 mt-8">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                        <Shield className="h-4 w-4 text-primary" />
+                  {/* Hero Content with Orb */}
+                  <div className="text-center max-w-3xl mx-auto">
+                    {/* Floating Orb */}
+                    <div className="relative w-28 h-28 mx-auto mb-8 animate-float">
+                      {/* Outer glow rings */}
+                      <div className="absolute inset-0 rounded-full gradient-sharpei opacity-30 blur-3xl animate-pulse-glow" />
+                      <div className="absolute inset-4 rounded-full gradient-sharpei opacity-40 blur-2xl animate-pulse-glow" style={{ animationDelay: '1s' }} />
+                      
+                      {/* Main orb */}
+                      <div className="relative w-full h-full rounded-full gradient-sharpei shadow-glow">
+                        {/* Inner highlight */}
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/40 to-transparent" />
+                        {/* Shine effect */}
+                        <div className="absolute top-3 left-3 w-10 h-10 rounded-full bg-white/50 blur-md" />
+                        {/* Center icon */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <MessageSquare className="w-10 h-10 text-white drop-shadow-lg" />
+                        </div>
                       </div>
-                      <span>Bank-Level Security</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                        <Zap className="h-4 w-4 text-primary" />
-                      </div>
-                      <span>24hr Decisions</span>
+                    
+                    {/* Title */}
+                    <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
+                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/80">
+                        Your AI Financing
+                      </span>
+                      <br />
+                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400">
+                        Copilot
+                      </span>
+                    </h1>
+                    
+                    <p className="text-lg text-white/60 mb-8 max-w-xl mx-auto leading-relaxed">
+                      Complete your business financing application in minutes with our AI-powered assistant. Fast, secure, and effortless.
+                    </p>
+                    
+                    {/* Trust Pills */}
+                    <div className="flex flex-wrap justify-center gap-3 mb-8">
+                      {[
+                        { icon: Shield, text: "Bank-Grade Security" },
+                        { icon: Zap, text: "24hr Decisions" },
+                        { icon: Clock, text: "5 Min Application" },
+                        { icon: Users, text: "10,000+ Approved" }
+                      ].map((item, idx) => (
+                        <div 
+                          key={idx} 
+                          className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm text-sm text-white/80"
+                        >
+                          <item.icon className="h-4 w-4 text-blue-400" />
+                          <span>{item.text}</span>
+                        </div>
+                      ))}
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                        <Users className="h-4 w-4 text-primary" />
-                      </div>
-                      <span>10,000+ Businesses Served</span>
+                    
+                    {/* Pulsing indicator */}
+                    <div className="flex items-center justify-center gap-1.5">
+                      <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+                      <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" style={{ animationDelay: '0.2s' }} />
+                      <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" style={{ animationDelay: '0.4s' }} />
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Main Content Area - AI Application Copilot */}
+              {/* Main Chat Area */}
               <div className="bg-background border border-t-0 border-border rounded-b-2xl overflow-hidden">
-                <div className="p-6 md:p-10">
-                  <div className="max-w-4xl mx-auto">
-                    {/* Copilot Header */}
-                    <div className="flex items-center gap-4 mb-6">
-                      <div className="w-14 h-14 rounded-2xl gradient-sharpei flex items-center justify-center shadow-lg">
-                        <MessageSquare className="w-7 h-7 text-white" />
+                <div className="p-6 md:p-8">
+                  <div className="max-w-3xl mx-auto">
+                    {/* Copilot Status Bar */}
+                    <div className="flex items-center justify-between p-4 mb-6 rounded-xl bg-gradient-to-r from-primary/5 via-transparent to-primary/5 border border-border">
+                      <div className="flex items-center gap-3">
+                        <div className="relative">
+                          <div className="w-10 h-10 rounded-xl gradient-sharpei flex items-center justify-center shadow-lg">
+                            <MessageSquare className="w-5 h-5 text-white" />
+                          </div>
+                          <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-green-500 border-2 border-background" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-foreground text-sm">Application Copilot</p>
+                          <p className="text-xs text-muted-foreground">Ready to assist you</p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="text-xl font-bold text-foreground">Application Copilot</h3>
-                        <p className="text-sm text-muted-foreground">I'll guide you through your financing application</p>
-                      </div>
-                      <div className="ml-auto flex items-center gap-2">
-                        <Badge variant="outline" className="border-primary/30 text-primary">
-                          <Sparkles className="h-3 w-3 mr-1" />
-                          AI-Powered
-                        </Badge>
-                      </div>
-                    </div>
-
-                    {/* Trust Indicators Bar */}
-                    <div className="flex flex-wrap items-center justify-center gap-4 p-4 mb-6 rounded-xl bg-muted/30 border border-border">
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Shield className="h-4 w-4 text-primary" />
-                        <span>Bank-level encryption</span>
-                      </div>
-                      <div className="hidden sm:block w-1 h-1 rounded-full bg-border" />
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Zap className="h-4 w-4 text-primary" />
-                        <span>No credit impact</span>
-                      </div>
-                      <div className="hidden sm:block w-1 h-1 rounded-full bg-border" />
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Clock className="h-4 w-4 text-primary" />
-                        <span>~5 min to complete</span>
-                      </div>
-                      <div className="hidden sm:block w-1 h-1 rounded-full bg-border" />
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <BadgeCheck className="h-4 w-4 text-primary" />
-                        <span>24hr decisions</span>
+                      <div className="flex items-center gap-2">
+                        <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted text-xs text-muted-foreground">
+                          <Shield className="h-3 w-3" />
+                          <span>Encrypted</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-500/10 text-xs text-green-600 dark:text-green-400">
+                          <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                          <span>Online</span>
+                        </div>
                       </div>
                     </div>
 
                     {/* AI Application Chat */}
                     <AIApplicationChat />
+                    
+                    {/* Bottom Trust Bar */}
+                    <div className="mt-6 pt-6 border-t border-border">
+                      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1.5">
+                          <Shield className="h-3.5 w-3.5 text-primary" />
+                          <span>256-bit SSL encryption</span>
+                        </div>
+                        <div className="hidden sm:block w-1 h-1 rounded-full bg-border" />
+                        <div className="flex items-center gap-1.5">
+                          <BadgeCheck className="h-3.5 w-3.5 text-primary" />
+                          <span>SOC 2 Compliant</span>
+                        </div>
+                        <div className="hidden sm:block w-1 h-1 rounded-full bg-border" />
+                        <div className="flex items-center gap-1.5">
+                          <Zap className="h-3.5 w-3.5 text-primary" />
+                          <span>Soft credit check only</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
