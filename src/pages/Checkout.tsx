@@ -3,18 +3,19 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Store, Building2 } from "lucide-react";
+import { Store, Building2, MessageSquare, FileText, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ShoppingCart, CheckCircle2, RotateCcw, ArrowUpCircle, Info, Plus, Minus } from "lucide-react";
+import { CheckCircle2, RotateCcw, ArrowUpCircle, Plus, Minus } from "lucide-react";
 import robotImage from "@/assets/humanoid-robot.png";
 import robotAngle1 from "@/assets/robot-angle-1.png";
 import robotAngle2 from "@/assets/robot-angle-2.png";
 import ilsLogo from "@/assets/ils-logo.png";
 import ibercajaLogo from "@/assets/ibercaja-logo.png";
+import AIApplicationChat from "@/components/AIApplicationChat";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ const Checkout = () => {
   const [maintenance, setMaintenance] = useState(false);
   const [insurance, setInsurance] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [bankApplicationMethod, setBankApplicationMethod] = useState<"select" | "ai" | "traditional">("select");
 
   const productImages = [robotImage, robotAngle1, robotAngle2];
 
@@ -453,127 +455,296 @@ const Checkout = () => {
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-3 gap-6">
-                {/* Left Sidebar - Info */}
-                <div className="space-y-6">
-                  <Card>
-                    <CardContent className="p-4">
-                      <h3 className="font-bold text-primary mb-3">Why Choose ILS?</h3>
-                      <ul className="space-y-2 text-sm text-muted-foreground">
-                        <li className="flex items-start gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                          Approvals in as little as 24 hours
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                          Lease as little as $1,500
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                          Simple, secure online application
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                          We work with nearly all industries
-                        </li>
-                      </ul>
-                    </CardContent>
-                  </Card>
+              {/* Application Method Selection */}
+              {bankApplicationMethod === "select" && (
+                <div className="grid md:grid-cols-3 gap-6">
+                  {/* Left Sidebar - Info */}
+                  <div className="space-y-6">
+                    <Card>
+                      <CardContent className="p-4">
+                        <h3 className="font-bold text-primary mb-3">Why Choose {i18n.language === 'es' ? 'Ibercaja' : 'ILS'}?</h3>
+                        <ul className="space-y-2 text-sm text-muted-foreground">
+                          <li className="flex items-start gap-2">
+                            <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                            Approvals in as little as 24 hours
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                            Lease as little as $1,500
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                            Simple, secure online application
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                            We work with nearly all industries
+                          </li>
+                        </ul>
+                      </CardContent>
+                    </Card>
 
-                  <Card>
-                    <CardContent className="p-4">
-                      <h3 className="font-bold text-primary mb-3">Application Process:</h3>
-                      <ul className="space-y-2 text-sm text-muted-foreground">
-                        <li>1. Fill out the form</li>
-                        <li>2. Speak with your dedicated Finance Specialist</li>
-                        <li>3. Get your funding</li>
-                      </ul>
-                    </CardContent>
-                  </Card>
+                    <Card>
+                      <CardContent className="p-4">
+                        <h3 className="font-bold text-primary mb-3">Application Process:</h3>
+                        <ul className="space-y-2 text-sm text-muted-foreground">
+                          <li>1. Choose your application method</li>
+                          <li>2. Speak with your dedicated Finance Specialist</li>
+                          <li>3. Get your funding</li>
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Right Side - Application Method Selection */}
+                  <div className="md:col-span-2">
+                    <div className="text-center mb-8">
+                      <h3 className="text-2xl font-bold text-foreground mb-2">Choose Your Application Method</h3>
+                      <p className="text-muted-foreground">Select how you'd like to complete your leasing application</p>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-6">
+                      {/* AI Chat Option */}
+                      <Card 
+                        className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-2 hover:border-primary" 
+                        onClick={() => setBankApplicationMethod("ai")}
+                      >
+                        <CardContent className="p-6 h-full flex flex-col">
+                          <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                            <MessageSquare className="w-7 h-7 text-primary" />
+                          </div>
+                          
+                          <h4 className="text-xl font-bold text-foreground mb-2">AI Chat Assistant</h4>
+                          <p className="text-muted-foreground mb-4 flex-grow text-sm">
+                            Complete your application through a guided conversation with our AI assistant.
+                          </p>
+                          
+                          <div className="space-y-1.5 mb-4">
+                            <div className="flex items-start gap-2">
+                              <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5" />
+                              <p className="text-xs text-muted-foreground">Conversational and intuitive</p>
+                            </div>
+                            <div className="flex items-start gap-2">
+                              <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5" />
+                              <p className="text-xs text-muted-foreground">Real-time assistance</p>
+                            </div>
+                            <div className="flex items-start gap-2">
+                              <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5" />
+                              <p className="text-xs text-muted-foreground">Adaptive to your responses</p>
+                            </div>
+                          </div>
+
+                          <Button className="w-full">
+                            Start AI Chat
+                          </Button>
+                        </CardContent>
+                      </Card>
+
+                      {/* Traditional Form Option */}
+                      <Card 
+                        className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-2 hover:border-primary" 
+                        onClick={() => setBankApplicationMethod("traditional")}
+                      >
+                        <CardContent className="p-6 h-full flex flex-col">
+                          <div className="w-14 h-14 rounded-2xl bg-accent flex items-center justify-center mb-4 group-hover:bg-accent/80 transition-colors">
+                            <FileText className="w-7 h-7 text-foreground" />
+                          </div>
+                          
+                          <h4 className="text-xl font-bold text-foreground mb-2">Traditional Form</h4>
+                          <p className="text-muted-foreground mb-4 flex-grow text-sm">
+                            Complete your application using a structured form at your own pace.
+                          </p>
+                          
+                          <div className="space-y-1.5 mb-4">
+                            <div className="flex items-start gap-2">
+                              <div className="w-1.5 h-1.5 rounded-full bg-foreground/50 mt-1.5" />
+                              <p className="text-xs text-muted-foreground">Clear, structured layout</p>
+                            </div>
+                            <div className="flex items-start gap-2">
+                              <div className="w-1.5 h-1.5 rounded-full bg-foreground/50 mt-1.5" />
+                              <p className="text-xs text-muted-foreground">See all requirements upfront</p>
+                            </div>
+                            <div className="flex items-start gap-2">
+                              <div className="w-1.5 h-1.5 rounded-full bg-foreground/50 mt-1.5" />
+                              <p className="text-xs text-muted-foreground">Save and continue later</p>
+                            </div>
+                          </div>
+
+                          <Button variant="outline" className="w-full">
+                            Use Traditional Form
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </div>
                 </div>
+              )}
 
-                {/* Right Side - Application Form */}
-                <div className="md:col-span-2">
-                  <Card>
-                    <CardContent className="p-6 space-y-4">
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-foreground">Product Interest *</label>
-                          <Select>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select product type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="equipment">Equipment Lease</SelectItem>
-                              <SelectItem value="working-capital">Working Capital</SelectItem>
-                              <SelectItem value="vehicle">Vehicle Lease</SelectItem>
-                              <SelectItem value="technology">Technology</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-foreground">Amount Needed</label>
-                          <Input placeholder="Numbers only (no symbols or characters)" />
-                        </div>
-                      </div>
+              {/* AI Chat Application */}
+              {bankApplicationMethod === "ai" && (
+                <div className="space-y-4">
+                  <Button 
+                    variant="ghost" 
+                    onClick={() => setBankApplicationMethod("select")}
+                    className="gap-2"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to options
+                  </Button>
+                  <AIApplicationChat />
+                </div>
+              )}
 
-                      <div className="grid md:grid-cols-2 gap-4">
+              {/* Traditional Form Application */}
+              {bankApplicationMethod === "traditional" && (
+                <div className="grid md:grid-cols-3 gap-6">
+                  {/* Left Sidebar - Info */}
+                  <div className="space-y-6">
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => setBankApplicationMethod("select")}
+                      className="gap-2 w-full justify-start"
+                    >
+                      <ArrowLeft className="h-4 w-4" />
+                      Back to options
+                    </Button>
+
+                    <Card>
+                      <CardContent className="p-4">
+                        <h3 className="font-bold text-primary mb-3">Why Choose {i18n.language === 'es' ? 'Ibercaja' : 'ILS'}?</h3>
+                        <ul className="space-y-2 text-sm text-muted-foreground">
+                          <li className="flex items-start gap-2">
+                            <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                            Approvals in as little as 24 hours
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                            Lease as little as $1,500
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                            Simple, secure online application
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                            We work with nearly all industries
+                          </li>
+                        </ul>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardContent className="p-4">
+                        <h3 className="font-bold text-primary mb-3">Application Process:</h3>
+                        <ul className="space-y-2 text-sm text-muted-foreground">
+                          <li>1. Fill out the form</li>
+                          <li>2. Speak with your dedicated Finance Specialist</li>
+                          <li>3. Get your funding</li>
+                        </ul>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Right Side - Application Form */}
+                  <div className="md:col-span-2">
+                    <Card>
+                      <CardContent className="p-6 space-y-4">
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-foreground">Product Interest *</label>
+                            <Select>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select product type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="equipment">Equipment Lease</SelectItem>
+                                <SelectItem value="working-capital">Working Capital</SelectItem>
+                                <SelectItem value="vehicle">Vehicle Lease</SelectItem>
+                                <SelectItem value="technology">Technology</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-foreground">Amount Needed</label>
+                            <Input placeholder="Numbers only (no symbols or characters)" />
+                          </div>
+                        </div>
+
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-foreground">Company *</label>
+                            <Input />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-foreground">DBA</label>
+                            <Input />
+                          </div>
+                        </div>
+
                         <div className="space-y-2">
-                          <label className="text-sm font-medium text-foreground">Company *</label>
+                          <label className="text-sm font-medium text-foreground">Business Address *</label>
+                          <Input placeholder="Include City, State & Zip" />
+                        </div>
+
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-foreground">Business Phone *</label>
+                            <Input placeholder="Enter numbers only (no spaces, dashes or periods)" />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-foreground">Email *</label>
+                            <Input type="email" />
+                          </div>
+                        </div>
+
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-foreground">Time in Business *</label>
+                            <Input placeholder="Years under Current Ownership (enter numbers only)" />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-foreground">Annual Revenue</label>
+                            <Input />
+                          </div>
+                        </div>
+
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-foreground">State of Incorporation</label>
+                            <Input />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-foreground">Federal Tax ID #</label>
+                            <Input />
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-foreground">Number of Business Owners</label>
                           <Input />
                         </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-foreground">DBA</label>
-                          <Input />
-                        </div>
-                      </div>
 
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-foreground">Business Address *</label>
-                        <Input placeholder="Include City, State & Zip" />
-                      </div>
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-foreground">Are you an Owner? *</label>
+                            <Select>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="yes">Yes</SelectItem>
+                                <SelectItem value="no">No</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-foreground">Social Security # *</label>
+                            <Input placeholder="Enter numbers only (no spaces, symbols or letters)" />
+                          </div>
+                        </div>
 
-                      <div className="grid md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <label className="text-sm font-medium text-foreground">Business Phone *</label>
-                          <Input placeholder="Enter numbers only (no spaces, dashes or periods)" />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-foreground">Email *</label>
-                          <Input type="email" />
-                        </div>
-                      </div>
-
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-foreground">Time in Business *</label>
-                          <Input placeholder="Years under Current Ownership (enter numbers only)" />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-foreground">Annual Revenue</label>
-                          <Input />
-                        </div>
-                      </div>
-
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-foreground">State of Incorporation</label>
-                          <Input />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-foreground">Federal Tax ID #</label>
-                          <Input />
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-foreground">Number of Business Owners</label>
-                        <Input />
-                      </div>
-
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-foreground">Are you an Owner? *</label>
+                          <label className="text-sm font-medium text-foreground">Is there a Secondary Owner? *</label>
                           <Select>
                             <SelectTrigger>
                               <SelectValue placeholder="Select" />
@@ -584,54 +755,37 @@ const Checkout = () => {
                             </SelectContent>
                           </Select>
                         </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-foreground">Social Security # *</label>
-                          <Input placeholder="Enter numbers only (no spaces, symbols or letters)" />
+
+                        <div className="space-y-3 pt-4 border-t border-border">
+                          <div className="flex items-start gap-2">
+                            <Checkbox id="authorize" />
+                            <label htmlFor="authorize" className="text-sm text-muted-foreground">
+                              <span className="font-medium">Authorize Soft Credit Inquiry *</span><br />
+                              By clicking submit I authorize {i18n.language === 'es' ? 'Ibercaja' : 'Innovative Lease Services, Inc.'} to perform a soft credit inquiry.
+                            </label>
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-foreground">Is there a Secondary Owner? *</label>
-                        <Select>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="yes">Yes</SelectItem>
-                            <SelectItem value="no">No</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div className="space-y-3 pt-4 border-t border-border">
-                        <div className="flex items-start gap-2">
-                          <Checkbox id="authorize" />
-                          <label htmlFor="authorize" className="text-sm text-muted-foreground">
-                            <span className="font-medium">Authorize Soft Credit Inquiry *</span><br />
-                            By clicking submit I authorize Innovative Lease Services, Inc. to perform a soft credit inquiry.
-                          </label>
+                        <div className="bg-muted p-3 rounded-md">
+                          <p className="text-xs text-muted-foreground">
+                            <span className="font-medium">SMS:</span> By submitting this application, you agree to receive SMS text message notifications from {i18n.language === 'es' ? 'Ibercaja' : 'Innovative Lease Services, Inc.'} to the number provided at the time of enrollment purposes, lease application status, document requests and approval updates. Reply "STOP" to opt-out at any time or "HELP" for more information. Message frequency may vary. Msg & data rates may apply.
+                          </p>
                         </div>
-                      </div>
 
-                      <div className="bg-muted p-3 rounded-md">
-                        <p className="text-xs text-muted-foreground">
-                          <span className="font-medium">SMS:</span> By submitting this application, you agree to receive SMS text message notifications from Innovative Lease Services, Inc. to the number provided at the time of enrollment purposes, lease application status, document requests and approval updates. Reply "STOP" to opt-out at any time or "HELP" for more information. Message frequency may vary. Msg & data rates may apply.
-                        </p>
-                      </div>
+                        <div className="flex items-center gap-4 p-3 bg-muted rounded-md">
+                          <Checkbox id="recaptcha" />
+                          <label htmlFor="recaptcha" className="text-sm text-muted-foreground">I'm not a robot</label>
+                          <div className="ml-auto text-xs text-muted-foreground">reCAPTCHA</div>
+                        </div>
 
-                      <div className="flex items-center gap-4 p-3 bg-muted rounded-md">
-                        <Checkbox id="recaptcha" />
-                        <label htmlFor="recaptcha" className="text-sm text-muted-foreground">I'm not a robot</label>
-                        <div className="ml-auto text-xs text-muted-foreground">reCAPTCHA</div>
-                      </div>
-
-                      <Button className="w-full" size="lg">
-                        Submit
-                      </Button>
-                    </CardContent>
-                  </Card>
+                        <Button className="w-full" size="lg">
+                          Submit
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </TabsContent>
         </Tabs>
