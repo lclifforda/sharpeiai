@@ -456,330 +456,422 @@ const Checkout = () => {
               </div>
 
               {/* Main Content Area */}
-              <div className="bg-background border border-t-0 border-border rounded-b-2xl">
+              <div className="bg-background border border-t-0 border-border rounded-b-2xl overflow-hidden">
                 {/* Application Method Selection */}
-                {bankApplicationMethod === "select" && <div className="p-6 md:p-10">
-                    <div className="grid lg:grid-cols-12 gap-8">
-                      {/* Left Sidebar - Benefits */}
-                      
+                {bankApplicationMethod === "select" && (
+                  <div className="p-8 md:p-12">
+                    <div className="max-w-4xl mx-auto">
+                      {/* Header Section */}
+                      <div className="text-center mb-10">
+                        <Badge className="mb-4 bg-primary/10 text-primary border-0">
+                          <Sparkles className="h-3 w-3 mr-1" />
+                          Quick & Easy Application
+                        </Badge>
+                        <h3 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
+                          How Would You Like to Apply?
+                        </h3>
+                        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                          Choose the method that works best for you. Both options are secure and take just minutes to complete.
+                        </p>
+                      </div>
 
-                      {/* Right Side - Application Method Selection */}
-                      <div className="lg:col-span-8">
-                        <div className="text-center mb-8">
-                          <h3 className="text-2xl font-bold text-foreground mb-2">Choose Your Application Method</h3>
-                          <p className="text-muted-foreground">Select the experience that works best for you</p>
-                        </div>
-
-                        <div className="grid md:grid-cols-2 gap-6">
-                          {/* AI Chat Option */}
-                          <Card className="group relative overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-primary bg-gradient-to-br from-background to-muted/30" onClick={() => setBankApplicationMethod("ai")}>
-                            <div className="absolute top-3 right-3">
-                              <Badge className="bg-primary/10 text-primary border-0 text-xs">
-                                <Sparkles className="h-3 w-3 mr-1" />
-                                Recommended
-                              </Badge>
+                      {/* Application Method Cards */}
+                      <div className="grid md:grid-cols-2 gap-6 mb-10">
+                        {/* AI Chat Option */}
+                        <Card 
+                          className="group relative overflow-hidden hover:shadow-2xl transition-all duration-500 cursor-pointer border-2 hover:border-primary hover:-translate-y-1" 
+                          onClick={() => setBankApplicationMethod("ai")}
+                        >
+                          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                          <div className="absolute top-4 right-4">
+                            <Badge className="bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 shadow-lg">
+                              <Sparkles className="h-3 w-3 mr-1" />
+                              Recommended
+                            </Badge>
+                          </div>
+                          <CardContent className="relative p-8 h-full flex flex-col">
+                            <div className="w-20 h-20 rounded-3xl gradient-sharpei flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-xl">
+                              <MessageSquare className="w-10 h-10 text-white" />
                             </div>
-                            <CardContent className="p-6 pt-10 h-full flex flex-col">
-                              <div className="w-16 h-16 rounded-2xl gradient-sharpei flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                                <MessageSquare className="w-8 h-8 text-white" />
-                              </div>
-                              
-                              <h4 className="text-xl font-bold text-foreground mb-2">AI Chat Assistant</h4>
-                              <p className="text-muted-foreground mb-5 flex-grow">
-                                Complete your application through a guided conversation with our AI assistant. Get instant help at every step.
-                              </p>
-                              
-                              <div className="space-y-2 mb-5">
-                                {["Conversational & intuitive", "Real-time assistance", "Personalized guidance"].map((text, idx) => <div key={idx} className="flex items-center gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-primary" />
-                                    <p className="text-sm text-muted-foreground">{text}</p>
-                                  </div>)}
-                              </div>
+                            
+                            <h4 className="text-2xl font-bold text-foreground mb-3">AI Chat Assistant</h4>
+                            <p className="text-muted-foreground mb-6 flex-grow text-base leading-relaxed">
+                              Have a conversation with our AI assistant. It guides you through each step and answers questions in real-time.
+                            </p>
+                            
+                            <div className="space-y-3 mb-6">
+                              {[
+                                { icon: Zap, text: "Complete in under 5 minutes" },
+                                { icon: MessageSquare, text: "Get instant answers to questions" },
+                                { icon: Sparkles, text: "Personalized guidance" }
+                              ].map((item, idx) => (
+                                <div key={idx} className="flex items-center gap-3">
+                                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                                    <item.icon className="h-4 w-4 text-primary" />
+                                  </div>
+                                  <p className="text-sm text-foreground font-medium">{item.text}</p>
+                                </div>
+                              ))}
+                            </div>
 
-                              <Button className="w-full group-hover:shadow-md transition-shadow" size="lg">
-                                <MessageSquare className="h-4 w-4 mr-2" />
-                                Start AI Chat
-                              </Button>
-                            </CardContent>
-                          </Card>
+                            <Button className="w-full h-12 text-base font-semibold group-hover:shadow-lg transition-all" size="lg">
+                              <MessageSquare className="h-5 w-5 mr-2" />
+                              Start AI Chat
+                            </Button>
+                          </CardContent>
+                        </Card>
 
-                          {/* Traditional Form Option */}
-                          <Card className="group relative overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-primary bg-gradient-to-br from-background to-muted/30" onClick={() => setBankApplicationMethod("traditional")}>
-                            <CardContent className="p-6 pt-10 h-full flex flex-col">
-                              <div className="w-16 h-16 rounded-2xl bg-accent flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-lg border border-border">
-                                <FileText className="w-8 h-8 text-foreground" />
-                              </div>
-                              
-                              <h4 className="text-xl font-bold text-foreground mb-2">Traditional Form</h4>
-                              <p className="text-muted-foreground mb-5 flex-grow">
-                                Complete your application using a structured form. Perfect if you prefer to see all fields at once.
-                              </p>
-                              
-                              <div className="space-y-2 mb-5">
-                                {["Clear, structured layout", "See all requirements upfront", "Save and continue later"].map((text, idx) => <div key={idx} className="flex items-center gap-2">
-                                    <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
-                                    <p className="text-sm text-muted-foreground">{text}</p>
-                                  </div>)}
-                              </div>
+                        {/* Traditional Form Option */}
+                        <Card 
+                          className="group relative overflow-hidden hover:shadow-2xl transition-all duration-500 cursor-pointer border-2 hover:border-primary hover:-translate-y-1" 
+                          onClick={() => setBankApplicationMethod("traditional")}
+                        >
+                          <div className="absolute inset-0 bg-gradient-to-br from-muted/50 via-transparent to-muted/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                          <CardContent className="relative p-8 h-full flex flex-col">
+                            <div className="w-20 h-20 rounded-3xl bg-accent flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-xl border border-border">
+                              <FileText className="w-10 h-10 text-foreground" />
+                            </div>
+                            
+                            <h4 className="text-2xl font-bold text-foreground mb-3">Traditional Form</h4>
+                            <p className="text-muted-foreground mb-6 flex-grow text-base leading-relaxed">
+                              Prefer a classic approach? Fill out our structured form at your own pace with all fields visible.
+                            </p>
+                            
+                            <div className="space-y-3 mb-6">
+                              {[
+                                { icon: FileText, text: "See all fields upfront" },
+                                { icon: Clock, text: "Save and continue later" },
+                                { icon: Shield, text: "Familiar form experience" }
+                              ].map((item, idx) => (
+                                <div key={idx} className="flex items-center gap-3">
+                                  <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center border border-border">
+                                    <item.icon className="h-4 w-4 text-muted-foreground" />
+                                  </div>
+                                  <p className="text-sm text-foreground font-medium">{item.text}</p>
+                                </div>
+                              ))}
+                            </div>
 
-                              <Button variant="outline" className="w-full group-hover:shadow-md transition-shadow" size="lg">
-                                <FileText className="h-4 w-4 mr-2" />
-                                Use Traditional Form
-                              </Button>
-                            </CardContent>
-                          </Card>
+                            <Button variant="outline" className="w-full h-12 text-base font-semibold group-hover:shadow-lg transition-all" size="lg">
+                              <FileText className="h-5 w-5 mr-2" />
+                              Use Traditional Form
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      </div>
+
+                      {/* Trust Indicators */}
+                      <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6 border-t border-border">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Shield className="h-5 w-5 text-primary" />
+                          <span>Bank-level encryption</span>
                         </div>
-
-                        {/* Security Note */}
-                        <div className="mt-8 flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                          <Shield className="h-4 w-4" />
-                          <span>Your information is encrypted and secure. We never share your data.</span>
+                        <div className="hidden sm:block w-1 h-1 rounded-full bg-border" />
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Zap className="h-5 w-5 text-primary" />
+                          <span>No impact on credit score</span>
+                        </div>
+                        <div className="hidden sm:block w-1 h-1 rounded-full bg-border" />
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <BadgeCheck className="h-5 w-5 text-primary" />
+                          <span>Decisions in 24 hours</span>
                         </div>
                       </div>
                     </div>
-                  </div>}
+                  </div>
+                )}
 
                 {/* AI Chat Application */}
-                {bankApplicationMethod === "ai" && <div className="p-6">
-                    <Button variant="ghost" onClick={() => setBankApplicationMethod("select")} className="gap-2 mb-4">
-                      <ArrowLeft className="h-4 w-4" />
-                      Back to options
-                    </Button>
-                    <AIApplicationChat />
-                  </div>}
+                {bankApplicationMethod === "ai" && (
+                  <div className="p-6 md:p-10">
+                    <div className="max-w-4xl mx-auto">
+                      <Button 
+                        variant="ghost" 
+                        onClick={() => setBankApplicationMethod("select")} 
+                        className="gap-2 mb-6 hover:bg-primary/10"
+                      >
+                        <ArrowLeft className="h-4 w-4" />
+                        Back to options
+                      </Button>
+                      <AIApplicationChat />
+                    </div>
+                  </div>
+                )}
 
                 {/* Traditional Form Application */}
-                {bankApplicationMethod === "traditional" && <div className="p-6 md:p-10">
-                    <div className="grid lg:grid-cols-12 gap-8">
-                      {/* Left Sidebar - Info */}
-                      <div className="lg:col-span-4 space-y-4">
-                        <Button variant="ghost" onClick={() => setBankApplicationMethod("select")} className="gap-2 w-full justify-start mb-2">
-                          <ArrowLeft className="h-4 w-4" />
-                          Back to options
-                        </Button>
+                {bankApplicationMethod === "traditional" && (
+                  <div className="p-6 md:p-10">
+                    <div className="max-w-6xl mx-auto">
+                      <Button 
+                        variant="ghost" 
+                        onClick={() => setBankApplicationMethod("select")} 
+                        className="gap-2 mb-6 hover:bg-primary/10"
+                      >
+                        <ArrowLeft className="h-4 w-4" />
+                        Back to options
+                      </Button>
 
-                        <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
-                          <CardContent className="p-5">
-                            <div className="flex items-center gap-2 mb-4">
-                              <BadgeCheck className="h-5 w-5 text-primary" />
-                              <h3 className="font-semibold text-foreground">Why Choose {i18n.language === 'es' ? 'Ibercaja' : 'ILS'}?</h3>
-                            </div>
-                            <ul className="space-y-3">
-                              {["Approvals in as little as 24 hours", "Lease as little as $1,500", "Simple, secure online application", "We work with nearly all industries"].map((text, idx) => <li key={idx} className="flex items-start gap-2">
-                                  <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                                  <span className="text-sm text-muted-foreground">{text}</span>
-                                </li>)}
-                            </ul>
-                          </CardContent>
-                        </Card>
+                      <div className="grid lg:grid-cols-3 gap-8">
+                        {/* Left Sidebar - Info */}
+                        <div className="lg:col-span-1 space-y-5">
+                          <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-primary/3 to-transparent overflow-hidden">
+                            <div className="h-1 bg-gradient-to-r from-primary to-primary/50" />
+                            <CardContent className="p-6">
+                              <div className="flex items-center gap-3 mb-5">
+                                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                                  <BadgeCheck className="h-5 w-5 text-primary" />
+                                </div>
+                                <h3 className="font-bold text-lg text-foreground">Why Choose {i18n.language === 'es' ? 'Ibercaja' : 'ILS'}?</h3>
+                              </div>
+                              <ul className="space-y-4">
+                                {[
+                                  "Approvals in as little as 24 hours",
+                                  "Lease as little as $1,500",
+                                  "Simple, secure online application",
+                                  "We work with nearly all industries"
+                                ].map((text, idx) => (
+                                  <li key={idx} className="flex items-start gap-3">
+                                    <CheckCircle2 className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                                    <span className="text-sm text-muted-foreground">{text}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </CardContent>
+                          </Card>
 
-                        <Card className="border-border/50">
-                          <CardContent className="p-5">
-                            <h3 className="font-semibold text-foreground mb-4">Application Process</h3>
-                            <div className="space-y-3">
-                              {[{
-                            step: "1",
-                            text: "Fill out the form"
-                          }, {
-                            step: "2",
-                            text: "Speak with your Finance Specialist"
-                          }, {
-                            step: "3",
-                            text: "Get your funding"
-                          }].map((item, idx) => <div key={idx} className="flex items-center gap-3">
-                                  <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-semibold">
-                                    {item.step}
+                          <Card className="border-border/50">
+                            <CardContent className="p-6">
+                              <h3 className="font-bold text-lg text-foreground mb-5">Application Process</h3>
+                              <div className="space-y-4">
+                                {[
+                                  { step: "1", title: "Fill out the form", desc: "Complete your information" },
+                                  { step: "2", title: "Speak with specialist", desc: "Quick consultation call" },
+                                  { step: "3", title: "Get your funding", desc: "Fast approval process" }
+                                ].map((item, idx) => (
+                                  <div key={idx} className="flex items-start gap-4">
+                                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold flex-shrink-0">
+                                      {item.step}
+                                    </div>
+                                    <div>
+                                      <p className="font-medium text-foreground text-sm">{item.title}</p>
+                                      <p className="text-xs text-muted-foreground">{item.desc}</p>
+                                    </div>
                                   </div>
-                                  <span className="text-sm text-muted-foreground">{item.text}</span>
-                                </div>)}
-                            </div>
-                          </CardContent>
-                        </Card>
+                                ))}
+                              </div>
+                            </CardContent>
+                          </Card>
 
-                        <div className="bg-muted/50 rounded-lg p-4 text-center">
-                          <p className="text-sm text-muted-foreground mb-1">Need help?</p>
-                          <p className="font-semibold text-foreground">800-438-1470</p>
+                          <Card className="border-border/50 bg-muted/30">
+                            <CardContent className="p-6 text-center">
+                              <Phone className="h-8 w-8 text-primary mx-auto mb-3" />
+                              <p className="text-sm text-muted-foreground mb-1">Need help?</p>
+                              <p className="font-bold text-xl text-foreground">800-438-1470</p>
+                              <p className="text-xs text-muted-foreground mt-2">Mon-Fri 8am-6pm EST</p>
+                            </CardContent>
+                          </Card>
                         </div>
-                      </div>
 
-                      {/* Right Side - Application Form */}
-                      <div className="lg:col-span-8">
-                        <Card className="shadow-sm">
-                          <CardContent className="p-6 md:p-8">
-                            <div className="mb-6">
-                              <h3 className="text-xl font-semibold text-foreground mb-1">Business Information</h3>
-                              <p className="text-sm text-muted-foreground">Complete the form below to start your application</p>
-                            </div>
-                            
-                            <div className="space-y-6">
-                              {/* Product & Amount */}
-                              <div className="grid md:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                  <label className="text-sm font-medium text-foreground">Product Interest *</label>
-                                  <Select>
-                                    <SelectTrigger className="h-11">
-                                      <SelectValue placeholder="Select product type" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectItem value="equipment">Equipment Lease</SelectItem>
-                                      <SelectItem value="working-capital">Working Capital</SelectItem>
-                                      <SelectItem value="vehicle">Vehicle Lease</SelectItem>
-                                      <SelectItem value="technology">Technology</SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                </div>
-                                <div className="space-y-2">
-                                  <label className="text-sm font-medium text-foreground">Amount Needed</label>
-                                  <div className="relative">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                                    <Input className="h-11 pl-7" placeholder="Enter amount" />
+                        {/* Right Side - Application Form */}
+                        <div className="lg:col-span-2">
+                          <Card className="shadow-lg border-border/50">
+                            <div className="h-1 bg-gradient-to-r from-primary via-primary/70 to-primary/40" />
+                            <CardContent className="p-6 md:p-8">
+                              <div className="mb-8">
+                                <h3 className="text-2xl font-bold text-foreground mb-2">Business Information</h3>
+                                <p className="text-muted-foreground">Complete the form below to start your application</p>
+                              </div>
+                              
+                              <div className="space-y-8">
+                                {/* Product & Amount */}
+                                <div className="space-y-4">
+                                  <div className="flex items-center gap-2 mb-4">
+                                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                                      <FileText className="h-4 w-4 text-primary" />
+                                    </div>
+                                    <h4 className="font-semibold text-foreground">Product Interest</h4>
+                                  </div>
+                                  <div className="grid md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                      <label className="text-sm font-medium text-foreground">Product Type *</label>
+                                      <Select>
+                                        <SelectTrigger className="h-12">
+                                          <SelectValue placeholder="Select product type" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectItem value="equipment">Equipment Lease</SelectItem>
+                                          <SelectItem value="working-capital">Working Capital</SelectItem>
+                                          <SelectItem value="vehicle">Vehicle Lease</SelectItem>
+                                          <SelectItem value="technology">Technology</SelectItem>
+                                        </SelectContent>
+                                      </Select>
+                                    </div>
+                                    <div className="space-y-2">
+                                      <label className="text-sm font-medium text-foreground">Amount Needed</label>
+                                      <div className="relative">
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">$</span>
+                                        <Input className="h-12 pl-8" placeholder="Enter amount" />
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
 
-                              {/* Company Info */}
-                              <div className="pt-4 border-t border-border">
-                                <p className="text-sm font-medium text-foreground mb-4">Company Details</p>
-                                <div className="grid md:grid-cols-2 gap-4">
-                                  <div className="space-y-2">
-                                    <label className="text-sm font-medium text-foreground">Company Name *</label>
-                                    <Input className="h-11" />
+                                {/* Company Info */}
+                                <div className="space-y-4 pt-6 border-t border-border">
+                                  <div className="flex items-center gap-2 mb-4">
+                                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                                      <Building2 className="h-4 w-4 text-primary" />
+                                    </div>
+                                    <h4 className="font-semibold text-foreground">Company Details</h4>
+                                  </div>
+                                  <div className="grid md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                      <label className="text-sm font-medium text-foreground">Company Name *</label>
+                                      <Input className="h-12" placeholder="Your company name" />
+                                    </div>
+                                    <div className="space-y-2">
+                                      <label className="text-sm font-medium text-foreground">DBA (if different)</label>
+                                      <Input className="h-12" placeholder="Doing business as" />
+                                    </div>
                                   </div>
                                   <div className="space-y-2">
-                                    <label className="text-sm font-medium text-foreground">DBA (if different)</label>
-                                    <Input className="h-11" />
+                                    <label className="text-sm font-medium text-foreground">Business Address *</label>
+                                    <Input className="h-12" placeholder="Street address, City, State, ZIP" />
+                                  </div>
+                                  <div className="grid md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                      <label className="text-sm font-medium text-foreground">Business Phone *</label>
+                                      <Input className="h-12" placeholder="(555) 555-5555" />
+                                    </div>
+                                    <div className="space-y-2">
+                                      <label className="text-sm font-medium text-foreground">Email *</label>
+                                      <Input className="h-12" type="email" placeholder="you@company.com" />
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
 
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium text-foreground">Business Address *</label>
-                                <Input className="h-11" placeholder="Street address, City, State, ZIP" />
-                              </div>
-
-                              <div className="grid md:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                  <label className="text-sm font-medium text-foreground">Business Phone *</label>
-                                  <Input className="h-11" placeholder="(555) 555-5555" />
+                                {/* Business Details */}
+                                <div className="space-y-4 pt-6 border-t border-border">
+                                  <div className="flex items-center gap-2 mb-4">
+                                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                                      <Zap className="h-4 w-4 text-primary" />
+                                    </div>
+                                    <h4 className="font-semibold text-foreground">Business Details</h4>
+                                  </div>
+                                  <div className="grid md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                      <label className="text-sm font-medium text-foreground">Years in Business *</label>
+                                      <Input className="h-12" placeholder="e.g., 5" />
+                                    </div>
+                                    <div className="space-y-2">
+                                      <label className="text-sm font-medium text-foreground">Annual Revenue</label>
+                                      <Select>
+                                        <SelectTrigger className="h-12">
+                                          <SelectValue placeholder="Select range" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectItem value="under-100k">Under $100K</SelectItem>
+                                          <SelectItem value="100k-500k">$100K - $500K</SelectItem>
+                                          <SelectItem value="500k-1m">$500K - $1M</SelectItem>
+                                          <SelectItem value="1m-5m">$1M - $5M</SelectItem>
+                                          <SelectItem value="over-5m">Over $5M</SelectItem>
+                                        </SelectContent>
+                                      </Select>
+                                    </div>
+                                  </div>
+                                  <div className="grid md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                      <label className="text-sm font-medium text-foreground">State of Incorporation</label>
+                                      <Input className="h-12" placeholder="e.g., California" />
+                                    </div>
+                                    <div className="space-y-2">
+                                      <label className="text-sm font-medium text-foreground">Federal Tax ID (EIN)</label>
+                                      <Input className="h-12" placeholder="XX-XXXXXXX" />
+                                    </div>
+                                  </div>
                                 </div>
-                                <div className="space-y-2">
-                                  <label className="text-sm font-medium text-foreground">Email *</label>
-                                  <Input className="h-11" type="email" placeholder="you@company.com" />
-                                </div>
-                              </div>
 
-                              {/* Business Details */}
-                              <div className="pt-4 border-t border-border">
-                                <p className="text-sm font-medium text-foreground mb-4">Business Details</p>
-                                <div className="grid md:grid-cols-2 gap-4">
-                                  <div className="space-y-2">
-                                    <label className="text-sm font-medium text-foreground">Years in Business *</label>
-                                    <Input className="h-11" placeholder="e.g., 5" />
+                                {/* Owner Information */}
+                                <div className="space-y-4 pt-6 border-t border-border">
+                                  <div className="flex items-center gap-2 mb-4">
+                                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                                      <Users className="h-4 w-4 text-primary" />
+                                    </div>
+                                    <h4 className="font-semibold text-foreground">Owner Information</h4>
+                                  </div>
+                                  <div className="grid md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                      <label className="text-sm font-medium text-foreground">Are you an Owner? *</label>
+                                      <Select>
+                                        <SelectTrigger className="h-12">
+                                          <SelectValue placeholder="Select" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectItem value="yes">Yes</SelectItem>
+                                          <SelectItem value="no">No</SelectItem>
+                                        </SelectContent>
+                                      </Select>
+                                    </div>
+                                    <div className="space-y-2">
+                                      <label className="text-sm font-medium text-foreground">Social Security # *</label>
+                                      <Input className="h-12" placeholder="XXX-XX-XXXX" type="password" />
+                                    </div>
                                   </div>
                                   <div className="space-y-2">
-                                    <label className="text-sm font-medium text-foreground">Annual Revenue</label>
+                                    <label className="text-sm font-medium text-foreground">Number of Business Owners</label>
                                     <Select>
-                                      <SelectTrigger className="h-11">
-                                        <SelectValue placeholder="Select range" />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        <SelectItem value="under-100k">Under $100K</SelectItem>
-                                        <SelectItem value="100k-500k">$100K - $500K</SelectItem>
-                                        <SelectItem value="500k-1m">$500K - $1M</SelectItem>
-                                        <SelectItem value="1m-5m">$1M - $5M</SelectItem>
-                                        <SelectItem value="over-5m">Over $5M</SelectItem>
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="grid md:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                  <label className="text-sm font-medium text-foreground">State of Incorporation</label>
-                                  <Input className="h-11" />
-                                </div>
-                                <div className="space-y-2">
-                                  <label className="text-sm font-medium text-foreground">Federal Tax ID (EIN)</label>
-                                  <Input className="h-11" placeholder="XX-XXXXXXX" />
-                                </div>
-                              </div>
-
-                              {/* Owner Information */}
-                              <div className="pt-4 border-t border-border">
-                                <p className="text-sm font-medium text-foreground mb-4">Owner Information</p>
-                                <div className="grid md:grid-cols-2 gap-4">
-                                  <div className="space-y-2">
-                                    <label className="text-sm font-medium text-foreground">Are you an Owner? *</label>
-                                    <Select>
-                                      <SelectTrigger className="h-11">
+                                      <SelectTrigger className="h-12 w-full md:w-1/2">
                                         <SelectValue placeholder="Select" />
                                       </SelectTrigger>
                                       <SelectContent>
-                                        <SelectItem value="yes">Yes</SelectItem>
-                                        <SelectItem value="no">No</SelectItem>
+                                        <SelectItem value="1">1</SelectItem>
+                                        <SelectItem value="2">2</SelectItem>
+                                        <SelectItem value="3">3</SelectItem>
+                                        <SelectItem value="4+">4 or more</SelectItem>
                                       </SelectContent>
                                     </Select>
                                   </div>
-                                  <div className="space-y-2">
-                                    <label className="text-sm font-medium text-foreground">Social Security # *</label>
-                                    <Input className="h-11" placeholder="XXX-XX-XXXX" type="password" />
+                                </div>
+
+                                {/* Authorizations */}
+                                <div className="space-y-4 pt-6 border-t border-border">
+                                  <div className="flex items-start gap-4 p-5 rounded-xl bg-primary/5 border border-primary/20">
+                                    <Checkbox id="authorize" className="mt-1" />
+                                    <label htmlFor="authorize" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
+                                      <span className="font-semibold text-foreground block mb-1">Authorize Soft Credit Inquiry *</span>
+                                      By clicking submit I authorize {i18n.language === 'es' ? 'Ibercaja' : 'Innovative Lease Services, Inc.'} to perform a soft credit inquiry. This will not affect your credit score.
+                                    </label>
+                                  </div>
+
+                                  <div className="p-4 rounded-xl bg-muted/50 border border-border">
+                                    <p className="text-xs text-muted-foreground leading-relaxed">
+                                      <span className="font-semibold text-foreground">SMS Consent:</span> By submitting this application, you agree to receive SMS text message notifications from {i18n.language === 'es' ? 'Ibercaja' : 'Innovative Lease Services, Inc.'} regarding your application status. Reply "STOP" to opt-out at any time.
+                                    </p>
+                                  </div>
+
+                                  <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-xl border border-border">
+                                    <Checkbox id="recaptcha" />
+                                    <label htmlFor="recaptcha" className="text-sm text-muted-foreground cursor-pointer">I'm not a robot</label>
+                                    <div className="ml-auto text-xs text-muted-foreground px-3 py-1 bg-background rounded border border-border">reCAPTCHA</div>
                                   </div>
                                 </div>
-                              </div>
 
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium text-foreground">Number of Business Owners</label>
-                                <Select>
-                                  <SelectTrigger className="h-11 w-full md:w-1/2">
-                                    <SelectValue placeholder="Select" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="1">1</SelectItem>
-                                    <SelectItem value="2">2</SelectItem>
-                                    <SelectItem value="3">3</SelectItem>
-                                    <SelectItem value="4+">4 or more</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
+                                <Button className="w-full h-14 text-lg font-semibold shadow-lg hover:shadow-xl transition-all" size="lg">
+                                  Submit Application
+                                </Button>
 
-                              {/* Authorizations */}
-                              <div className="pt-4 border-t border-border space-y-4">
-                                <div className="flex items-start gap-3 p-4 rounded-lg bg-muted/50">
-                                  <Checkbox id="authorize" className="mt-0.5" />
-                                  <label htmlFor="authorize" className="text-sm text-muted-foreground leading-relaxed">
-                                    <span className="font-medium text-foreground">Authorize Soft Credit Inquiry *</span><br />
-                                    By clicking submit I authorize {i18n.language === 'es' ? 'Ibercaja' : 'Innovative Lease Services, Inc.'} to perform a soft credit inquiry. This will not affect your credit score.
-                                  </label>
-                                </div>
-
-                                <div className="p-4 rounded-lg bg-muted/30 border border-border">
-                                  <p className="text-xs text-muted-foreground leading-relaxed">
-                                    <span className="font-medium">SMS Consent:</span> By submitting this application, you agree to receive SMS text message notifications from {i18n.language === 'es' ? 'Ibercaja' : 'Innovative Lease Services, Inc.'} regarding your application status. Reply "STOP" to opt-out at any time.
-                                  </p>
-                                </div>
-
-                                <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg border border-border">
-                                  <Checkbox id="recaptcha" />
-                                  <label htmlFor="recaptcha" className="text-sm text-muted-foreground">I'm not a robot</label>
-                                  <div className="ml-auto text-xs text-muted-foreground">reCAPTCHA</div>
+                                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                                  <Shield className="h-4 w-4 text-primary" />
+                                  <span>Your information is encrypted and secure</span>
                                 </div>
                               </div>
-
-                              <Button className="w-full h-12 text-base" size="lg">
-                                Submit Application
-                              </Button>
-
-                              <p className="text-xs text-center text-muted-foreground">
-                                <Shield className="h-3 w-3 inline mr-1" />
-                                Your information is encrypted and secure
-                              </p>
-                            </div>
-                          </CardContent>
-                        </Card>
+                            </CardContent>
+                          </Card>
+                        </div>
                       </div>
                     </div>
-                  </div>}
+                  </div>
+                )}
               </div>
             </div>
           </TabsContent>
