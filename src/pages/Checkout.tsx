@@ -17,10 +17,11 @@ import robotAngle2 from "@/assets/robot-angle-2.png";
 import ilsLogo from "@/assets/ils-logo.png";
 import ibercajaLogo from "@/assets/ibercaja-logo.png";
 import AIApplicationChat from "@/components/AIApplicationChat";
-
 const Checkout = () => {
   const navigate = useNavigate();
-  const { i18n } = useTranslation();
+  const {
+    i18n
+  } = useTranslation();
   const [downPayment, setDownPayment] = useState(299);
   const [term, setTerm] = useState("24");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -29,9 +30,7 @@ const Checkout = () => {
   const [insurance, setInsurance] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
   const [bankApplicationMethod, setBankApplicationMethod] = useState<"select" | "ai" | "traditional">("select");
-
   const productImages = [robotImage, robotAngle1, robotAngle2];
-
   const handleApplyNow = () => {
     navigate("/application", {
       state: {
@@ -43,38 +42,42 @@ const Checkout = () => {
       }
     });
   };
-
   const productPrice = 28800; // $800/mo * 36 months
   const monthlyRate = 800;
   const maintenanceCost = 150;
   const insuranceCost = 200;
-
   const calculateMonthlyPayment = () => {
     const principal = productPrice - downPayment;
     const months = parseInt(term);
     const monthlyRate = 0.039 / 12; // 3.9% APR
-    const payment = (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
+    const payment = principal * monthlyRate * Math.pow(1 + monthlyRate, months) / (Math.pow(1 + monthlyRate, months) - 1);
     return payment.toFixed(2);
   };
-
   const calculateTotal = () => {
     let total = monthlyRate * quantity;
     if (maintenance) total += maintenanceCost;
     if (insurance) total += insuranceCost;
     return total;
   };
-
-  const paymentOptions = [
-    { term: "12 months", monthly: "$1,200", apr: "3.5%", total: "$14,400" },
-    { term: "24 months", monthly: "$800", apr: "3.9%", total: "$19,200" },
-    { term: "36 months", monthly: "$650", apr: "4.2%", total: "$23,400" },
-  ];
-
+  const paymentOptions = [{
+    term: "12 months",
+    monthly: "$1,200",
+    apr: "3.5%",
+    total: "$14,400"
+  }, {
+    term: "24 months",
+    monthly: "$800",
+    apr: "3.9%",
+    total: "$19,200"
+  }, {
+    term: "36 months",
+    monthly: "$650",
+    apr: "4.2%",
+    total: "$23,400"
+  }];
   const currentLogo = i18n.language === 'es' ? ibercajaLogo : ilsLogo;
   const logoAlt = i18n.language === 'es' ? 'Ibercaja' : 'Innovative Lease Services';
-
-  return (
-    <div className="min-h-screen p-6 space-y-6">
+  return <div className="min-h-screen p-6 space-y-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-foreground">Checkout Preview</h1>
@@ -106,31 +109,13 @@ const Checkout = () => {
                   {/* Product Image Gallery */}
                   <div className="space-y-3">
                     <div className="bg-muted rounded-lg overflow-hidden aspect-square flex items-center justify-center">
-                      <img 
-                        src={productImages[selectedImage]} 
-                        alt="Humanoid Robot" 
-                        className="w-full h-full object-cover"
-                      />
+                      <img src={productImages[selectedImage]} alt="Humanoid Robot" className="w-full h-full object-cover" />
                     </div>
                     {/* Thumbnail Gallery */}
                     <div className="grid grid-cols-3 gap-2">
-                      {productImages.map((image, index) => (
-                        <button
-                          key={index}
-                          onClick={() => setSelectedImage(index)}
-                          className={`bg-muted rounded-lg overflow-hidden aspect-square flex items-center justify-center border-2 transition-all ${
-                            selectedImage === index 
-                              ? 'border-primary' 
-                              : 'border-transparent hover:border-border'
-                          }`}
-                        >
-                          <img 
-                            src={image} 
-                            alt={`Robot view ${index + 1}`} 
-                            className="w-full h-full object-cover"
-                          />
-                        </button>
-                      ))}
+                      {productImages.map((image, index) => <button key={index} onClick={() => setSelectedImage(index)} className={`bg-muted rounded-lg overflow-hidden aspect-square flex items-center justify-center border-2 transition-all ${selectedImage === index ? 'border-primary' : 'border-transparent hover:border-border'}`}>
+                          <img src={image} alt={`Robot view ${index + 1}`} className="w-full h-full object-cover" />
+                        </button>)}
                     </div>
                   </div>
 
@@ -177,21 +162,11 @@ const Checkout = () => {
                           <div className="flex justify-between items-center py-2">
                             <span className="text-muted-foreground">Units</span>
                             <div className="flex items-center gap-2">
-                              <Button 
-                                variant="outline" 
-                                size="icon"
-                                className="h-8 w-8"
-                                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                              >
+                              <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setQuantity(Math.max(1, quantity - 1))}>
                                 <Minus className="h-4 w-4" />
                               </Button>
                               <span className="text-foreground font-semibold w-8 text-center">{quantity}</span>
-                              <Button 
-                                variant="outline" 
-                                size="icon"
-                                className="h-8 w-8"
-                                onClick={() => setQuantity(quantity + 1)}
-                              >
+                              <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setQuantity(quantity + 1)}>
                                 <Plus className="h-4 w-4" />
                               </Button>
                             </div>
@@ -202,11 +177,7 @@ const Checkout = () => {
                             <p className="text-sm font-medium text-foreground">Add-ons</p>
                             <div className="flex items-center justify-between py-2">
                               <div className="flex items-center gap-2">
-                                <Checkbox 
-                                  id="maintenance" 
-                                  checked={maintenance}
-                                  onCheckedChange={(checked) => setMaintenance(checked as boolean)}
-                                />
+                                <Checkbox id="maintenance" checked={maintenance} onCheckedChange={checked => setMaintenance(checked as boolean)} />
                                 <label htmlFor="maintenance" className="text-sm text-muted-foreground cursor-pointer">
                                   Maintenance Package
                                 </label>
@@ -215,11 +186,7 @@ const Checkout = () => {
                             </div>
                             <div className="flex items-center justify-between py-2">
                               <div className="flex items-center gap-2">
-                                <Checkbox 
-                                  id="insurance" 
-                                  checked={insurance}
-                                  onCheckedChange={(checked) => setInsurance(checked as boolean)}
-                                />
+                                <Checkbox id="insurance" checked={insurance} onCheckedChange={checked => setInsurance(checked as boolean)} />
                                 <label htmlFor="insurance" className="text-sm text-muted-foreground cursor-pointer">
                                   Insurance Coverage
                                 </label>
@@ -240,12 +207,7 @@ const Checkout = () => {
                             <label className="text-sm text-muted-foreground">Down Payment</label>
                             <div className="relative">
                               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                              <Input
-                                type="number"
-                                value={downPayment}
-                                onChange={(e) => setDownPayment(Number(e.target.value))}
-                                className="pl-7"
-                              />
+                              <Input type="number" value={downPayment} onChange={e => setDownPayment(Number(e.target.value))} className="pl-7" />
                             </div>
                           </div>
                           <div className="space-y-2">
@@ -351,15 +313,13 @@ const Checkout = () => {
                               <div className="border-t border-border pt-4 mt-4">
                                 <p className="text-sm font-semibold text-foreground mb-3">Available Terms</p>
                                 <div className="space-y-2">
-                                  {paymentOptions.map((option, index) => (
-                                    <div key={index} className="flex justify-between items-center py-2 px-3 rounded-md hover:bg-muted transition-colors">
+                                  {paymentOptions.map((option, index) => <div key={index} className="flex justify-between items-center py-2 px-3 rounded-md hover:bg-muted transition-colors">
                                       <span className="text-sm text-foreground">{option.term}</span>
                                       <div className="text-right">
                                         <span className="text-sm font-semibold text-primary">{option.monthly}/mo</span>
                                         <span className="text-xs text-muted-foreground ml-2">({option.apr} APR)</span>
                                       </div>
-                                    </div>
-                                  ))}
+                                    </div>)}
                                 </div>
                               </div>
 
@@ -399,22 +359,14 @@ const Checkout = () => {
                         </div>
 
                         {/* BBVA Branded Button */}
-                        <Button 
-                          onClick={handleApplyNow}
-                          className="w-full bg-foreground hover:bg-foreground/90 text-background" 
-                          size="lg"
-                        >
+                        <Button onClick={handleApplyNow} className="w-full bg-foreground hover:bg-foreground/90 text-background" size="lg">
                           Apply Now
                         </Button>
 
                         {/* Powered By */}
                         <div className="flex items-center justify-center gap-2 pt-2">
                           <span className="text-xs text-muted-foreground">Powered by</span>
-                          <img 
-                            src={i18n.language === 'es' ? ibercajaLogo : ilsLogo} 
-                            alt={i18n.language === 'es' ? 'Ibercaja' : 'ILS'} 
-                            className="h-4"
-                          />
+                          <img src={i18n.language === 'es' ? ibercajaLogo : ilsLogo} alt={i18n.language === 'es' ? 'Ibercaja' : 'ILS'} className="h-4" />
                         </div>
 
                         <p className="text-xs text-muted-foreground text-center">
@@ -439,11 +391,7 @@ const Checkout = () => {
                 <div className="relative flex justify-between items-center">
                   <div className="flex items-center gap-4">
                     <div className="bg-white rounded-xl p-2 shadow-lg">
-                      <img 
-                        src={currentLogo} 
-                        alt={logoAlt} 
-                        className="h-8"
-                      />
+                      <img src={currentLogo} alt={logoAlt} className="h-8" />
                     </div>
                     <div className="hidden md:block">
                       <p className="text-primary-foreground/80 text-sm">Business Financing Solutions</p>
@@ -510,58 +458,10 @@ const Checkout = () => {
               {/* Main Content Area */}
               <div className="bg-background border border-t-0 border-border rounded-b-2xl">
                 {/* Application Method Selection */}
-                {bankApplicationMethod === "select" && (
-                  <div className="p-6 md:p-10">
+                {bankApplicationMethod === "select" && <div className="p-6 md:p-10">
                     <div className="grid lg:grid-cols-12 gap-8">
                       {/* Left Sidebar - Benefits */}
-                      <div className="lg:col-span-4 space-y-6">
-                        <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
-                          <CardContent className="p-5">
-                            <div className="flex items-center gap-2 mb-4">
-                              <BadgeCheck className="h-5 w-5 text-primary" />
-                              <h3 className="font-semibold text-foreground">Why Choose {i18n.language === 'es' ? 'Ibercaja' : 'ILS'}?</h3>
-                            </div>
-                            <ul className="space-y-3">
-                              {[
-                                { icon: Clock, text: "Approvals in as little as 24 hours" },
-                                { icon: Shield, text: "Lease as little as $1,500" },
-                                { icon: Zap, text: "Simple, secure online application" },
-                                { icon: Users, text: "We work with nearly all industries" },
-                              ].map((item, idx) => (
-                                <li key={idx} className="flex items-start gap-3">
-                                  <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                    <item.icon className="h-3 w-3 text-primary" />
-                                  </div>
-                                  <span className="text-sm text-muted-foreground">{item.text}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </CardContent>
-                        </Card>
-
-                        <Card className="border-border/50">
-                          <CardContent className="p-5">
-                            <h3 className="font-semibold text-foreground mb-4">How It Works</h3>
-                            <div className="space-y-4">
-                              {[
-                                { step: "1", title: "Choose method", desc: "AI chat or form" },
-                                { step: "2", title: "Complete application", desc: "Takes ~5 minutes" },
-                                { step: "3", title: "Get funded", desc: "As fast as 24 hours" },
-                              ].map((item, idx) => (
-                                <div key={idx} className="flex items-start gap-3">
-                                  <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-semibold flex-shrink-0">
-                                    {item.step}
-                                  </div>
-                                  <div>
-                                    <p className="text-sm font-medium text-foreground">{item.title}</p>
-                                    <p className="text-xs text-muted-foreground">{item.desc}</p>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </div>
+                      
 
                       {/* Right Side - Application Method Selection */}
                       <div className="lg:col-span-8">
@@ -572,10 +472,7 @@ const Checkout = () => {
 
                         <div className="grid md:grid-cols-2 gap-6">
                           {/* AI Chat Option */}
-                          <Card 
-                            className="group relative overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-primary bg-gradient-to-br from-background to-muted/30" 
-                            onClick={() => setBankApplicationMethod("ai")}
-                          >
+                          <Card className="group relative overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-primary bg-gradient-to-br from-background to-muted/30" onClick={() => setBankApplicationMethod("ai")}>
                             <div className="absolute top-3 right-3">
                               <Badge className="bg-primary/10 text-primary border-0 text-xs">
                                 <Sparkles className="h-3 w-3 mr-1" />
@@ -593,12 +490,10 @@ const Checkout = () => {
                               </p>
                               
                               <div className="space-y-2 mb-5">
-                                {["Conversational & intuitive", "Real-time assistance", "Personalized guidance"].map((text, idx) => (
-                                  <div key={idx} className="flex items-center gap-2">
+                                {["Conversational & intuitive", "Real-time assistance", "Personalized guidance"].map((text, idx) => <div key={idx} className="flex items-center gap-2">
                                     <CheckCircle2 className="h-4 w-4 text-primary" />
                                     <p className="text-sm text-muted-foreground">{text}</p>
-                                  </div>
-                                ))}
+                                  </div>)}
                               </div>
 
                               <Button className="w-full group-hover:shadow-md transition-shadow" size="lg">
@@ -609,10 +504,7 @@ const Checkout = () => {
                           </Card>
 
                           {/* Traditional Form Option */}
-                          <Card 
-                            className="group relative overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-primary bg-gradient-to-br from-background to-muted/30" 
-                            onClick={() => setBankApplicationMethod("traditional")}
-                          >
+                          <Card className="group relative overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-primary bg-gradient-to-br from-background to-muted/30" onClick={() => setBankApplicationMethod("traditional")}>
                             <CardContent className="p-6 pt-10 h-full flex flex-col">
                               <div className="w-16 h-16 rounded-2xl bg-accent flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-lg border border-border">
                                 <FileText className="w-8 h-8 text-foreground" />
@@ -624,12 +516,10 @@ const Checkout = () => {
                               </p>
                               
                               <div className="space-y-2 mb-5">
-                                {["Clear, structured layout", "See all requirements upfront", "Save and continue later"].map((text, idx) => (
-                                  <div key={idx} className="flex items-center gap-2">
+                                {["Clear, structured layout", "See all requirements upfront", "Save and continue later"].map((text, idx) => <div key={idx} className="flex items-center gap-2">
                                     <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
                                     <p className="text-sm text-muted-foreground">{text}</p>
-                                  </div>
-                                ))}
+                                  </div>)}
                               </div>
 
                               <Button variant="outline" className="w-full group-hover:shadow-md transition-shadow" size="lg">
@@ -647,35 +537,23 @@ const Checkout = () => {
                         </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  </div>}
 
                 {/* AI Chat Application */}
-                {bankApplicationMethod === "ai" && (
-                  <div className="p-6">
-                    <Button 
-                      variant="ghost" 
-                      onClick={() => setBankApplicationMethod("select")}
-                      className="gap-2 mb-4"
-                    >
+                {bankApplicationMethod === "ai" && <div className="p-6">
+                    <Button variant="ghost" onClick={() => setBankApplicationMethod("select")} className="gap-2 mb-4">
                       <ArrowLeft className="h-4 w-4" />
                       Back to options
                     </Button>
                     <AIApplicationChat />
-                  </div>
-                )}
+                  </div>}
 
                 {/* Traditional Form Application */}
-                {bankApplicationMethod === "traditional" && (
-                  <div className="p-6 md:p-10">
+                {bankApplicationMethod === "traditional" && <div className="p-6 md:p-10">
                     <div className="grid lg:grid-cols-12 gap-8">
                       {/* Left Sidebar - Info */}
                       <div className="lg:col-span-4 space-y-4">
-                        <Button 
-                          variant="ghost" 
-                          onClick={() => setBankApplicationMethod("select")}
-                          className="gap-2 w-full justify-start mb-2"
-                        >
+                        <Button variant="ghost" onClick={() => setBankApplicationMethod("select")} className="gap-2 w-full justify-start mb-2">
                           <ArrowLeft className="h-4 w-4" />
                           Back to options
                         </Button>
@@ -687,17 +565,10 @@ const Checkout = () => {
                               <h3 className="font-semibold text-foreground">Why Choose {i18n.language === 'es' ? 'Ibercaja' : 'ILS'}?</h3>
                             </div>
                             <ul className="space-y-3">
-                              {[
-                                "Approvals in as little as 24 hours",
-                                "Lease as little as $1,500",
-                                "Simple, secure online application",
-                                "We work with nearly all industries",
-                              ].map((text, idx) => (
-                                <li key={idx} className="flex items-start gap-2">
+                              {["Approvals in as little as 24 hours", "Lease as little as $1,500", "Simple, secure online application", "We work with nearly all industries"].map((text, idx) => <li key={idx} className="flex items-start gap-2">
                                   <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                                   <span className="text-sm text-muted-foreground">{text}</span>
-                                </li>
-                              ))}
+                                </li>)}
                             </ul>
                           </CardContent>
                         </Card>
@@ -706,18 +577,21 @@ const Checkout = () => {
                           <CardContent className="p-5">
                             <h3 className="font-semibold text-foreground mb-4">Application Process</h3>
                             <div className="space-y-3">
-                              {[
-                                { step: "1", text: "Fill out the form" },
-                                { step: "2", text: "Speak with your Finance Specialist" },
-                                { step: "3", text: "Get your funding" },
-                              ].map((item, idx) => (
-                                <div key={idx} className="flex items-center gap-3">
+                              {[{
+                            step: "1",
+                            text: "Fill out the form"
+                          }, {
+                            step: "2",
+                            text: "Speak with your Finance Specialist"
+                          }, {
+                            step: "3",
+                            text: "Get your funding"
+                          }].map((item, idx) => <div key={idx} className="flex items-center gap-3">
                                   <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-semibold">
                                     {item.step}
                                   </div>
                                   <span className="text-sm text-muted-foreground">{item.text}</span>
-                                </div>
-                              ))}
+                                </div>)}
                             </div>
                           </CardContent>
                         </Card>
@@ -905,15 +779,12 @@ const Checkout = () => {
                         </Card>
                       </div>
                     </div>
-                  </div>
-                )}
+                  </div>}
               </div>
             </div>
           </TabsContent>
         </Tabs>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Checkout;
