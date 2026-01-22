@@ -2,10 +2,11 @@ import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Building2, Search, Plus, List, LayoutGrid, MapPin, Users } from "lucide-react";
+import { Building2, Search, Plus, MapPin, Users, FileText, TrendingUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import TableFilters from "@/components/TableFilters";
 import { ExportButton } from "@/components/ExportButton";
+import techcorpLogo from "@/assets/techcorp-logo.png";
 
 const Companies = () => {
   const navigate = useNavigate();
@@ -23,7 +24,8 @@ const Companies = () => {
       representatives: 2,
       activeContracts: 3,
       revenue: "$45,000",
-      status: "active" 
+      status: "active",
+      logo: techcorpLogo,
     },
     { 
       id: "2",
@@ -33,7 +35,8 @@ const Companies = () => {
       representatives: 1,
       activeContracts: 2,
       revenue: "$28,500",
-      status: "active" 
+      status: "active",
+      logo: undefined,
     },
     { 
       id: "3",
@@ -43,7 +46,8 @@ const Companies = () => {
       representatives: 3,
       activeContracts: 4,
       revenue: "$62,000",
-      status: "active" 
+      status: "active",
+      logo: undefined,
     },
     { 
       id: "4",
@@ -53,7 +57,8 @@ const Companies = () => {
       representatives: 1,
       activeContracts: 1,
       revenue: "$18,000",
-      status: "inactive" 
+      status: "inactive",
+      logo: undefined,
     },
     { 
       id: "5",
@@ -63,7 +68,8 @@ const Companies = () => {
       representatives: 2,
       activeContracts: 2,
       revenue: "$35,000",
-      status: "active" 
+      status: "active",
+      logo: undefined,
     },
   ];
 
@@ -102,6 +108,15 @@ const Companies = () => {
 
   const activeFilterCount = filters.industry.length + filters.status.length;
 
+  const totalCompanies = allCompanies.length;
+  const activeCompanies = allCompanies.filter((c) => c.status === "active").length;
+  const totalMonthlyRevenue = allCompanies.reduce((sum, company) => {
+    const numeric = parseInt(company.revenue.replace(/[^0-9]/g, ""), 10) || 0;
+    return sum + numeric;
+  }, 0);
+  const formattedMonthlyRevenue = `$${totalMonthlyRevenue.toLocaleString()}`;
+  const companiesWithContracts = allCompanies.filter((c) => c.activeContracts > 0).length;
+
   const companies = useMemo(() => {
     return allCompanies.filter(company => {
       const matchesSearch = company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -139,34 +154,64 @@ const Companies = () => {
       </div>
 
       {/* Content */}
-      <div className="p-6 space-y-4">
+      <div className="px-6 py-6 space-y-6">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="p-4 rounded-xl border bg-card">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-muted-foreground">Total Companies</span>
+              <Building2 className="h-4 w-4 text-muted-foreground" />
+            </div>
+            <div className="text-2xl font-semibold text-foreground">{totalCompanies}</div>
+            <p className="text-xs text-muted-foreground mt-1">In your portfolio</p>
+          </div>
+
+          <div className="p-4 rounded-xl border bg-card">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-muted-foreground">Active</span>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </div>
+            <div className="text-2xl font-semibold text-foreground">{activeCompanies}</div>
+            <p className="text-xs text-muted-foreground mt-1">Currently active customers</p>
+          </div>
+
+          <div className="p-4 rounded-xl border bg-card">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-muted-foreground">Monthly Revenue</span>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            </div>
+            <div className="text-2xl font-semibold text-foreground">{formattedMonthlyRevenue}</div>
+            <p className="text-xs text-muted-foreground mt-1">Total from active contracts</p>
+          </div>
+
+          <div className="p-4 rounded-xl border bg-card">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-muted-foreground">With Contracts</span>
+              <FileText className="h-4 w-4 text-muted-foreground" />
+            </div>
+            <div className="text-2xl font-semibold text-foreground">{companiesWithContracts}</div>
+            <p className="text-xs text-muted-foreground mt-1">Companies with active deals</p>
+          </div>
+        </div>
+
         {/* Search & Filters */}
-        <div className="flex items-center gap-4 flex-wrap">
-          <div className="relative flex-1 max-w-md">
+        <div className="flex items-center gap-4 mb-6">
+          <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <Input 
-              placeholder="Search companies..." 
+            <Input
+              placeholder="Search companies..."
               className="pl-10 bg-card border-border"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          
-          <TableFilters 
+
+          <TableFilters
             filters={filterGroups}
             onFilterChange={handleFilterChange}
             onClearAll={handleClearFilters}
             activeCount={activeFilterCount}
           />
-          
-          <div className="flex gap-2 ml-auto">
-            <Button variant="default" size="icon" className="gradient-sharpei text-white hover:opacity-90">
-              <List className="w-5 h-5" />
-            </Button>
-            <Button variant="outline" size="icon">
-              <LayoutGrid className="w-5 h-5" />
-            </Button>
-          </div>
         </div>
 
         {/* Companies Table */}
@@ -190,10 +235,28 @@ const Companies = () => {
                 onClick={() => navigate(`/companies/${company.id}`)}
                 className="grid grid-cols-[2fr_1.2fr_1.8fr_1fr_1.2fr_1fr_0.8fr] gap-6 px-6 py-5 hover:bg-gradient-to-r hover:from-gradient-start/5 hover:to-gradient-purple/5 transition-colors cursor-pointer"
               >
-                <div>
+                <div className="flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-md bg-card flex items-center justify-center border border-border overflow-hidden">
+                    {company.logo ? (
+                      <img
+                        src={company.logo}
+                        alt={`${company.name} logo`}
+                        className="w-full h-full object-contain"
+                      />
+                    ) : (
+                      <span className="text-xs font-semibold text-muted-foreground">
+                        {company.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                          .slice(0, 2)
+                          .toUpperCase()}
+                      </span>
+                    )}
+                  </div>
                   <p className="font-semibold gradient-sharpei-text text-base">{company.name}</p>
                 </div>
-                <div>
+                <div className="flex items-center">
                   <p className="text-foreground text-sm">{company.industry}</p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -204,10 +267,11 @@ const Companies = () => {
                   <Users className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                   <p className="text-foreground text-sm">{company.representatives}</p>
                 </div>
-                <div>
+                <div className="flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                   <p className="text-foreground text-sm">{company.activeContracts}</p>
                 </div>
-                <div>
+                <div className="flex items-center">
                   <p className="font-semibold gradient-sharpei-text text-sm">{company.revenue}</p>
                 </div>
                 <div>

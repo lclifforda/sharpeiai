@@ -47,7 +47,11 @@ const ApplicationForm = () => {
   };
 
   const [selectedMethod, setSelectedMethod] = useState<"ai" | "traditional" | null>(
-    location.state?.formType === "application" ? "traditional" : null
+    location.state?.formType === "application"
+      ? "traditional"
+      : location.state?.formType === "ai"
+      ? "ai"
+      : null
   );
   const [applicantType, setApplicantType] = useState<"company" | "individual">("company");
   const [formData, setFormData] = useState({

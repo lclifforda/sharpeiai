@@ -1,6 +1,7 @@
 import { NavLink } from "@/components/NavLink";
 import { MessageSquare, LayoutDashboard, Building2, ShoppingCart, FileText, CreditCard, Package, Settings, LogOut, Headphones, Store, BookOpen, HelpCircle, Mail, Smartphone } from "lucide-react";
 import bbvaLogo from "@/assets/bbva-logo.png";
+import sharpeiLogo from "@/assets/sharpei-logo.png";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, SidebarHeader, useSidebar } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 const previewItem = {
@@ -52,14 +53,23 @@ export function AppSidebar() {
           <div className={`flex items-center ${open ? 'gap-3 w-full' : 'justify-center'}`}>
             {open ? (
               <>
-                <div className="flex-shrink-0 w-16 h-8">
-                  <img 
-                    src={bbvaLogo} 
-                    alt="BBVA" 
-                    className="w-full h-full object-contain"
-                  />
+                <div className="flex items-center gap-3 flex-shrink-0">
+                  <div className="w-16 h-8">
+                    <img 
+                      src={bbvaLogo} 
+                      alt="BBVA" 
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <div className="border-l border-border/50 h-8" />
+                  <div className="w-9 h-9 rounded-xl gradient-sharpei flex items-center justify-center overflow-hidden">
+                    <img 
+                      src={sharpeiLogo} 
+                      alt="Sharpei AI" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 </div>
-                <div className="border-l border-border/50 h-8 ml-1" />
               </>
             ) : (
               <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0 overflow-hidden p-1">
