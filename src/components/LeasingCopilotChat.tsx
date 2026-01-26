@@ -841,7 +841,7 @@ Want to schedule a call now to discuss your needs?`;
           </div>
 
           {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto pr-4 -mr-4">
+          <ScrollArea className="flex-1 pr-4 -mr-4">
             <div className="min-h-full flex flex-col justify-end space-y-6 pb-4">
               {messages.map(message => <div key={message.id} className={`flex gap-3 ${message.role === 'user' ? 'flex-row-reverse' : ''}`}>
                   {/* Avatar */}
@@ -1067,7 +1067,7 @@ Want to schedule a call now to discuss your needs?`;
                 </div>}
               <div ref={messagesEndRef} />
             </div>
-          </div>
+          </ScrollArea>
 
           {/* Floating Chat Input - Sticky */}
           <div className="w-full max-w-3xl mx-auto py-4 flex-shrink-0">
