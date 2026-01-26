@@ -21,6 +21,30 @@ const EXISTING_CUSTOMER = {
   credit_limit: "$500,000"
 };
 
+const LEASED_PRODUCTS = [
+  { 
+    name: "Dell PowerEdge Servers", 
+    quantity: 12, 
+    monthlyRate: "$2,450",
+    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=200&h=200&fit=crop",
+    expires: "Feb 2026"
+  },
+  { 
+    name: "MacBook Pro Fleet", 
+    quantity: 25, 
+    monthlyRate: "$3,200",
+    image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=200&h=200&fit=crop",
+    expires: "Mar 2026"
+  },
+  { 
+    name: "Medical Imaging Suite", 
+    quantity: 1, 
+    monthlyRate: "$8,500",
+    image: "https://images.unsplash.com/photo-1516549655169-df83a0774514?w=200&h=200&fit=crop",
+    expires: "Apr 2026"
+  }
+];
+
 const NEW_CUSTOMER = {
   company_name: "Acme Inc",
   status: "Not found"
@@ -50,6 +74,7 @@ interface Message {
   content: string;
   actions?: { label: string; value: string }[];
   showOTP?: boolean;
+  showProducts?: boolean;
 }
 
 interface OnboardingData {
@@ -182,13 +207,14 @@ const LeasingCopilotChat = () => {
     setCurrentStep("authenticated");
     addMessage({
       role: "assistant",
-      content: `🔒 Verified! Welcome back, ${EXISTING_CUSTOMER.contact_name}.\n\n**Your Account:**\n• Active Leases: ${EXISTING_CUSTOMER.active_leases}\n• Credit Limit: ${EXISTING_CUSTOMER.credit_limit}\n• Status: ${EXISTING_CUSTOMER.status}\n\nWhat would you like to do today?`,
+      content: `🔒 Verified! Welcome back, ${EXISTING_CUSTOMER.contact_name}.\n\nWhat would you like to do today?`,
       actions: [
         { label: "📦 New Lease", value: "new_lease" },
         { label: "🔄 Renewal", value: "renewal" },
         { label: "↩️ Return Equipment", value: "return" },
         { label: "💬 Talk to Human", value: "talk_human" }
-      ]
+      ],
+      showProducts: true
     });
     setCurrentStep("self_serve_menu");
     setOtpValue("");
@@ -553,6 +579,33 @@ Want to schedule a call now to discuss your needs?`;
                         >
                           Verify
                         </Button>
+                      </div>
+                    )}
+
+                    {/* Currently Leasing Products */}
+                    {message.showProducts && (
+                      <div className="mt-3 space-y-2">
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Currently Leasing</p>
+                        <div className="grid grid-cols-1 gap-2">
+                          {LEASED_PRODUCTS.map((product, idx) => (
+                            <div 
+                              key={idx}
+                              className="flex items-center gap-3 p-3 bg-background border border-border rounded-xl hover:border-primary/30 transition-colors"
+                            >
+                              <img 
+                                src={product.image} 
+                                alt={product.name}
+                                className="w-12 h-12 rounded-lg object-cover"
+                              />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-foreground truncate">{product.name}</p>
+                                <p className="text-xs text-muted-foreground">
+                                  {product.quantity}x · {product.monthlyRate}/mo · Expires {product.expires}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
