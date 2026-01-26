@@ -123,12 +123,20 @@ const LeasingCopilotChat = () => {
   const [extractedData, setExtractedData] = useState<ExtractedInvoiceData | null>(null);
   const [selectedOffer, setSelectedOffer] = useState<SelectedOffer | null>(null);
   const [showOfferPanel, setShowOfferPanel] = useState(false);
+  const [showTermSelector, setShowTermSelector] = useState(false);
   const [maintenanceEnabled, setMaintenanceEnabled] = useState(false);
   const [insuranceEnabled, setInsuranceEnabled] = useState(false);
   const [isSigningContract, setIsSigningContract] = useState(false);
   const [contractSigned, setContractSigned] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  // Term options for the panel
+  const termOptions: TermOption[] = [
+    { term: 24, monthlyPayment: 4500, totalCost: 108000, apr: 7.9 },
+    { term: 36, monthlyPayment: 2950, totalCost: 106200, apr: 6.9 },
+    { term: 48, monthlyPayment: 2350, totalCost: 112800, apr: 8.5 },
+  ];
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({
       behavior: "smooth"
@@ -327,6 +335,32 @@ const LeasingCopilotChat = () => {
     if (maintenanceEnabled) total += 10;
     if (insuranceEnabled) total += 15;
     return total;
+  };
+
+  // Handle term change from panel
+  const handleTermChangeFromPanel = (option: TermOption) => {
+    if (!extractedData) return;
+    
+    const offer: SelectedOffer = {
+      term: option.term,
+      monthlyPayment: option.monthlyPayment,
+      totalCost: option.totalCost,
+      apr: option.apr,
+      equipment: extractedData.equipment,
+      quantity: extractedData.quantity,
+      totalPrice: extractedData.totalPrice,
+      vendor: extractedData.vendor
+    };
+    
+    setSelectedOffer(offer);
+    setShowTermSelector(false);
+    setCurrentStep("final_offer");
+    setContractSigned(false);
+    
+    addMessage({
+      role: "assistant",
+      content: `✅ Updated to ${option.term}-month term @ $${option.monthlyPayment.toLocaleString()}/mo. Review your updated offer in the panel!`
+    });
   };
 
   const handleUpdateContract = async () => {
@@ -1058,168 +1092,255 @@ Want to schedule a call now to discuss your needs?`;
 
       {/* Offer Side Panel */}
       {showOfferPanel && selectedOffer && (
-        <div className="fixed right-0 top-0 h-full w-[380px] bg-card border-l border-border shadow-2xl flex flex-col z-40 animate-in slide-in-from-right duration-300">
+        <div className="fixed right-0 top-0 h-full w-[400px] bg-card border-l border-border shadow-2xl flex flex-col z-40 animate-in slide-in-from-right duration-300">
           {/* Panel Header */}
-          <div className="p-5 border-b border-border flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-foreground">Order Summary</h2>
-            <button 
-              onClick={() => setShowOfferPanel(false)}
-              className="p-1.5 hover:bg-muted rounded-lg transition-colors"
-            >
-              <X className="w-5 h-5 text-muted-foreground" />
-            </button>
+          <div className="px-6 py-5 border-b border-border">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-bold text-foreground">Order Summary</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">Review and confirm your lease</p>
+              </div>
+              <button 
+                onClick={() => setShowOfferPanel(false)}
+                className="p-2 hover:bg-muted rounded-full transition-colors"
+              >
+                <X className="w-5 h-5 text-muted-foreground" />
+              </button>
+            </div>
           </div>
 
           {/* Panel Content */}
           <ScrollArea className="flex-1">
-            <div className="p-5 space-y-5">
-              {/* Product Info */}
-              <div className="flex gap-4">
-                <img 
-                  src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=80&h=80&fit=crop" 
-                  alt={selectedOffer.equipment}
-                  className="w-16 h-16 rounded-lg object-cover"
-                />
-                <div>
-                  <p className="font-medium text-foreground">{selectedOffer.equipment}</p>
-                  <p className="text-sm text-muted-foreground">${selectedOffer.monthlyPayment.toLocaleString()}/mo per unit</p>
-                </div>
-              </div>
-
-              {/* Order Details */}
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between py-2 border-b border-border">
-                  <span className="text-muted-foreground">Quantity</span>
-                  <span className="font-medium text-foreground">{selectedOffer.quantity}</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-border">
-                  <span className="text-muted-foreground">Term</span>
-                  <span className="font-medium text-foreground">{selectedOffer.term} months</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-border">
-                  <div>
-                    <span className="text-muted-foreground">Leasing total:</span>
-                    <p className="text-xs text-muted-foreground">Purchase option at end of lease</p>
+            <div className="p-6 space-y-6">
+              {/* Product Card */}
+              <div className="bg-gradient-to-br from-muted/50 to-muted/30 rounded-2xl p-4">
+                <div className="flex gap-4">
+                  <div className="relative">
+                    <img 
+                      src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=100&h=100&fit=crop" 
+                      alt={selectedOffer.equipment}
+                      className="w-20 h-20 rounded-xl object-cover shadow-md"
+                    />
+                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-primary rounded-full flex items-center justify-center text-xs font-bold text-primary-foreground shadow-sm">
+                      {selectedOffer.quantity}
+                    </div>
                   </div>
-                  <span className="font-medium text-foreground">${selectedOffer.monthlyPayment.toLocaleString()}/mo</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-foreground leading-tight">{selectedOffer.equipment}</p>
+                    <p className="text-sm text-muted-foreground mt-1">{selectedOffer.vendor}</p>
+                    <div className="flex items-baseline gap-1 mt-2">
+                      <span className="text-lg font-bold text-primary">${selectedOffer.monthlyPayment.toLocaleString()}</span>
+                      <span className="text-sm text-muted-foreground">/mo</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* Services */}
+              {/* Term Selection */}
               <div className="space-y-3">
-                <h3 className="font-medium text-foreground">Services</h3>
-                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-semibold text-foreground">Lease Term</h3>
+                  {!showTermSelector && !contractSigned && (
+                    <button 
+                      onClick={() => setShowTermSelector(true)}
+                      className="text-xs font-medium text-primary hover:underline"
+                    >
+                      Change
+                    </button>
+                  )}
+                </div>
+                
+                {showTermSelector ? (
+                  <div className="space-y-2">
+                    {termOptions.map((option, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => handleTermChangeFromPanel(option)}
+                        className={`w-full flex items-center justify-between p-3 rounded-xl border-2 transition-all ${
+                          selectedOffer.term === option.term 
+                            ? 'border-primary bg-primary/5' 
+                            : 'border-border hover:border-primary/40 bg-background'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
+                            selectedOffer.term === option.term 
+                              ? 'bg-primary text-primary-foreground' 
+                              : 'bg-muted text-muted-foreground'
+                          }`}>
+                            {option.term}
+                          </div>
+                          <div className="text-left">
+                            <p className="text-sm font-medium text-foreground">{option.term} months</p>
+                            <p className="text-xs text-muted-foreground">{option.apr}% APR</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-bold text-foreground">${option.monthlyPayment.toLocaleString()}/mo</p>
+                        </div>
+                      </button>
+                    ))}
+                    <button 
+                      onClick={() => setShowTermSelector(false)}
+                      className="w-full text-xs text-muted-foreground hover:text-foreground py-2"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between p-3 bg-muted/50 rounded-xl">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span className="text-sm font-bold text-primary">{selectedOffer.term}</span>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-foreground">{selectedOffer.term} months</p>
+                        <p className="text-xs text-muted-foreground">{selectedOffer.apr}% APR</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-bold text-foreground">${selectedOffer.monthlyPayment.toLocaleString()}/mo</p>
+                      <p className="text-xs text-muted-foreground">Total: ${selectedOffer.totalCost.toLocaleString()}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Divider */}
+              <div className="border-t border-border" />
+
+              {/* Services & Extras */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-semibold text-foreground">Add-ons</h3>
+                
+                {/* Maintenance */}
+                <div className="flex items-center justify-between p-4 bg-muted/30 rounded-xl border border-transparent hover:border-border transition-colors">
                   <div className="flex items-center gap-3">
-                    <Wrench className="w-4 h-4 text-muted-foreground" />
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Wrench className="w-5 h-5 text-primary" />
+                    </div>
                     <div>
                       <p className="text-sm font-medium text-foreground">Maintenance Pack</p>
-                      <p className="text-xs text-muted-foreground">$10/mo</p>
+                      <p className="text-xs text-muted-foreground">Preventive care & repairs</p>
                     </div>
                   </div>
-                  <Switch checked={maintenanceEnabled} onCheckedChange={setMaintenanceEnabled} />
-                </div>
-              </div>
-
-              {/* Equipment Extras */}
-              <div className="space-y-3">
-                <h3 className="font-medium text-foreground">Equipment Extras</h3>
-                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                   <div className="flex items-center gap-3">
-                    <Shield className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm font-medium text-foreground">+$10/mo</span>
+                    <Switch checked={maintenanceEnabled} onCheckedChange={setMaintenanceEnabled} />
+                  </div>
+                </div>
+
+                {/* Insurance */}
+                <div className="flex items-center justify-between p-4 bg-muted/30 rounded-xl border border-transparent hover:border-border transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Shield className="w-5 h-5 text-primary" />
+                    </div>
                     <div>
                       <p className="text-sm font-medium text-foreground">Insurance Coverage</p>
-                      <p className="text-xs text-muted-foreground">Comprehensive protection plan</p>
+                      <p className="text-xs text-muted-foreground">Comprehensive protection</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-sm text-muted-foreground">$15/mo</span>
+                    <span className="text-sm font-medium text-foreground">+$15/mo</span>
                     <Switch checked={insuranceEnabled} onCheckedChange={setInsuranceEnabled} />
                   </div>
                 </div>
               </div>
 
-              {/* Price Breakdown */}
-              <div className="space-y-2 text-sm pt-3 border-t border-border">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Monthly payment</span>
-                  <span className="font-medium text-foreground">${selectedOffer.monthlyPayment.toLocaleString()}</span>
-                </div>
-                {maintenanceEnabled && (
+              {/* Divider */}
+              <div className="border-t border-border" />
+
+              {/* Price Summary */}
+              <div className="space-y-3">
+                <h3 className="text-sm font-semibold text-foreground">Payment Summary</h3>
+                <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Maintenance Pack</span>
-                    <span className="font-medium text-foreground">$10.00</span>
+                    <span className="text-muted-foreground">Equipment lease</span>
+                    <span className="font-medium text-foreground">${selectedOffer.monthlyPayment.toLocaleString()}/mo</span>
                   </div>
-                )}
-                {insuranceEnabled && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Insurance Coverage</span>
-                    <span className="font-medium text-foreground">$15.00</span>
-                  </div>
-                )}
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Shipping</span>
-                  <span className="text-muted-foreground">Calculated at checkout</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Tax</span>
-                  <span className="text-muted-foreground">Calculated at checkout</span>
+                  {maintenanceEnabled && (
+                    <div className="flex justify-between text-success">
+                      <span>+ Maintenance Pack</span>
+                      <span className="font-medium">$10.00/mo</span>
+                    </div>
+                  )}
+                  {insuranceEnabled && (
+                    <div className="flex justify-between text-success">
+                      <span>+ Insurance Coverage</span>
+                      <span className="font-medium">$15.00/mo</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
               {/* Total */}
-              <div className="text-center pt-4 border-t border-border">
-                <p className="text-3xl font-bold text-foreground">${calculateTotal().toLocaleString()}</p>
-                <p className="text-xs text-muted-foreground mt-1">Monthly, Annual Insurance, plus shipping & tax</p>
+              <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl p-5 text-center">
+                <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Monthly Total</p>
+                <p className="text-4xl font-bold text-foreground">${calculateTotal().toLocaleString()}</p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  For {selectedOffer.term} months • Total: ${(calculateTotal() * selectedOffer.term).toLocaleString()}
+                </p>
               </div>
             </div>
           </ScrollArea>
 
           {/* Panel Footer */}
-          <div className="p-5 border-t border-border space-y-3">
+          <div className="p-6 border-t border-border bg-muted/30 space-y-4">
             {currentStep === "final_offer" && !contractSigned && (
               <Button 
                 onClick={handleAcceptOfferFromPanel}
-                className="w-full gap-2 bg-success hover:bg-success/90 h-12"
+                className="w-full gap-2 bg-success hover:bg-success/90 h-14 text-base font-semibold shadow-lg"
                 disabled={isTyping}
               >
                 <Check className="w-5 h-5" />
-                Accept Offer
+                Accept & Continue
               </Button>
             )}
             
             {currentStep === "contract_review" && !contractSigned && (
-              <Button 
-                onClick={handleSignContractFromPanel}
-                className="w-full gap-2 h-12"
-                style={{ backgroundColor: '#4F46E5' }}
-                disabled={isSigningContract || isTyping}
-              >
-                {isSigningContract ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    Signing via DocuSign...
-                  </>
-                ) : (
-                  <>
-                    <Pen className="w-5 h-5" />
-                    Sign with DocuSign
-                  </>
-                )}
-              </Button>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                  <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center flex-shrink-0">
+                    <Pen className="w-4 h-4 text-white" />
+                  </div>
+                  <p className="text-xs text-muted-foreground">Sign securely with DocuSign e-signature</p>
+                </div>
+                <Button 
+                  onClick={handleSignContractFromPanel}
+                  className="w-full gap-2 h-14 text-base font-semibold"
+                  style={{ backgroundColor: '#4F46E5' }}
+                  disabled={isSigningContract || isTyping}
+                >
+                  {isSigningContract ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Signing...
+                    </>
+                  ) : (
+                    <>
+                      <Pen className="w-5 h-5" />
+                      Sign Contract
+                    </>
+                  )}
+                </Button>
+              </div>
             )}
 
             {contractSigned && (
-              <div className="text-center space-y-3">
-                <div className="w-12 h-12 bg-success rounded-full flex items-center justify-center mx-auto">
-                  <Check className="w-6 h-6 text-success-foreground" />
+              <div className="space-y-4">
+                <div className="flex items-center gap-4 p-4 bg-success/10 rounded-xl border border-success/20">
+                  <div className="w-12 h-12 bg-success rounded-full flex items-center justify-center flex-shrink-0">
+                    <Check className="w-6 h-6 text-success-foreground" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-foreground">Contract Activated!</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Shipping notification coming soon</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-semibold text-foreground">Contract Signed!</p>
-                  <p className="text-xs text-muted-foreground">Equipment shipping soon</p>
-                </div>
-                <Button variant="outline" className="w-full gap-2">
+                <Button variant="outline" className="w-full gap-2 h-12">
                   <FileText className="w-4 h-4" />
-                  Download Contract
+                  Download Contract PDF
                 </Button>
               </div>
             )}
@@ -1227,7 +1348,10 @@ Want to schedule a call now to discuss your needs?`;
             {/* Powered by */}
             <div className="flex items-center justify-center gap-2 pt-2">
               <span className="text-xs text-muted-foreground">Powered by</span>
-              <span className="text-xs font-bold text-foreground">SHARPEI</span>
+              <div className="flex items-center gap-1">
+                <div className="w-4 h-4 rounded-full gradient-sharpei" />
+                <span className="text-xs font-bold text-foreground">SHARPEI</span>
+              </div>
             </div>
           </div>
         </div>
