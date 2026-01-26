@@ -1070,7 +1070,7 @@ Want to schedule a call now to discuss your needs?`;
           </ScrollArea>
 
           {/* Floating Chat Input */}
-          <div className="w-full max-w-3xl mx-auto mt-6">
+          <div className="w-full max-w-3xl mx-auto -mt-2">
             <div className="relative">
               <div className="flex items-center gap-3 p-2 bg-card rounded-full border border-border shadow-lg hover:shadow-xl transition-all duration-300">
                 <button className="p-3 hover:bg-muted/50 rounded-full transition-colors">
