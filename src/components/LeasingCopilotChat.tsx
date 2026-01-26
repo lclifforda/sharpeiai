@@ -797,10 +797,10 @@ Want to schedule a call now to discuss your needs?`;
       handleSend();
     }
   };
-  return <div className="min-h-screen bg-background flex">
+  return <div className="h-screen bg-background flex overflow-hidden">
       {/* Main Chat Area */}
-      <main className={`flex-1 flex flex-col px-6 py-8 transition-all duration-300 ${showOfferPanel ? 'mr-[380px]' : ''}`}>
-        <div className="w-full max-w-4xl mx-auto flex-1 flex flex-col">
+      <main className={`flex-1 flex flex-col transition-all duration-300 ${showOfferPanel ? 'mr-[380px]' : ''}`}>
+        <div className="w-full max-w-4xl mx-auto flex-1 flex flex-col h-full px-6 py-8 overflow-hidden">
           {/* Chat Header with Mini Orb */}
           <div className="flex items-center gap-3 pb-4 border-b border-border mb-4">
             <div className="relative w-10 h-10">
@@ -1069,8 +1069,8 @@ Want to schedule a call now to discuss your needs?`;
             </div>
           </ScrollArea>
 
-          {/* Floating Chat Input */}
-          <div className="w-full max-w-3xl mx-auto -mt-2">
+          {/* Floating Chat Input - Sticky */}
+          <div className="w-full max-w-3xl mx-auto py-4 flex-shrink-0">
             <div className="relative">
               <div className="flex items-center gap-3 p-2 bg-card rounded-full border border-border shadow-lg hover:shadow-xl transition-all duration-300">
                 <button className="p-3 hover:bg-muted/50 rounded-full transition-colors">
