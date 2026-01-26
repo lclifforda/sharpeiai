@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { MessageSquare, Paperclip, Plus, User, ChevronDown, Sparkles, Upload, PlusCircle, RefreshCw, RotateCcw } from "lucide-react";
+import { MessageSquare, Paperclip, Plus, User, ChevronDown, Sparkles, Upload, PlusCircle, RefreshCw, RotateCcw, FileText, Check, Pen, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -39,7 +39,18 @@ const NEW_CUSTOMER = {
   status: "Not found"
 };
 type FlowType = "unknown" | "existing" | "new";
-type StepType = "welcome" | "ask_company" | "confirm_customer_type" | "otp_sent" | "otp_verify" | "authenticated" | "self_serve_menu" | "new_lease_flow" | "renewal_flow" | "return_flow" | "onboarding_company" | "onboarding_contact" | "onboarding_revenue" | "onboarding_equipment" | "onboarding_complete";
+type StepType = "welcome" | "ask_company" | "confirm_customer_type" | "otp_sent" | "otp_verify" | "authenticated" | "self_serve_menu" | "new_lease_flow" | "renewal_flow" | "return_flow" | "onboarding_company" | "onboarding_contact" | "onboarding_revenue" | "onboarding_equipment" | "onboarding_complete" | "invoice_uploaded" | "contract_review" | "contract_signed";
+
+interface ExtractedInvoiceData {
+  vendor: string;
+  equipment: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+  term: number;
+  monthlyPayment: number;
+}
+
 interface Message {
   id: string;
   role: "user" | "assistant";
@@ -50,6 +61,10 @@ interface Message {
   }[];
   showOTP?: boolean;
   showProducts?: boolean;
+  showInvoiceUpload?: boolean;
+  showExtractedData?: ExtractedInvoiceData;
+  showContract?: boolean;
+  showSignedContract?: boolean;
 }
 interface OnboardingData {
   companyName: string;
@@ -82,6 +97,11 @@ const LeasingCopilotChat = () => {
     equipmentType: "",
     estimatedValue: ""
   });
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [isProcessingFile, setIsProcessingFile] = useState(false);
+  const [extractedData, setExtractedData] = useState<ExtractedInvoiceData | null>(null);
+  const [isSigningContract, setIsSigningContract] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({
@@ -103,6 +123,105 @@ const LeasingCopilotChat = () => {
     setIsTyping(true);
     await new Promise(resolve => setTimeout(resolve, delay));
     setIsTyping(false);
+  };
+
+  // Handle file upload for invoice
+  const handleFileUpload = async (file: File) => {
+    setUploadedFile(file);
+    setIsProcessingFile(true);
+    
+    addMessage({
+      role: "user",
+      content: `📄 Uploaded: ${file.name}`
+    });
+    
+    await simulateTyping(2000);
+    
+    // Simulate extracting data from the PDF
+    const mockExtractedData: ExtractedInvoiceData = {
+      vendor: "Dell Technologies",
+      equipment: "PowerEdge R750 Servers",
+      quantity: 8,
+      unitPrice: 12500,
+      totalPrice: 100000,
+      term: 36,
+      monthlyPayment: 2950
+    };
+    
+    setExtractedData(mockExtractedData);
+    setIsProcessingFile(false);
+    setCurrentStep("invoice_uploaded");
+    
+    addMessage({
+      role: "assistant",
+      content: "✅ Invoice processed! Here's what I extracted:",
+      showExtractedData: mockExtractedData
+    });
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleFileUpload(file);
+    }
+  };
+
+  const handleConfirmInvoiceData = async () => {
+    if (!extractedData) return;
+    
+    addMessage({
+      role: "user",
+      content: "✓ Data looks correct, proceed"
+    });
+    
+    await simulateTyping(1200);
+    setCurrentStep("contract_review");
+    
+    addMessage({
+      role: "assistant",
+      content: "📝 Great! I've generated your lease contract. Please review and sign below:",
+      showContract: true
+    });
+  };
+
+  const handleSignContract = async () => {
+    setIsSigningContract(true);
+    await simulateTyping(1500);
+    setIsSigningContract(false);
+    
+    addMessage({
+      role: "user",
+      content: "✍️ Contract signed"
+    });
+    
+    await simulateTyping(1000);
+    setCurrentStep("contract_signed");
+    
+    addMessage({
+      role: "assistant",
+      content: "🎉 Contract signed successfully!",
+      showSignedContract: true
+    });
+  };
+
+  const handleUpdateContract = async () => {
+    addMessage({
+      role: "user",
+      content: "📝 Request contract update"
+    });
+    
+    await simulateTyping(800);
+    
+    addMessage({
+      role: "assistant",
+      content: "No problem! What would you like to change?",
+      actions: [
+        { label: "Change term length", value: "update_term" },
+        { label: "Adjust quantity", value: "update_quantity" },
+        { label: "Add maintenance", value: "update_maintenance" },
+        { label: "Other changes", value: "update_other" }
+      ]
+    });
   };
   const handleCompanyInput = async (companyName: string) => {
     addMessage({
@@ -646,15 +765,239 @@ Want to schedule a call now to discuss your needs?`;
                             <h4 className="text-sm font-semibold text-foreground">Lease New Equipment</h4>
                             <p className="text-xs text-muted-foreground">Upload a proforma invoice and provider details.</p>
                           </div>
-                          <Button variant="outline" className="w-full h-12 border-dashed border-primary/40 hover:border-primary hover:bg-primary/5 gap-2" onClick={() => handleSelfServeAction("new_lease")}>
-                            <Upload className="w-4 h-4" />
-                            <span>Upload Invoice</span>
+                          <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                            onChange={handleFileInputChange}
+                            className="hidden"
+                          />
+                          <Button 
+                            variant="outline" 
+                            className="w-full h-12 border-dashed border-primary/40 hover:border-primary hover:bg-primary/5 gap-2" 
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={isProcessingFile}
+                          >
+                            {isProcessingFile ? (
+                              <>
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                <span>Processing...</span>
+                              </>
+                            ) : (
+                              <>
+                                <Upload className="w-4 h-4" />
+                                <span>Upload Invoice</span>
+                              </>
+                            )}
                           </Button>
                           <p className="text-xs text-muted-foreground text-center">
                             We'll automatically extract asset and pricing information for you.
                           </p>
                         </div>
                       </div>}
+
+                    {/* Extracted Invoice Data */}
+                    {message.showExtractedData && (
+                      <div className="mt-4 space-y-4">
+                        <div className="bg-background border border-border rounded-xl overflow-hidden">
+                          <div className="bg-success/10 border-b border-success/20 px-4 py-3 flex items-center gap-2">
+                            <FileText className="w-4 h-4 text-success" />
+                            <span className="text-sm font-semibold text-success">Extracted Invoice Data</span>
+                          </div>
+                          <div className="p-4 space-y-3">
+                            <div className="grid grid-cols-2 gap-3 text-sm">
+                              <div>
+                                <span className="text-muted-foreground text-xs">Vendor</span>
+                                <p className="font-medium text-foreground">{message.showExtractedData.vendor}</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground text-xs">Equipment</span>
+                                <p className="font-medium text-foreground">{message.showExtractedData.equipment}</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground text-xs">Quantity</span>
+                                <p className="font-medium text-foreground">{message.showExtractedData.quantity} units</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground text-xs">Unit Price</span>
+                                <p className="font-medium text-foreground">${message.showExtractedData.unitPrice.toLocaleString()}</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground text-xs">Total Value</span>
+                                <p className="font-semibold text-foreground">${message.showExtractedData.totalPrice.toLocaleString()}</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground text-xs">Lease Term</span>
+                                <p className="font-medium text-foreground">{message.showExtractedData.term} months</p>
+                              </div>
+                            </div>
+                            <div className="bg-primary/10 rounded-lg p-3 text-center">
+                              <span className="text-xs text-muted-foreground">Estimated Monthly Payment</span>
+                              <p className="text-xl font-bold text-primary">${message.showExtractedData.monthlyPayment.toLocaleString()}/mo</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button 
+                            onClick={handleConfirmInvoiceData} 
+                            className="flex-1 gap-2"
+                            disabled={isTyping}
+                          >
+                            <Check className="w-4 h-4" />
+                            Data looks correct
+                          </Button>
+                          <Button 
+                            variant="outline"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="gap-2"
+                          >
+                            <Upload className="w-4 h-4" />
+                            Re-upload
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Contract Review */}
+                    {message.showContract && (
+                      <div className="mt-4 space-y-4">
+                        <div className="bg-background border-2 border-primary/30 rounded-xl overflow-hidden">
+                          <div className="bg-gradient-to-r from-primary/20 to-primary/10 px-4 py-3 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <FileText className="w-4 h-4 text-primary" />
+                              <span className="text-sm font-semibold text-foreground">Equipment Lease Agreement</span>
+                            </div>
+                            <span className="text-xs bg-warning/20 text-warning px-2 py-1 rounded-full font-medium">Pending Signature</span>
+                          </div>
+                          <div className="p-4 space-y-4">
+                            {/* Contract Parties */}
+                            <div className="grid grid-cols-2 gap-3 text-sm border-b border-border pb-3">
+                              <div>
+                                <span className="text-muted-foreground text-xs">Lessor</span>
+                                <p className="font-medium text-foreground">Sharpei Financial Services</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground text-xs">Lessee</span>
+                                <p className="font-medium text-foreground">{EXISTING_CUSTOMER.company_name}</p>
+                              </div>
+                            </div>
+                            
+                            {/* Contract Details */}
+                            {extractedData && (
+                              <div className="space-y-2 text-sm">
+                                <div className="flex justify-between py-1">
+                                  <span className="text-muted-foreground">Equipment</span>
+                                  <span className="font-medium text-foreground">{extractedData.equipment}</span>
+                                </div>
+                                <div className="flex justify-between py-1">
+                                  <span className="text-muted-foreground">Quantity</span>
+                                  <span className="font-medium text-foreground">{extractedData.quantity} units</span>
+                                </div>
+                                <div className="flex justify-between py-1">
+                                  <span className="text-muted-foreground">Total Value</span>
+                                  <span className="font-medium text-foreground">${extractedData.totalPrice.toLocaleString()}</span>
+                                </div>
+                                <div className="flex justify-between py-1">
+                                  <span className="text-muted-foreground">Lease Term</span>
+                                  <span className="font-medium text-foreground">{extractedData.term} months</span>
+                                </div>
+                                <div className="flex justify-between py-1 border-t border-border pt-2">
+                                  <span className="text-muted-foreground font-medium">Monthly Payment</span>
+                                  <span className="font-bold text-primary">${extractedData.monthlyPayment.toLocaleString()}/mo</span>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Key Terms */}
+                            <div className="bg-muted/50 rounded-lg p-3 space-y-2 text-xs">
+                              <p className="font-semibold text-foreground">Key Terms:</p>
+                              <ul className="space-y-1 text-muted-foreground">
+                                <li>• Payment due on 1st of each month</li>
+                                <li>• Equipment maintenance included</li>
+                                <li>• End-of-term purchase option at 10% residual</li>
+                                <li>• 30-day early termination notice required</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button 
+                            onClick={handleSignContract}
+                            className="flex-1 gap-2 bg-success hover:bg-success/90"
+                            disabled={isSigningContract || isTyping}
+                          >
+                            {isSigningContract ? (
+                              <>
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                Signing...
+                              </>
+                            ) : (
+                              <>
+                                <Pen className="w-4 h-4" />
+                                Sign Contract
+                              </>
+                            )}
+                          </Button>
+                          <Button 
+                            variant="outline"
+                            onClick={handleUpdateContract}
+                            className="gap-2"
+                            disabled={isTyping}
+                          >
+                            <RefreshCw className="w-4 h-4" />
+                            Request Changes
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Signed Contract Confirmation */}
+                    {message.showSignedContract && (
+                      <div className="mt-4 space-y-4">
+                        <div className="bg-success/10 border-2 border-success/30 rounded-xl p-5 text-center space-y-3">
+                          <div className="w-12 h-12 bg-success rounded-full flex items-center justify-center mx-auto">
+                            <Check className="w-6 h-6 text-success-foreground" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-foreground">Contract Activated!</h4>
+                            <p className="text-sm text-muted-foreground mt-1">Contract #SHP-2026-00847</p>
+                          </div>
+                          {extractedData && (
+                            <div className="bg-background rounded-lg p-3 text-sm space-y-1">
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Equipment</span>
+                                <span className="font-medium text-foreground">{extractedData.equipment}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Monthly Payment</span>
+                                <span className="font-bold text-success">${extractedData.monthlyPayment.toLocaleString()}/mo</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">First Payment</span>
+                                <span className="font-medium text-foreground">Feb 1, 2026</span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex gap-2">
+                          <Button variant="outline" className="flex-1 gap-2">
+                            <FileText className="w-4 h-4" />
+                            Download Contract
+                          </Button>
+                          <Button 
+                            variant="outline"
+                            onClick={handleUpdateContract}
+                            className="gap-2"
+                          >
+                            <RefreshCw className="w-4 h-4" />
+                            Update Contract
+                          </Button>
+                        </div>
+                        <p className="text-xs text-center text-muted-foreground">
+                          A copy has been sent to {EXISTING_CUSTOMER.default_email}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>)}
 
