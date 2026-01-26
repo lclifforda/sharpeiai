@@ -100,7 +100,7 @@ const LeasingCopilotChat = () => {
   const [messages, setMessages] = useState<Message[]>([{
     id: "welcome",
     role: "assistant",
-    content: "Hey there! 👋 I'm your Sharpei Leasing Copilot. Ready to help you with equipment financing.\n\nWhat's your company name?"
+    content: "Hey there! 👋 I'm your Sharpei Leasing Copilot. Ready to help you with equipment leasing.\n\nWhat's your company name?"
   }]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -207,7 +207,7 @@ const LeasingCopilotChat = () => {
     
     addMessage({
       role: "assistant",
-      content: "Based on your profile and equipment value, here are your financing options:",
+      content: "Based on your profile and equipment value, here are your leasing options:",
       showTermOptions: termOptions
     });
   };
@@ -477,7 +477,7 @@ const LeasingCopilotChat = () => {
         setCurrentStep("onboarding_revenue");
         addMessage({
           role: "assistant",
-          content: `Nice to meet you, ${value.split(" ")[0]}! 👋\n\nQuick question: What's your approximate annual revenue? This helps us match you with the right financing options.`,
+          content: `Nice to meet you, ${value.split(" ")[0]}! 👋\n\nQuick question: What's your approximate annual revenue? This helps us match you with the right leasing options.`,
           actions: [{
             label: "Under $1M",
             value: "revenue_under_1m"
@@ -535,7 +535,7 @@ Here's what we have:
 • **Equipment Interest:** ${value}
 
 **What's Next:**
-Our team will review your info and reach out within 24 hours with financing options tailored to your business.
+Our team will review your info and reach out within 24 hours with leasing options tailored to your business.
 
 Want to schedule a call now to discuss your needs?`;
         addMessage({
@@ -730,7 +730,7 @@ Want to schedule a call now to discuss your needs?`;
             </div>
             <div className="flex-1">
               <h2 className="text-sm font-medium text-foreground">Sharpei AI</h2>
-              <p className="text-xs text-muted-foreground">Equipment financing copilot</p>
+              <p className="text-xs text-muted-foreground">Equipment leasing copilot</p>
             </div>
             
             {/* Quick Actions Menu */}
