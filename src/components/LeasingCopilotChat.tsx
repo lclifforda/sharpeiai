@@ -905,14 +905,6 @@ Want to schedule a call now to discuss your needs?`;
                                 <span className="text-muted-foreground text-xs">Total Value</span>
                                 <p className="font-semibold text-foreground">${message.showExtractedData.totalPrice.toLocaleString()}</p>
                               </div>
-                              <div>
-                                <span className="text-muted-foreground text-xs">Lease Term</span>
-                                <p className="font-medium text-foreground">{message.showExtractedData.term} months</p>
-                              </div>
-                            </div>
-                            <div className="bg-primary/10 rounded-lg p-3 text-center">
-                              <span className="text-xs text-muted-foreground">Estimated Monthly Payment</span>
-                              <p className="text-xl font-bold text-primary">${message.showExtractedData.monthlyPayment.toLocaleString()}/mo</p>
                             </div>
                           </div>
                         </div>
