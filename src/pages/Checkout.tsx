@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Store, Building2 } from "lucide-react";
+import { Store, Building2, Shield, Clock, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -430,7 +430,55 @@ const Checkout = () => {
 
           {/* Bank Landing Preview Tab */}
           <TabsContent value="bank">
-            <LeasingCopilotChat />
+            <div className="max-w-5xl mx-auto space-y-6">
+              {/* Bank Header */}
+              <div className="flex justify-between items-center bg-gradient-to-r from-background to-muted rounded-xl p-6 border border-border">
+                <div className="flex items-center gap-4">
+                  <img 
+                    src={i18n.language === 'es' ? ibercajaLogo : ilsLogo} 
+                    alt={i18n.language === 'es' ? 'Ibercaja' : 'Innovative Lease Services'} 
+                    className="h-10"
+                  />
+                  <div className="h-8 w-px bg-border" />
+                  <div>
+                    <h2 className="font-semibold text-foreground">AI-Powered Application</h2>
+                    <p className="text-sm text-muted-foreground">Fast, secure financing decisions</p>
+                  </div>
+                </div>
+                <div className="text-right text-sm">
+                  <p className="text-muted-foreground">Need help?</p>
+                  <p className="text-primary font-medium">800-438-1470</p>
+                </div>
+              </div>
+
+              {/* Trust Indicators */}
+              <div className="grid grid-cols-3 gap-4">
+                <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+                  <Shield className="h-5 w-5 text-primary" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">Bank-Level Security</p>
+                    <p className="text-xs text-muted-foreground">256-bit encryption</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+                  <Clock className="h-5 w-5 text-primary" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">Quick Decisions</p>
+                    <p className="text-xs text-muted-foreground">As fast as 24 hours</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+                  <Sparkles className="h-5 w-5 text-primary" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">AI-Assisted</p>
+                    <p className="text-xs text-muted-foreground">Personalized guidance</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Chat */}
+              <LeasingCopilotChat />
+            </div>
           </TabsContent>
         </Tabs>
       </div>
