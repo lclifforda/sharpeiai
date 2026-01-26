@@ -1,11 +1,15 @@
 import { useState, useRef, useEffect } from "react";
-import { Send, Building2, Shield, Sparkles, ArrowLeft, Calendar } from "lucide-react";
+import { MessageSquare, Paperclip, Plus, User, ChevronDown, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Card, CardContent } from "@/components/ui/card";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import sharpeiLogo from "@/assets/sharpei-logo.png";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 // Hard-coded customer data
 const EXISTING_CUSTOMER = {
@@ -82,12 +86,14 @@ const LeasingCopilotChat = () => {
     equipmentType: "",
     estimatedValue: ""
   });
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
+    scrollToBottom();
   }, [messages]);
 
   const addMessage = (message: Omit<Message, "id">) => {
@@ -434,66 +440,98 @@ Want to schedule a call now to discuss your needs?`;
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => window.history.back()}>
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <img src={sharpeiLogo} alt="Sharpei" className="h-8" />
-            <div className="h-6 w-px bg-border" />
-            <div>
-              <h1 className="font-semibold text-foreground">Leasing Copilot</h1>
-              <p className="text-xs text-muted-foreground">AI-powered equipment financing</p>
+    <div className="min-h-screen bg-background flex flex-col">
+      <main className="flex-1 flex flex-col px-6 py-8">
+        <div className="w-full max-w-4xl mx-auto flex-1 flex flex-col">
+          {/* Chat Header with Mini Orb */}
+          <div className="flex items-center gap-3 pb-4 border-b border-border mb-4">
+            <div className="relative w-10 h-10">
+              <div className="absolute inset-0 rounded-full gradient-sharpei opacity-30 blur-md" />
+              <div className="relative w-full h-full rounded-full gradient-sharpei shadow-lg flex items-center justify-center">
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/30 to-transparent" />
+              </div>
             </div>
+            <div className="flex-1">
+              <h2 className="text-sm font-medium text-foreground">Sharpei AI</h2>
+              <p className="text-xs text-muted-foreground">Equipment financing copilot</p>
+            </div>
+            
+            {/* Quick Actions Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Sparkles className="w-4 h-4" />
+                  Quick Actions
+                  <ChevronDown className="w-3 h-3" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={() => handleSelfServeAction('new_lease')} className="gap-2">
+                  📦 New Lease
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleSelfServeAction('renewal')} className="gap-2">
+                  🔄 Renewal
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleSelfServeAction('return')} className="gap-2">
+                  ↩️ Return Equipment
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleSelfServeAction('talk_human')} className="gap-2">
+                  💬 Talk to Human
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span className="text-sm text-muted-foreground">Online</span>
-          </div>
-        </div>
 
-        {/* Trust Badges */}
-        <div className="grid grid-cols-3 gap-3 mb-6">
-          <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg">
-            <Shield className="h-4 w-4 text-primary" />
-            <span className="text-xs font-medium">Bank-Level Security</span>
-          </div>
-          <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg">
-            <Sparkles className="h-4 w-4 text-primary" />
-            <span className="text-xs font-medium">AI-Powered</span>
-          </div>
-          <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg">
-            <Building2 className="h-4 w-4 text-primary" />
-            <span className="text-xs font-medium">$2B+ Financed</span>
-          </div>
-        </div>
+          {/* Messages Area */}
+          <ScrollArea className="flex-1 pr-4 -mr-4">
+            <div className="space-y-6 pb-4">
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex gap-3 ${message.role === 'user' ? 'flex-row-reverse' : ''}`}
+                >
+                  {/* Avatar */}
+                  <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                    message.role === 'assistant' 
+                      ? 'gradient-sharpei' 
+                      : 'bg-muted'
+                  }`}>
+                    {message.role === 'assistant' ? (
+                      <div className="w-full h-full rounded-full bg-gradient-to-br from-white/30 to-transparent" />
+                    ) : (
+                      <User className="w-4 h-4 text-muted-foreground" />
+                    )}
+                  </div>
 
-        {/* Chat Card */}
-        <Card className="border-2 shadow-lg">
-          <CardContent className="p-0">
-            {/* Chat Messages */}
-            <ScrollArea className="h-[500px] p-4" ref={scrollRef}>
-              <div className="space-y-4">
-                {messages.map((message) => (
-                  <div key={message.id}>
-                    <div className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-                      <div
-                        className={`max-w-[85%] rounded-2xl px-4 py-3 ${
-                          message.role === "user"
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-muted text-foreground"
-                        }`}
-                      >
-                        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                      </div>
+                  {/* Message Bubble */}
+                  <div className="max-w-[75%] space-y-3">
+                    <div className={`${
+                      message.role === 'user' 
+                        ? 'bg-foreground text-background rounded-2xl rounded-tr-md' 
+                        : 'bg-muted rounded-2xl rounded-tl-md'
+                    } px-4 py-3`}>
+                      <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
                     </div>
-                    
+
+                    {/* Action Buttons */}
+                    {message.actions && message.actions.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {message.actions.map((action, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => handleActionClick(action)}
+                            disabled={isTyping}
+                            className="px-3 py-1.5 text-sm border border-border rounded-full hover:bg-accent transition-colors bg-background disabled:opacity-50"
+                          >
+                            {action.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
                     {/* OTP Input */}
-                    {message.showOTP && currentStep === "otp_sent" && (
-                      <div className="mt-4 flex flex-col items-center gap-3">
+                    {message.showOTP && (
+                      <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-xl">
                         <InputOTP
                           maxLength={6}
                           value={otpValue}
@@ -508,76 +546,69 @@ Want to schedule a call now to discuss your needs?`;
                             <InputOTPSlot index={5} />
                           </InputOTPGroup>
                         </InputOTP>
-                        <Button 
+                        <Button
                           onClick={handleOTPVerification}
-                          disabled={otpValue.length !== 6}
+                          disabled={otpValue.length !== 6 || isTyping}
                           size="sm"
                         >
-                          Verify Code
+                          Verify
                         </Button>
                       </div>
                     )}
-                    
-                    {/* Action Buttons */}
-                    {message.actions && message.actions.length > 0 && (
-                      <div className="mt-3 flex flex-wrap gap-2 ml-2">
-                        {message.actions.map((action, idx) => (
-                          <Button
-                            key={idx}
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleActionClick(action)}
-                            className="text-xs"
-                          >
-                            {action.label}
-                          </Button>
-                        ))}
-                      </div>
-                    )}
                   </div>
-                ))}
-                
-                {/* Typing Indicator */}
-                {isTyping && (
-                  <div className="flex justify-start">
-                    <div className="bg-muted rounded-2xl px-4 py-3">
-                      <div className="flex gap-1">
-                        <div className="w-2 h-2 rounded-full bg-foreground/40 animate-bounce" />
-                        <div className="w-2 h-2 rounded-full bg-foreground/40 animate-bounce" style={{ animationDelay: "150ms" }} />
-                        <div className="w-2 h-2 rounded-full bg-foreground/40 animate-bounce" style={{ animationDelay: "300ms" }} />
-                      </div>
+                </div>
+              ))}
+
+              {/* Typing Indicator */}
+              {isTyping && (
+                <div className="flex gap-3">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full gradient-sharpei flex items-center justify-center">
+                    <div className="w-full h-full rounded-full bg-gradient-to-br from-white/30 to-transparent" />
+                  </div>
+                  <div className="bg-muted rounded-2xl rounded-tl-md px-4 py-3">
+                    <div className="flex gap-1">
+                      <div className="w-2 h-2 rounded-full bg-muted-foreground/50 animate-bounce" style={{ animationDelay: '0ms' }} />
+                      <div className="w-2 h-2 rounded-full bg-muted-foreground/50 animate-bounce" style={{ animationDelay: '150ms' }} />
+                      <div className="w-2 h-2 rounded-full bg-muted-foreground/50 animate-bounce" style={{ animationDelay: '300ms' }} />
                     </div>
                   </div>
-                )}
-              </div>
-            </ScrollArea>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+          </ScrollArea>
 
-            {/* Input Area */}
-            <div className="p-4 border-t border-border">
-              <div className="flex gap-2">
-                <Input
+          {/* Floating Chat Input */}
+          <div className="w-full max-w-3xl mx-auto mt-6">
+            <div className="relative">
+              <div className="flex items-center gap-3 p-2 bg-white rounded-full border border-border shadow-float-lg hover:shadow-float transition-all duration-300">
+                <button className="p-3 hover:bg-muted/50 rounded-full transition-colors">
+                  <Paperclip className="w-5 h-5 text-muted-foreground" />
+                </button>
+                <button className="flex items-center gap-1.5 px-3 py-2 hover:bg-muted/50 rounded-full transition-colors">
+                  <Plus className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground font-medium">Sources</span>
+                </button>
+                <Input 
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Type your message..."
+                  placeholder="Ask me anything about equipment financing, risk, contracts, or assets..."
                   disabled={isTyping}
-                  className="flex-1"
+                  className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground" 
                 />
-                <Button
+                <button 
                   onClick={handleSend}
                   disabled={!input.trim() || isTyping}
-                  size="icon"
+                  className="p-3 rounded-full gradient-sharpei text-white hover:opacity-90 transition-opacity shadow-float disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Send className="h-4 w-4" />
-                </Button>
+                  <MessageSquare className="w-5 h-5" />
+                </button>
               </div>
-              <p className="text-xs text-muted-foreground mt-2 text-center">
-                🔒 Your data is encrypted and secure
-              </p>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </div>
+      </main>
     </div>
   );
 };
