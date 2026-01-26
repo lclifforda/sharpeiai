@@ -39,7 +39,7 @@ const NEW_CUSTOMER = {
   status: "Not found"
 };
 type FlowType = "unknown" | "existing" | "new";
-type StepType = "welcome" | "ask_company" | "confirm_customer_type" | "otp_sent" | "otp_verify" | "authenticated" | "self_serve_menu" | "new_lease_flow" | "renewal_flow" | "return_flow" | "onboarding_company" | "onboarding_contact" | "onboarding_revenue" | "onboarding_equipment" | "onboarding_complete" | "invoice_uploaded" | "contract_review" | "contract_signed";
+type StepType = "welcome" | "ask_company" | "confirm_customer_type" | "otp_sent" | "otp_verify" | "authenticated" | "self_serve_menu" | "new_lease_flow" | "renewal_flow" | "return_flow" | "onboarding_company" | "onboarding_contact" | "onboarding_revenue" | "onboarding_equipment" | "onboarding_complete" | "invoice_uploaded" | "term_selection" | "final_offer" | "contract_review" | "contract_signed";
 
 interface ExtractedInvoiceData {
   vendor: string;
@@ -49,6 +49,24 @@ interface ExtractedInvoiceData {
   totalPrice: number;
   term: number;
   monthlyPayment: number;
+}
+
+interface TermOption {
+  term: number;
+  monthlyPayment: number;
+  totalCost: number;
+  apr: number;
+}
+
+interface SelectedOffer {
+  term: number;
+  monthlyPayment: number;
+  totalCost: number;
+  apr: number;
+  equipment: string;
+  quantity: number;
+  totalPrice: number;
+  vendor: string;
 }
 
 interface Message {
@@ -63,8 +81,10 @@ interface Message {
   showProducts?: boolean;
   showInvoiceUpload?: boolean;
   showExtractedData?: ExtractedInvoiceData;
-  showContract?: boolean;
-  showSignedContract?: boolean;
+  showTermOptions?: TermOption[];
+  showFinalOffer?: SelectedOffer;
+  showContract?: SelectedOffer;
+  showSignedContract?: SelectedOffer;
 }
 interface OnboardingData {
   companyName: string;
@@ -100,6 +120,7 @@ const LeasingCopilotChat = () => {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isProcessingFile, setIsProcessingFile] = useState(false);
   const [extractedData, setExtractedData] = useState<ExtractedInvoiceData | null>(null);
+  const [selectedOffer, setSelectedOffer] = useState<SelectedOffer | null>(null);
   const [isSigningContract, setIsSigningContract] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -175,23 +196,81 @@ const LeasingCopilotChat = () => {
     });
     
     await simulateTyping(1200);
+    setCurrentStep("term_selection");
+    
+    // Generate 3 term options
+    const termOptions: TermOption[] = [
+      { term: 24, monthlyPayment: 4500, totalCost: 108000, apr: 7.9 },
+      { term: 36, monthlyPayment: 2950, totalCost: 106200, apr: 6.9 },
+      { term: 48, monthlyPayment: 2350, totalCost: 112800, apr: 8.5 },
+    ];
+    
+    addMessage({
+      role: "assistant",
+      content: "Based on your profile and equipment value, here are your financing options:",
+      showTermOptions: termOptions
+    });
+  };
+
+  const handleSelectTerm = async (option: TermOption) => {
+    if (!extractedData) return;
+    
+    addMessage({
+      role: "user",
+      content: `Selected: ${option.term} months @ $${option.monthlyPayment.toLocaleString()}/mo`
+    });
+    
+    await simulateTyping(1000);
+    setCurrentStep("final_offer");
+    
+    const offer: SelectedOffer = {
+      term: option.term,
+      monthlyPayment: option.monthlyPayment,
+      totalCost: option.totalCost,
+      apr: option.apr,
+      equipment: extractedData.equipment,
+      quantity: extractedData.quantity,
+      totalPrice: extractedData.totalPrice,
+      vendor: extractedData.vendor
+    };
+    
+    setSelectedOffer(offer);
+    
+    addMessage({
+      role: "assistant",
+      content: "🎯 Here's your final offer:",
+      showFinalOffer: offer
+    });
+  };
+
+  const handleAcceptOffer = async () => {
+    if (!selectedOffer) return;
+    
+    addMessage({
+      role: "user",
+      content: "✓ Accept offer"
+    });
+    
+    await simulateTyping(1200);
     setCurrentStep("contract_review");
     
     addMessage({
       role: "assistant",
-      content: "📝 Great! I've generated your lease contract. Please review and sign below:",
-      showContract: true
+      content: "📝 Excellent! I've prepared your contract. Sign securely via DocuSign:",
+      showContract: selectedOffer
     });
   };
 
   const handleSignContract = async () => {
+    if (!selectedOffer) return;
+    
     setIsSigningContract(true);
-    await simulateTyping(1500);
+    await simulateTyping(2000);
     setIsSigningContract(false);
     
     addMessage({
       role: "user",
-      content: "✍️ Contract signed"
+      content: "✍️ Contract signed via DocuSign"
     });
     
     await simulateTyping(1000);
@@ -199,8 +278,8 @@ const LeasingCopilotChat = () => {
     
     addMessage({
       role: "assistant",
-      content: "🎉 Contract signed successfully!",
-      showSignedContract: true
+      content: "🎉 Contract activated!",
+      showSignedContract: selectedOffer
     });
   };
 
@@ -858,17 +937,110 @@ Want to schedule a call now to discuss your needs?`;
                       </div>
                     )}
 
-                    {/* Contract Review */}
+                    {/* Term Selection Options */}
+                    {message.showTermOptions && (
+                      <div className="mt-4 space-y-3">
+                        <div className="grid gap-3">
+                          {message.showTermOptions.map((option, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => handleSelectTerm(option)}
+                              className="bg-background border-2 border-border hover:border-primary/50 rounded-xl p-4 text-left transition-all hover:shadow-md group"
+                            >
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                                    <span className="text-sm font-bold text-primary">{option.term}</span>
+                                  </div>
+                                  <div>
+                                    <p className="font-semibold text-foreground">{option.term} months</p>
+                                    <p className="text-xs text-muted-foreground">{option.apr}% APR</p>
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-lg font-bold text-foreground">${option.monthlyPayment.toLocaleString()}<span className="text-sm font-normal text-muted-foreground">/mo</span></p>
+                                  <p className="text-xs text-muted-foreground">Total: ${option.totalCost.toLocaleString()}</p>
+                                </div>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                        <p className="text-xs text-center text-muted-foreground">
+                          Select a term that works best for your business
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Final Offer */}
+                    {message.showFinalOffer && (
+                      <div className="mt-4 space-y-4">
+                        <div className="bg-gradient-to-br from-primary/5 to-primary/10 border-2 border-primary/30 rounded-xl overflow-hidden">
+                          <div className="bg-primary/20 px-4 py-3 flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-primary" />
+                            <span className="text-sm font-semibold text-foreground">Your Final Offer</span>
+                          </div>
+                          <div className="p-4 space-y-4">
+                            <div className="grid grid-cols-2 gap-3 text-sm">
+                              <div>
+                                <span className="text-muted-foreground text-xs">Equipment</span>
+                                <p className="font-medium text-foreground">{message.showFinalOffer.equipment}</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground text-xs">Quantity</span>
+                                <p className="font-medium text-foreground">{message.showFinalOffer.quantity} units</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground text-xs">Total Value</span>
+                                <p className="font-medium text-foreground">${message.showFinalOffer.totalPrice.toLocaleString()}</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground text-xs">Term</span>
+                                <p className="font-medium text-foreground">{message.showFinalOffer.term} months @ {message.showFinalOffer.apr}% APR</p>
+                              </div>
+                            </div>
+                            <div className="bg-primary/10 rounded-lg p-4 text-center">
+                              <span className="text-xs text-muted-foreground">Your Monthly Payment</span>
+                              <p className="text-2xl font-bold text-primary">${message.showFinalOffer.monthlyPayment.toLocaleString()}<span className="text-base font-normal">/mo</span></p>
+                              <p className="text-xs text-muted-foreground mt-1">Total cost: ${message.showFinalOffer.totalCost.toLocaleString()}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button 
+                            onClick={handleAcceptOffer}
+                            className="flex-1 gap-2 bg-success hover:bg-success/90"
+                            disabled={isTyping}
+                          >
+                            <Check className="w-4 h-4" />
+                            Accept Offer
+                          </Button>
+                          <Button 
+                            variant="outline"
+                            onClick={handleUpdateContract}
+                            className="gap-2"
+                          >
+                            <RefreshCw className="w-4 h-4" />
+                            Adjust Terms
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Contract Review with DocuSign */}
                     {message.showContract && (
                       <div className="mt-4 space-y-4">
                         <div className="bg-background border-2 border-primary/30 rounded-xl overflow-hidden">
-                          <div className="bg-gradient-to-r from-primary/20 to-primary/10 px-4 py-3 flex items-center justify-between">
+                          {/* DocuSign Header */}
+                          <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3 flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <FileText className="w-4 h-4 text-primary" />
-                              <span className="text-sm font-semibold text-foreground">Equipment Lease Agreement</span>
+                              <div className="w-6 h-6 bg-white rounded flex items-center justify-center">
+                                <Pen className="w-3 h-3 text-blue-600" />
+                              </div>
+                              <span className="text-sm font-semibold text-white">DocuSign</span>
                             </div>
-                            <span className="text-xs bg-warning/20 text-warning px-2 py-1 rounded-full font-medium">Pending Signature</span>
+                            <span className="text-xs bg-white/20 text-white px-2 py-1 rounded-full font-medium">Awaiting Signature</span>
                           </div>
+                          
                           <div className="p-4 space-y-4">
                             {/* Contract Parties */}
                             <div className="grid grid-cols-2 gap-3 text-sm border-b border-border pb-3">
@@ -883,30 +1055,28 @@ Want to schedule a call now to discuss your needs?`;
                             </div>
                             
                             {/* Contract Details */}
-                            {extractedData && (
-                              <div className="space-y-2 text-sm">
-                                <div className="flex justify-between py-1">
-                                  <span className="text-muted-foreground">Equipment</span>
-                                  <span className="font-medium text-foreground">{extractedData.equipment}</span>
-                                </div>
-                                <div className="flex justify-between py-1">
-                                  <span className="text-muted-foreground">Quantity</span>
-                                  <span className="font-medium text-foreground">{extractedData.quantity} units</span>
-                                </div>
-                                <div className="flex justify-between py-1">
-                                  <span className="text-muted-foreground">Total Value</span>
-                                  <span className="font-medium text-foreground">${extractedData.totalPrice.toLocaleString()}</span>
-                                </div>
-                                <div className="flex justify-between py-1">
-                                  <span className="text-muted-foreground">Lease Term</span>
-                                  <span className="font-medium text-foreground">{extractedData.term} months</span>
-                                </div>
-                                <div className="flex justify-between py-1 border-t border-border pt-2">
-                                  <span className="text-muted-foreground font-medium">Monthly Payment</span>
-                                  <span className="font-bold text-primary">${extractedData.monthlyPayment.toLocaleString()}/mo</span>
-                                </div>
+                            <div className="space-y-2 text-sm">
+                              <div className="flex justify-between py-1">
+                                <span className="text-muted-foreground">Equipment</span>
+                                <span className="font-medium text-foreground">{message.showContract.equipment}</span>
                               </div>
-                            )}
+                              <div className="flex justify-between py-1">
+                                <span className="text-muted-foreground">Quantity</span>
+                                <span className="font-medium text-foreground">{message.showContract.quantity} units</span>
+                              </div>
+                              <div className="flex justify-between py-1">
+                                <span className="text-muted-foreground">Total Value</span>
+                                <span className="font-medium text-foreground">${message.showContract.totalPrice.toLocaleString()}</span>
+                              </div>
+                              <div className="flex justify-between py-1">
+                                <span className="text-muted-foreground">Lease Term</span>
+                                <span className="font-medium text-foreground">{message.showContract.term} months @ {message.showContract.apr}% APR</span>
+                              </div>
+                              <div className="flex justify-between py-1 border-t border-border pt-2">
+                                <span className="text-muted-foreground font-medium">Monthly Payment</span>
+                                <span className="font-bold text-primary">${message.showContract.monthlyPayment.toLocaleString()}/mo</span>
+                              </div>
+                            </div>
 
                             {/* Key Terms */}
                             <div className="bg-muted/50 rounded-lg p-3 space-y-2 text-xs">
@@ -923,18 +1093,18 @@ Want to schedule a call now to discuss your needs?`;
                         <div className="flex gap-2">
                           <Button 
                             onClick={handleSignContract}
-                            className="flex-1 gap-2 bg-success hover:bg-success/90"
+                            className="flex-1 gap-2 bg-blue-600 hover:bg-blue-700"
                             disabled={isSigningContract || isTyping}
                           >
                             {isSigningContract ? (
                               <>
                                 <Loader2 className="w-4 h-4 animate-spin" />
-                                Signing...
+                                Signing via DocuSign...
                               </>
                             ) : (
                               <>
                                 <Pen className="w-4 h-4" />
-                                Sign Contract
+                                Sign with DocuSign
                               </>
                             )}
                           </Button>
@@ -944,41 +1114,63 @@ Want to schedule a call now to discuss your needs?`;
                             className="gap-2"
                             disabled={isTyping}
                           >
-                            <RefreshCw className="w-4 h-4" />
-                            Request Changes
+                            <X className="w-4 h-4" />
+                            Decline
                           </Button>
                         </div>
                       </div>
                     )}
 
-                    {/* Signed Contract Confirmation */}
+                    {/* Signed Contract - Contract Activated */}
                     {message.showSignedContract && (
                       <div className="mt-4 space-y-4">
-                        <div className="bg-success/10 border-2 border-success/30 rounded-xl p-5 text-center space-y-3">
-                          <div className="w-12 h-12 bg-success rounded-full flex items-center justify-center mx-auto">
-                            <Check className="w-6 h-6 text-success-foreground" />
+                        <div className="bg-success/10 border-2 border-success/30 rounded-xl p-5 space-y-4">
+                          <div className="text-center space-y-2">
+                            <div className="w-14 h-14 bg-success rounded-full flex items-center justify-center mx-auto">
+                              <Check className="w-7 h-7 text-success-foreground" />
+                            </div>
+                            <div>
+                              <h4 className="text-lg font-bold text-foreground">Contract Activated! 🎉</h4>
+                              <p className="text-sm text-muted-foreground mt-1">Contract #SHP-2026-00847</p>
+                            </div>
                           </div>
-                          <div>
-                            <h4 className="font-semibold text-foreground">Contract Activated!</h4>
-                            <p className="text-sm text-muted-foreground mt-1">Contract #SHP-2026-00847</p>
+                          
+                          <div className="bg-background rounded-lg p-4 text-sm space-y-2">
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Equipment</span>
+                              <span className="font-medium text-foreground">{message.showSignedContract.equipment}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Quantity</span>
+                              <span className="font-medium text-foreground">{message.showSignedContract.quantity} units</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Monthly Payment</span>
+                              <span className="font-bold text-success">${message.showSignedContract.monthlyPayment.toLocaleString()}/mo</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">First Payment Due</span>
+                              <span className="font-medium text-foreground">Feb 1, 2026</span>
+                            </div>
                           </div>
-                          {extractedData && (
-                            <div className="bg-background rounded-lg p-3 text-sm space-y-1">
-                              <div className="flex justify-between">
-                                <span className="text-muted-foreground">Equipment</span>
-                                <span className="font-medium text-foreground">{extractedData.equipment}</span>
+
+                          {/* Merchant Shipping Notice */}
+                          <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+                            <div className="flex items-start gap-3">
+                              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <MessageSquare className="w-4 h-4 text-white" />
                               </div>
-                              <div className="flex justify-between">
-                                <span className="text-muted-foreground">Monthly Payment</span>
-                                <span className="font-bold text-success">${extractedData.monthlyPayment.toLocaleString()}/mo</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-muted-foreground">First Payment</span>
-                                <span className="font-medium text-foreground">Feb 1, 2026</span>
+                              <div>
+                                <p className="text-sm font-semibold text-foreground">Next Steps</p>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  We've notified <strong>{message.showSignedContract.vendor}</strong> to ship your equipment ASAP. 
+                                  You'll receive tracking information within 24-48 hours.
+                                </p>
                               </div>
                             </div>
-                          )}
+                          </div>
                         </div>
+                        
                         <div className="flex gap-2">
                           <Button variant="outline" className="flex-1 gap-2">
                             <FileText className="w-4 h-4" />
@@ -990,11 +1182,11 @@ Want to schedule a call now to discuss your needs?`;
                             className="gap-2"
                           >
                             <RefreshCw className="w-4 h-4" />
-                            Update Contract
+                            Need Changes?
                           </Button>
                         </div>
                         <p className="text-xs text-center text-muted-foreground">
-                          A copy has been sent to {EXISTING_CUSTOMER.default_email}
+                          📧 A copy has been sent to {EXISTING_CUSTOMER.default_email}
                         </p>
                       </div>
                     )}
