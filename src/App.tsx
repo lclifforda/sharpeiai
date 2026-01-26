@@ -18,6 +18,7 @@ import Checkout from "./pages/Checkout";
 import CheckoutV2 from "./pages/CheckoutV2";
 import CheckoutV3 from "./pages/CheckoutV3";
 import ApplicationForm from "./pages/ApplicationForm";
+import LeasingCopilotChat from "./components/LeasingCopilotChat";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -43,6 +44,7 @@ const App = () => (
           <Route element={<PageLayout><CheckoutV2 /></PageLayout>} path="/checkout-v2" />
           <Route element={<PageLayout><CheckoutV3 /></PageLayout>} path="/checkout-v3" />
           <Route element={<PageLayout><ApplicationForm /></PageLayout>} path="/application" />
+          <Route element={<LeasingCopilotChat />} path="/leasing-copilot" />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
