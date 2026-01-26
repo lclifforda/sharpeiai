@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { MessageSquare, Paperclip, Plus, User, ChevronDown, Sparkles } from "lucide-react";
+import { MessageSquare, Paperclip, Plus, User, ChevronDown, Sparkles, Upload, PlusCircle, RefreshCw, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -207,13 +207,7 @@ const LeasingCopilotChat = () => {
     setCurrentStep("authenticated");
     addMessage({
       role: "assistant",
-      content: `🔒 Verified! Welcome back, ${EXISTING_CUSTOMER.contact_name}.\n\nWhat would you like to do today?`,
-      actions: [
-        { label: "📦 New Lease", value: "new_lease" },
-        { label: "🔄 Renewal", value: "renewal" },
-        { label: "↩️ Return Equipment", value: "return" },
-        { label: "💬 Talk to Human", value: "talk_human" }
-      ],
+      content: `🔒 Verified. Welcome back, ${EXISTING_CUSTOMER.contact_name}.`,
       showProducts: true
     });
     setCurrentStep("self_serve_menu");
@@ -582,29 +576,92 @@ Want to schedule a call now to discuss your needs?`;
                       </div>
                     )}
 
-                    {/* Currently Leasing Products */}
+                    {/* Currently Leasing Products - Enhanced UX */}
                     {message.showProducts && (
-                      <div className="mt-3 space-y-2">
-                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Currently Leasing</p>
-                        <div className="grid grid-cols-1 gap-2">
-                          {LEASED_PRODUCTS.map((product, idx) => (
-                            <div 
-                              key={idx}
-                              className="flex items-center gap-3 p-3 bg-background border border-border rounded-xl hover:border-primary/30 transition-colors"
-                            >
-                              <img 
-                                src={product.image} 
-                                alt={product.name}
-                                className="w-12 h-12 rounded-lg object-cover"
-                              />
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-foreground truncate">{product.name}</p>
-                                <p className="text-xs text-muted-foreground">
-                                  {product.quantity}x · {product.monthlyRate}/mo · Expires {product.expires}
-                                </p>
+                      <div className="mt-4 space-y-5">
+                        {/* Company Header */}
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Company:</span>
+                          <span className="text-sm font-semibold text-foreground">{EXISTING_CUSTOMER.company_name}</span>
+                        </div>
+
+                        {/* Active Leases Section */}
+                        <div className="space-y-3">
+                          <div>
+                            <h4 className="text-sm font-semibold text-foreground">Active Leases</h4>
+                            <p className="text-xs text-muted-foreground">Manage your existing contracts:</p>
+                          </div>
+                          
+                          <div className="space-y-3">
+                            {LEASED_PRODUCTS.map((product, idx) => (
+                              <div 
+                                key={idx}
+                                className="bg-background border border-border rounded-xl p-4 hover:border-primary/30 transition-colors"
+                              >
+                                <div className="flex gap-4">
+                                  <img 
+                                    src={product.image} 
+                                    alt={product.name}
+                                    className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+                                  />
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-semibold text-foreground">{product.name}</p>
+                                    <p className="text-xs text-muted-foreground mt-0.5">
+                                      {product.quantity} units · {product.monthlyRate}/mo · Expires {product.expires}
+                                    </p>
+                                    <div className="flex flex-wrap gap-2 mt-3">
+                                      <Button 
+                                        variant="outline" 
+                                        size="sm" 
+                                        className="h-7 text-xs gap-1.5"
+                                        onClick={() => handleSelfServeAction("new_lease")}
+                                      >
+                                        <PlusCircle className="w-3.5 h-3.5" />
+                                        Add more units
+                                      </Button>
+                                      <Button 
+                                        variant="outline" 
+                                        size="sm" 
+                                        className="h-7 text-xs gap-1.5"
+                                        onClick={() => handleSelfServeAction("renewal")}
+                                      >
+                                        <RefreshCw className="w-3.5 h-3.5" />
+                                        Extend lease
+                                      </Button>
+                                      <Button 
+                                        variant="outline" 
+                                        size="sm" 
+                                        className="h-7 text-xs gap-1.5"
+                                        onClick={() => handleSelfServeAction("return")}
+                                      >
+                                        <RotateCcw className="w-3.5 h-3.5" />
+                                        Return
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Lease New Equipment Section */}
+                        <div className="bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 rounded-xl p-4 space-y-3">
+                          <div>
+                            <h4 className="text-sm font-semibold text-foreground">Lease New Equipment</h4>
+                            <p className="text-xs text-muted-foreground">Upload a proforma invoice and provider details.</p>
+                          </div>
+                          <Button 
+                            variant="outline" 
+                            className="w-full h-12 border-dashed border-primary/40 hover:border-primary hover:bg-primary/5 gap-2"
+                            onClick={() => handleSelfServeAction("new_lease")}
+                          >
+                            <Upload className="w-4 h-4" />
+                            <span>Upload Invoice</span>
+                          </Button>
+                          <p className="text-xs text-muted-foreground text-center">
+                            We'll automatically extract asset and pricing information for you.
+                          </p>
                         </div>
                       </div>
                     )}
