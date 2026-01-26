@@ -842,7 +842,7 @@ Want to schedule a call now to discuss your needs?`;
 
           {/* Messages Area */}
           <ScrollArea className="flex-1 pr-4 -mr-4">
-            <div className="space-y-6 pb-4">
+            <div className="min-h-full flex flex-col justify-end space-y-6 pb-4">
               {messages.map(message => <div key={message.id} className={`flex gap-3 ${message.role === 'user' ? 'flex-row-reverse' : ''}`}>
                   {/* Avatar */}
                   <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${message.role === 'assistant' ? 'gradient-sharpei' : 'bg-muted'}`}>
