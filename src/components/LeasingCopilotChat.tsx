@@ -1121,8 +1121,8 @@ Want to schedule a call now to discuss your needs?`;
                       alt={selectedOffer.equipment}
                       className="w-20 h-20 rounded-xl object-cover shadow-md"
                     />
-                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-primary rounded-full flex items-center justify-center text-xs font-bold text-primary-foreground shadow-sm">
-                      {selectedOffer.quantity}
+                    <div className="absolute -bottom-2 -right-2 px-2.5 py-1 bg-gradient-to-r from-primary to-purple-500 rounded-full flex items-center justify-center text-sm font-bold text-primary-foreground shadow-lg border-2 border-background">
+                      ×{selectedOffer.quantity}
                     </div>
                   </div>
                   <div className="flex-1 min-w-0">
