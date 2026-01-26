@@ -15,7 +15,7 @@ import robotAngle1 from "@/assets/robot-angle-1.png";
 import robotAngle2 from "@/assets/robot-angle-2.png";
 import ilsLogo from "@/assets/ils-logo.png";
 import ibercajaLogo from "@/assets/ibercaja-logo.png";
-import BankApplicationChat from "@/components/BankApplicationChat";
+import LeasingCopilotChat from "@/components/LeasingCopilotChat";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -430,7 +430,7 @@ const Checkout = () => {
 
           {/* Bank Landing Preview Tab */}
           <TabsContent value="bank">
-            <BankApplicationChat />
+            <LeasingCopilotChat />
           </TabsContent>
         </Tabs>
       </div>
