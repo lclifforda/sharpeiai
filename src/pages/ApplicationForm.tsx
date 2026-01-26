@@ -15,7 +15,7 @@ import { ArrowLeft, Plus, Minus, Upload, FileCheck, X, File } from "lucide-react
 import monitorImage from "@/assets/lg-ultragear-monitors.png";
 import { z } from "zod";
 import ApplicationMethodSelector from "@/components/ApplicationMethodSelector";
-import AIApplicationChat from "@/components/AIApplicationChat";
+import LeasingCopilotChat from "@/components/LeasingCopilotChat";
 import FormAIAssistant from "@/components/FormAIAssistant";
 import OfferCard from "@/components/OfferCard";
 import ContractCard from "@/components/ContractCard";
@@ -302,7 +302,7 @@ const ApplicationForm = () => {
 
   // Show AI chat if AI method chosen
   if (selectedMethod === "ai") {
-    return <AIApplicationChat />;
+    return <LeasingCopilotChat />;
   }
 
   // Show traditional form
