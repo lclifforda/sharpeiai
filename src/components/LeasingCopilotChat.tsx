@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from "react";
-import { MessageSquare, Paperclip, Plus, User, ChevronDown, Sparkles, Upload, PlusCircle, RefreshCw, RotateCcw, FileText, Check, Pen, X, Loader2 } from "lucide-react";
+import { MessageSquare, Paperclip, Plus, User, ChevronDown, Sparkles, Upload, PlusCircle, RefreshCw, RotateCcw, FileText, Check, Pen, X, Loader2, Shield, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Switch } from "@/components/ui/switch";
 
 // Hard-coded customer data
 const EXISTING_CUSTOMER = {
@@ -121,7 +122,11 @@ const LeasingCopilotChat = () => {
   const [isProcessingFile, setIsProcessingFile] = useState(false);
   const [extractedData, setExtractedData] = useState<ExtractedInvoiceData | null>(null);
   const [selectedOffer, setSelectedOffer] = useState<SelectedOffer | null>(null);
+  const [showOfferPanel, setShowOfferPanel] = useState(false);
+  const [maintenanceEnabled, setMaintenanceEnabled] = useState(false);
+  const [insuranceEnabled, setInsuranceEnabled] = useState(false);
   const [isSigningContract, setIsSigningContract] = useState(false);
+  const [contractSigned, setContractSigned] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollToBottom = () => {
@@ -235,11 +240,43 @@ const LeasingCopilotChat = () => {
     };
     
     setSelectedOffer(offer);
+    setShowOfferPanel(true);
     
     addMessage({
       role: "assistant",
-      content: "🎯 Here's your final offer:",
-      showFinalOffer: offer
+      content: "🎯 I've prepared your offer in the panel on the right. You can review the details, add optional services, and accept when ready. Feel free to keep chatting if you have any questions!"
+    });
+  };
+
+  const handleAcceptOfferFromPanel = async () => {
+    if (!selectedOffer) return;
+    
+    addMessage({
+      role: "user",
+      content: "✓ Accept offer"
+    });
+    
+    await simulateTyping(800);
+    setCurrentStep("contract_review");
+    
+    addMessage({
+      role: "assistant",
+      content: "📝 Excellent choice! Please sign the contract in the panel to complete your lease. I'm here if you have any questions!"
+    });
+  };
+
+  const handleSignContractFromPanel = async () => {
+    if (!selectedOffer) return;
+    
+    setIsSigningContract(true);
+    await simulateTyping(2000);
+    setIsSigningContract(false);
+    setContractSigned(true);
+    setCurrentStep("contract_signed");
+    
+    addMessage({
+      role: "assistant",
+      content: `🎉 **Contract Activated!**\n\nContract #SHP-2026-00847\n\nWe've notified **${selectedOffer.vendor}** to ship your equipment ASAP. You'll receive tracking information within 24-48 hours.\n\n📧 A copy has been sent to ${EXISTING_CUSTOMER.default_email}`
     });
   };
 
@@ -281,6 +318,15 @@ const LeasingCopilotChat = () => {
       content: "🎉 Contract activated!",
       showSignedContract: selectedOffer
     });
+  };
+
+  // Calculate total with add-ons
+  const calculateTotal = () => {
+    if (!selectedOffer) return 0;
+    let total = selectedOffer.monthlyPayment;
+    if (maintenanceEnabled) total += 10;
+    if (insuranceEnabled) total += 15;
+    return total;
   };
 
   const handleUpdateContract = async () => {
@@ -717,9 +763,10 @@ Want to schedule a call now to discuss your needs?`;
       handleSend();
     }
   };
-  return <div className="min-h-screen bg-background flex flex-col">
-      <main className="flex-1 flex flex-col px-6 py-8">
-        <div className="w-full max-w-5xl mx-auto flex-1 flex flex-col">
+  return <div className="min-h-screen bg-background flex">
+      {/* Main Chat Area */}
+      <main className={`flex-1 flex flex-col px-6 py-8 transition-all duration-300 ${showOfferPanel ? 'mr-[380px]' : ''}`}>
+        <div className="w-full max-w-4xl mx-auto flex-1 flex flex-col">
           {/* Chat Header with Mini Orb */}
           <div className="flex items-center gap-3 pb-4 border-b border-border mb-4">
             <div className="relative w-10 h-10">
@@ -962,226 +1009,6 @@ Want to schedule a call now to discuss your needs?`;
                         </p>
                       </div>
                     )}
-
-                    {/* Final Offer */}
-                    {message.showFinalOffer && (
-                      <div className="mt-4 space-y-4">
-                        <div className="bg-gradient-to-br from-primary/5 to-primary/10 border-2 border-primary/30 rounded-xl overflow-hidden">
-                          <div className="bg-primary/20 px-4 py-3 flex items-center gap-2">
-                            <Sparkles className="w-4 h-4 text-primary" />
-                            <span className="text-sm font-semibold text-foreground">Your Final Offer</span>
-                          </div>
-                          <div className="p-4 space-y-4">
-                            <div className="grid grid-cols-2 gap-3 text-sm">
-                              <div>
-                                <span className="text-muted-foreground text-xs">Equipment</span>
-                                <p className="font-medium text-foreground">{message.showFinalOffer.equipment}</p>
-                              </div>
-                              <div>
-                                <span className="text-muted-foreground text-xs">Quantity</span>
-                                <p className="font-medium text-foreground">{message.showFinalOffer.quantity} units</p>
-                              </div>
-                              <div>
-                                <span className="text-muted-foreground text-xs">Total Value</span>
-                                <p className="font-medium text-foreground">${message.showFinalOffer.totalPrice.toLocaleString()}</p>
-                              </div>
-                              <div>
-                                <span className="text-muted-foreground text-xs">Term</span>
-                                <p className="font-medium text-foreground">{message.showFinalOffer.term} months @ {message.showFinalOffer.apr}% APR</p>
-                              </div>
-                            </div>
-                            <div className="bg-primary/10 rounded-lg p-4 text-center">
-                              <span className="text-xs text-muted-foreground">Your Monthly Payment</span>
-                              <p className="text-2xl font-bold text-primary">${message.showFinalOffer.monthlyPayment.toLocaleString()}<span className="text-base font-normal">/mo</span></p>
-                              <p className="text-xs text-muted-foreground mt-1">Total cost: ${message.showFinalOffer.totalCost.toLocaleString()}</p>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button 
-                            onClick={handleAcceptOffer}
-                            className="flex-1 gap-2 bg-success hover:bg-success/90"
-                            disabled={isTyping}
-                          >
-                            <Check className="w-4 h-4" />
-                            Accept Offer
-                          </Button>
-                          <Button 
-                            variant="outline"
-                            onClick={handleUpdateContract}
-                            className="gap-2"
-                          >
-                            <RefreshCw className="w-4 h-4" />
-                            Adjust Terms
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Contract Review with DocuSign */}
-                    {message.showContract && (
-                      <div className="mt-4 space-y-4">
-                        <div className="bg-background border-2 border-primary/30 rounded-xl overflow-hidden">
-                          {/* DocuSign Header */}
-                          <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3 flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 bg-white rounded flex items-center justify-center">
-                                <Pen className="w-3 h-3 text-blue-600" />
-                              </div>
-                              <span className="text-sm font-semibold text-white">DocuSign</span>
-                            </div>
-                            <span className="text-xs bg-white/20 text-white px-2 py-1 rounded-full font-medium">Awaiting Signature</span>
-                          </div>
-                          
-                          <div className="p-4 space-y-4">
-                            {/* Contract Parties */}
-                            <div className="grid grid-cols-2 gap-3 text-sm border-b border-border pb-3">
-                              <div>
-                                <span className="text-muted-foreground text-xs">Lessor</span>
-                                <p className="font-medium text-foreground">Sharpei Financial Services</p>
-                              </div>
-                              <div>
-                                <span className="text-muted-foreground text-xs">Lessee</span>
-                                <p className="font-medium text-foreground">{EXISTING_CUSTOMER.company_name}</p>
-                              </div>
-                            </div>
-                            
-                            {/* Contract Details */}
-                            <div className="space-y-2 text-sm">
-                              <div className="flex justify-between py-1">
-                                <span className="text-muted-foreground">Equipment</span>
-                                <span className="font-medium text-foreground">{message.showContract.equipment}</span>
-                              </div>
-                              <div className="flex justify-between py-1">
-                                <span className="text-muted-foreground">Quantity</span>
-                                <span className="font-medium text-foreground">{message.showContract.quantity} units</span>
-                              </div>
-                              <div className="flex justify-between py-1">
-                                <span className="text-muted-foreground">Total Value</span>
-                                <span className="font-medium text-foreground">${message.showContract.totalPrice.toLocaleString()}</span>
-                              </div>
-                              <div className="flex justify-between py-1">
-                                <span className="text-muted-foreground">Lease Term</span>
-                                <span className="font-medium text-foreground">{message.showContract.term} months @ {message.showContract.apr}% APR</span>
-                              </div>
-                              <div className="flex justify-between py-1 border-t border-border pt-2">
-                                <span className="text-muted-foreground font-medium">Monthly Payment</span>
-                                <span className="font-bold text-primary">${message.showContract.monthlyPayment.toLocaleString()}/mo</span>
-                              </div>
-                            </div>
-
-                            {/* Key Terms */}
-                            <div className="bg-muted/50 rounded-lg p-3 space-y-2 text-xs">
-                              <p className="font-semibold text-foreground">Key Terms:</p>
-                              <ul className="space-y-1 text-muted-foreground">
-                                <li>• Payment due on 1st of each month</li>
-                                <li>• Equipment maintenance included</li>
-                                <li>• End-of-term purchase option at 10% residual</li>
-                                <li>• 30-day early termination notice required</li>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button 
-                            onClick={handleSignContract}
-                            className="flex-1 gap-2 bg-blue-600 hover:bg-blue-700"
-                            disabled={isSigningContract || isTyping}
-                          >
-                            {isSigningContract ? (
-                              <>
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                                Signing via DocuSign...
-                              </>
-                            ) : (
-                              <>
-                                <Pen className="w-4 h-4" />
-                                Sign with DocuSign
-                              </>
-                            )}
-                          </Button>
-                          <Button 
-                            variant="outline"
-                            onClick={handleUpdateContract}
-                            className="gap-2"
-                            disabled={isTyping}
-                          >
-                            <X className="w-4 h-4" />
-                            Decline
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Signed Contract - Contract Activated */}
-                    {message.showSignedContract && (
-                      <div className="mt-4 space-y-4">
-                        <div className="bg-success/10 border-2 border-success/30 rounded-xl p-5 space-y-4">
-                          <div className="text-center space-y-2">
-                            <div className="w-14 h-14 bg-success rounded-full flex items-center justify-center mx-auto">
-                              <Check className="w-7 h-7 text-success-foreground" />
-                            </div>
-                            <div>
-                              <h4 className="text-lg font-bold text-foreground">Contract Activated! 🎉</h4>
-                              <p className="text-sm text-muted-foreground mt-1">Contract #SHP-2026-00847</p>
-                            </div>
-                          </div>
-                          
-                          <div className="bg-background rounded-lg p-4 text-sm space-y-2">
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">Equipment</span>
-                              <span className="font-medium text-foreground">{message.showSignedContract.equipment}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">Quantity</span>
-                              <span className="font-medium text-foreground">{message.showSignedContract.quantity} units</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">Monthly Payment</span>
-                              <span className="font-bold text-success">${message.showSignedContract.monthlyPayment.toLocaleString()}/mo</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">First Payment Due</span>
-                              <span className="font-medium text-foreground">Feb 1, 2026</span>
-                            </div>
-                          </div>
-
-                          {/* Merchant Shipping Notice */}
-                          <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
-                            <div className="flex items-start gap-3">
-                              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                <MessageSquare className="w-4 h-4 text-white" />
-                              </div>
-                              <div>
-                                <p className="text-sm font-semibold text-foreground">Next Steps</p>
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  We've notified <strong>{message.showSignedContract.vendor}</strong> to ship your equipment ASAP. 
-                                  You'll receive tracking information within 24-48 hours.
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div className="flex gap-2">
-                          <Button variant="outline" className="flex-1 gap-2">
-                            <FileText className="w-4 h-4" />
-                            Download Contract
-                          </Button>
-                          <Button 
-                            variant="outline"
-                            onClick={handleUpdateContract}
-                            className="gap-2"
-                          >
-                            <RefreshCw className="w-4 h-4" />
-                            Need Changes?
-                          </Button>
-                        </div>
-                        <p className="text-xs text-center text-muted-foreground">
-                          📧 A copy has been sent to {EXISTING_CUSTOMER.default_email}
-                        </p>
-                      </div>
-                    )}
                   </div>
                 </div>)}
 
@@ -1211,7 +1038,7 @@ Want to schedule a call now to discuss your needs?`;
           {/* Floating Chat Input */}
           <div className="w-full max-w-3xl mx-auto mt-6">
             <div className="relative">
-              <div className="flex items-center gap-3 p-2 bg-white rounded-full border border-border shadow-float-lg hover:shadow-float transition-all duration-300">
+              <div className="flex items-center gap-3 p-2 bg-card rounded-full border border-border shadow-lg hover:shadow-xl transition-all duration-300">
                 <button className="p-3 hover:bg-muted/50 rounded-full transition-colors">
                   <Paperclip className="w-5 h-5 text-muted-foreground" />
                 </button>
@@ -1219,8 +1046,8 @@ Want to schedule a call now to discuss your needs?`;
                   <Plus className="w-4 h-4 text-muted-foreground" />
                   <span className="text-sm text-muted-foreground font-medium">Sources</span>
                 </button>
-                <Input value={input} onChange={e => setInput(e.target.value)} onKeyPress={handleKeyPress} placeholder="Ask me anything about equipment financing, risk, contracts, or assets..." disabled={isTyping} className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground" />
-                <button onClick={handleSend} disabled={!input.trim() || isTyping} className="p-3 rounded-full gradient-sharpei text-white hover:opacity-90 transition-opacity shadow-float disabled:opacity-50 disabled:cursor-not-allowed">
+                <Input value={input} onChange={e => setInput(e.target.value)} onKeyPress={handleKeyPress} placeholder="Ask me anything about equipment leasing..." disabled={isTyping} className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground" />
+                <button onClick={handleSend} disabled={!input.trim() || isTyping} className="p-3 rounded-full gradient-sharpei text-white hover:opacity-90 transition-opacity shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
                   <MessageSquare className="w-5 h-5" />
                 </button>
               </div>
@@ -1228,6 +1055,183 @@ Want to schedule a call now to discuss your needs?`;
           </div>
         </div>
       </main>
+
+      {/* Offer Side Panel */}
+      {showOfferPanel && selectedOffer && (
+        <div className="fixed right-0 top-0 h-full w-[380px] bg-card border-l border-border shadow-2xl flex flex-col z-40 animate-in slide-in-from-right duration-300">
+          {/* Panel Header */}
+          <div className="p-5 border-b border-border flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-foreground">Order Summary</h2>
+            <button 
+              onClick={() => setShowOfferPanel(false)}
+              className="p-1.5 hover:bg-muted rounded-lg transition-colors"
+            >
+              <X className="w-5 h-5 text-muted-foreground" />
+            </button>
+          </div>
+
+          {/* Panel Content */}
+          <ScrollArea className="flex-1">
+            <div className="p-5 space-y-5">
+              {/* Product Info */}
+              <div className="flex gap-4">
+                <img 
+                  src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=80&h=80&fit=crop" 
+                  alt={selectedOffer.equipment}
+                  className="w-16 h-16 rounded-lg object-cover"
+                />
+                <div>
+                  <p className="font-medium text-foreground">{selectedOffer.equipment}</p>
+                  <p className="text-sm text-muted-foreground">${selectedOffer.monthlyPayment.toLocaleString()}/mo per unit</p>
+                </div>
+              </div>
+
+              {/* Order Details */}
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between py-2 border-b border-border">
+                  <span className="text-muted-foreground">Quantity</span>
+                  <span className="font-medium text-foreground">{selectedOffer.quantity}</span>
+                </div>
+                <div className="flex justify-between py-2 border-b border-border">
+                  <span className="text-muted-foreground">Term</span>
+                  <span className="font-medium text-foreground">{selectedOffer.term} months</span>
+                </div>
+                <div className="flex justify-between py-2 border-b border-border">
+                  <div>
+                    <span className="text-muted-foreground">Leasing total:</span>
+                    <p className="text-xs text-muted-foreground">Purchase option at end of lease</p>
+                  </div>
+                  <span className="font-medium text-foreground">${selectedOffer.monthlyPayment.toLocaleString()}/mo</span>
+                </div>
+              </div>
+
+              {/* Services */}
+              <div className="space-y-3">
+                <h3 className="font-medium text-foreground">Services</h3>
+                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Wrench className="w-4 h-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Maintenance Pack</p>
+                      <p className="text-xs text-muted-foreground">$10/mo</p>
+                    </div>
+                  </div>
+                  <Switch checked={maintenanceEnabled} onCheckedChange={setMaintenanceEnabled} />
+                </div>
+              </div>
+
+              {/* Equipment Extras */}
+              <div className="space-y-3">
+                <h3 className="font-medium text-foreground">Equipment Extras</h3>
+                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Shield className="w-4 h-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Insurance Coverage</p>
+                      <p className="text-xs text-muted-foreground">Comprehensive protection plan</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-muted-foreground">$15/mo</span>
+                    <Switch checked={insuranceEnabled} onCheckedChange={setInsuranceEnabled} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Price Breakdown */}
+              <div className="space-y-2 text-sm pt-3 border-t border-border">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Monthly payment</span>
+                  <span className="font-medium text-foreground">${selectedOffer.monthlyPayment.toLocaleString()}</span>
+                </div>
+                {maintenanceEnabled && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Maintenance Pack</span>
+                    <span className="font-medium text-foreground">$10.00</span>
+                  </div>
+                )}
+                {insuranceEnabled && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Insurance Coverage</span>
+                    <span className="font-medium text-foreground">$15.00</span>
+                  </div>
+                )}
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Shipping</span>
+                  <span className="text-muted-foreground">Calculated at checkout</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Tax</span>
+                  <span className="text-muted-foreground">Calculated at checkout</span>
+                </div>
+              </div>
+
+              {/* Total */}
+              <div className="text-center pt-4 border-t border-border">
+                <p className="text-3xl font-bold text-foreground">${calculateTotal().toLocaleString()}</p>
+                <p className="text-xs text-muted-foreground mt-1">Monthly, Annual Insurance, plus shipping & tax</p>
+              </div>
+            </div>
+          </ScrollArea>
+
+          {/* Panel Footer */}
+          <div className="p-5 border-t border-border space-y-3">
+            {currentStep === "final_offer" && !contractSigned && (
+              <Button 
+                onClick={handleAcceptOfferFromPanel}
+                className="w-full gap-2 bg-success hover:bg-success/90 h-12"
+                disabled={isTyping}
+              >
+                <Check className="w-5 h-5" />
+                Accept Offer
+              </Button>
+            )}
+            
+            {currentStep === "contract_review" && !contractSigned && (
+              <Button 
+                onClick={handleSignContractFromPanel}
+                className="w-full gap-2 h-12"
+                style={{ backgroundColor: '#4F46E5' }}
+                disabled={isSigningContract || isTyping}
+              >
+                {isSigningContract ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Signing via DocuSign...
+                  </>
+                ) : (
+                  <>
+                    <Pen className="w-5 h-5" />
+                    Sign with DocuSign
+                  </>
+                )}
+              </Button>
+            )}
+
+            {contractSigned && (
+              <div className="text-center space-y-3">
+                <div className="w-12 h-12 bg-success rounded-full flex items-center justify-center mx-auto">
+                  <Check className="w-6 h-6 text-success-foreground" />
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground">Contract Signed!</p>
+                  <p className="text-xs text-muted-foreground">Equipment shipping soon</p>
+                </div>
+                <Button variant="outline" className="w-full gap-2">
+                  <FileText className="w-4 h-4" />
+                  Download Contract
+                </Button>
+              </div>
+            )}
+
+            {/* Powered by */}
+            <div className="flex items-center justify-center gap-2 pt-2">
+              <span className="text-xs text-muted-foreground">Powered by</span>
+              <span className="text-xs font-bold text-foreground">SHARPEI</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>;
 };
 export default LeasingCopilotChat;
