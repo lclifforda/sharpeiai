@@ -13,7 +13,7 @@ import { ShoppingCart, CheckCircle2, RotateCcw, ArrowUpCircle, Info, Plus, Minus
 import robotImage from "@/assets/humanoid-robot.png";
 import robotAngle1 from "@/assets/robot-angle-1.png";
 import robotAngle2 from "@/assets/robot-angle-2.png";
-import ilsLogo from "@/assets/ils-logo.png";
+import ilsLogo from "@/assets/5star-leasing-logo.png";
 import ibercajaLogo from "@/assets/ibercaja-logo.png";
 import LeasingCopilotChat from "@/components/LeasingCopilotChat";
 
