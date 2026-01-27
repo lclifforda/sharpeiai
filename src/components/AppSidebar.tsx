@@ -1,6 +1,6 @@
 import { NavLink } from "@/components/NavLink";
 import { MessageSquare, LayoutDashboard, Building2, ShoppingCart, FileText, CreditCard, Package, Settings, LogOut, Headphones, Store, BookOpen, HelpCircle, Mail, Smartphone } from "lucide-react";
-import ilsLogo from "@/assets/ils-logo.png";
+import ilsLogo from "@/assets/5star-leasing-logo.png";
 import ibercajaLogo from "@/assets/ibercaja-logo.png";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, SidebarHeader, useSidebar } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
