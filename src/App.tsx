@@ -23,6 +23,9 @@ import MerchantDetail from "./pages/MerchantDetail";
 import Checkout from "./pages/Checkout";
 import CheckoutV2 from "./pages/CheckoutV2";
 import ApplicationForm from "./pages/ApplicationForm";
+import Automations from "./pages/Automations";
+import AutomationCreate from "./pages/AutomationCreate";
+import AutomationDetail from "./pages/AutomationDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -53,6 +56,9 @@ const App = () => (
           <Route element={<PageLayout><Checkout /></PageLayout>} path="/checkout" />
           <Route element={<PageLayout><CheckoutV2 /></PageLayout>} path="/checkout-v2" />
           <Route element={<PageLayout><ApplicationForm /></PageLayout>} path="/application" />
+          <Route element={<PageLayout><Automations /></PageLayout>} path="/automations" />
+          <Route element={<PageLayout><AutomationCreate /></PageLayout>} path="/automations/new" />
+          <Route element={<PageLayout><AutomationDetail /></PageLayout>} path="/automations/:id" />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

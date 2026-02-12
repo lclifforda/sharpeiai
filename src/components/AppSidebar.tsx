@@ -1,5 +1,5 @@
 import { NavLink } from "@/components/NavLink";
-import { MessageSquare, LayoutDashboard, Building2, ShoppingCart, FileText, CreditCard, Package, Settings, LogOut, Headphones, Store, BookOpen, HelpCircle, Mail, Smartphone } from "lucide-react";
+import { MessageSquare, LayoutDashboard, Building2, ShoppingCart, FileText, CreditCard, Package, Settings, LogOut, Headphones, Store, BookOpen, HelpCircle, Mail, Smartphone, Zap } from "lucide-react";
 import bbvaLogo from "@/assets/bbva-logo.png";
 import sharpeiLogo from "@/assets/sharpei-logo.png";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, SidebarHeader, useSidebar } from "@/components/ui/sidebar";
@@ -42,6 +42,10 @@ const navigationItems = [{
   name: "Assets",
   path: "/assets",
   icon: Package
+}, {
+  name: "Automations",
+  path: "/automations",
+  icon: Zap
 }];
 export function AppSidebar() {
   const {
