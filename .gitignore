@@ -23,3 +23,9 @@ dist-ssr
 *.sln
 *.sw?
 .trello_implementation_ready
+
+# Sharpei monorepo
+.turbo/
+.env
+.env.*
+!.env.example
