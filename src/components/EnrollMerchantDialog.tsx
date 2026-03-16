@@ -4,49 +4,58 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Copy, Mail, Plus, Sparkles, CheckCircle2 } from "lucide-react";
+import { Copy, Mail, Plus, Sparkles, CheckCircle2, ChevronDown, ChevronUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 export function EnrollMerchantDialog() {
   const [open, setOpen] = useState(false);
-  const [merchantName, setMerchantName] = useState("");
-  const [merchantEmail, setMerchantEmail] = useState("");
+  const [vendorName, setVendorName] = useState("");
+  const [contactName, setContactName] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactPhone, setContactPhone] = useState("");
+  const [website, setWebsite] = useState("");
+  const [showEmailSection, setShowEmailSection] = useState(false);
   const [draftEmail, setDraftEmail] = useState("");
   const { toast } = useToast();
 
-  const generateEmail = () => {
-    if (!merchantName || !merchantEmail) {
+  const handleAddVendor = () => {
+    if (!vendorName || !contactEmail) {
       toast({
         title: "Missing Information",
-        description: "Please fill in both merchant name and email.",
+        description: "Please fill in at least the vendor name and contact email.",
         variant: "destructive",
       });
       return;
     }
 
-    const email = `Subject: Welcome to Sharpei - Complete Your Merchant Onboarding
+    toast({
+      title: "Vendor Added",
+      description: `${vendorName} has been added to the platform.`,
+    });
+    setOpen(false);
+  };
 
-Dear ${merchantName} Team,
+  const generateEmail = () => {
+    if (!vendorName || !contactEmail) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in at least the vendor name and contact email.",
+        variant: "destructive",
+      });
+      return;
+    }
 
-Welcome to Sharpei! We're excited to partner with you to provide flexible payment solutions for your customers.
+    const email = `Subject: Welcome to Sharpei - Your Vendor Partnership Setup
 
-To complete your onboarding, please upload the following required documents through our secure portal:
+Dear ${vendorName} Team,
 
-{{UPLOAD_LINK}}
+Welcome to Sharpei! We're excited to partner with you to offer flexible financing solutions to your customers.
 
-Required Documents:
-• Certificate of Incorporation
-• Tax ID / Company Registration Number
-• Proof of Address
-• Government-issued ID (admin)
-• Latest Financial Statements
-• Bank Account Verification
-• Product Catalog / Asset List
-• Return Policy
-• Warranty Policy
+To get started, we'll set up your referral integration so customers coming through your website can seamlessly apply for financing via Sharpei.
 
-Once we receive and verify your documents, we'll activate your account and provide access to our merchant dashboard.
+Once we have everything configured, we'll generate your unique referral link and provide integration instructions for your website.
 
 If you have any questions, please don't hesitate to reach out to our team.
 
@@ -72,8 +81,12 @@ The Sharpei Team`;
   };
 
   const resetForm = () => {
-    setMerchantName("");
-    setMerchantEmail("");
+    setVendorName("");
+    setContactName("");
+    setContactEmail("");
+    setContactPhone("");
+    setWebsite("");
+    setShowEmailSection(false);
     setDraftEmail("");
   };
 
@@ -85,96 +98,153 @@ The Sharpei Team`;
       <DialogTrigger asChild>
         <Button>
           <Plus className="h-4 w-4" />
-          Enroll Merchant
+          Add Vendor
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl">Enroll New Merchant</DialogTitle>
+          <DialogTitle className="text-2xl">Add New Vendor</DialogTitle>
           <DialogDescription>
-            Enter merchant details to generate a personalized onboarding email with document requirements.
+            Add a vendor or broker to the platform.
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="space-y-6 py-4">
-          {/* Form Section */}
-          <Card className="p-6 border-2">
-            <div className="space-y-4">
+          {/* Vendor Details Form */}
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="vendor-name" className="text-sm font-medium">
+                Vendor Name *
+              </Label>
+              <Input
+                id="vendor-name"
+                placeholder="e.g., TechMart Electronics"
+                value={vendorName}
+                onChange={(e) => setVendorName(e.target.value)}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="merchant-name" className="text-base font-semibold">
-                  Merchant Name *
+                <Label htmlFor="contact-name" className="text-sm font-medium">
+                  Contact Name
                 </Label>
                 <Input
-                  id="merchant-name"
-                  placeholder="e.g., TechMart Electronics"
-                  value={merchantName}
-                  onChange={(e) => setMerchantName(e.target.value)}
-                  className="h-11"
+                  id="contact-name"
+                  placeholder="e.g., Sarah Johnson"
+                  value={contactName}
+                  onChange={(e) => setContactName(e.target.value)}
                 />
               </div>
-
               <div className="space-y-2">
-                <Label htmlFor="merchant-email" className="text-base font-semibold">
-                  Merchant Email *
+                <Label htmlFor="contact-email" className="text-sm font-medium">
+                  Contact Email *
                 </Label>
                 <Input
-                  id="merchant-email"
+                  id="contact-email"
                   type="email"
-                  placeholder="e.g., contact@techmart.com"
-                  value={merchantEmail}
-                  onChange={(e) => setMerchantEmail(e.target.value)}
-                  className="h-11"
+                  placeholder="e.g., sarah@techmart.com"
+                  value={contactEmail}
+                  onChange={(e) => setContactEmail(e.target.value)}
                 />
               </div>
-
-              <Button 
-                onClick={generateEmail} 
-                className="w-full h-12 text-base"
-                size="lg"
-              >
-                <Sparkles className="h-5 w-5" />
-                Generate Onboarding Email with AI
-              </Button>
             </div>
-          </Card>
 
-          {/* Email Preview Section */}
-          {draftEmail && (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-5 w-5 text-success" />
-                <Label className="text-lg font-semibold">Email Preview</Label>
-              </div>
-              
-              <Card className="p-4 bg-muted/50">
-                <Textarea
-                  value={draftEmail}
-                  onChange={(e) => setDraftEmail(e.target.value)}
-                  className="min-h-[320px] font-mono text-sm bg-background resize-none"
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="contact-phone" className="text-sm font-medium">
+                  Phone
+                </Label>
+                <Input
+                  id="contact-phone"
+                  type="tel"
+                  placeholder="e.g., +1 (555) 123-4567"
+                  value={contactPhone}
+                  onChange={(e) => setContactPhone(e.target.value)}
                 />
-              </Card>
-              
-              <div className="flex gap-3">
-                <Button 
-                  onClick={copyToClipboard}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="vendor-website" className="text-sm font-medium">
+                  Website
+                </Label>
+                <Input
+                  id="vendor-website"
+                  placeholder="e.g., www.techmart.com"
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Primary Action */}
+          <Button
+            onClick={handleAddVendor}
+            className="w-full h-11"
+            size="lg"
+          >
+            Add Vendor
+          </Button>
+
+          {/* Optional Email Section */}
+          <Collapsible open={showEmailSection} onOpenChange={setShowEmailSection}>
+            <CollapsibleTrigger asChild>
+              <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors w-full">
+                <Mail className="h-4 w-4" />
+                <span>Send a welcome email</span>
+                {showEmailSection ? (
+                  <ChevronUp className="h-4 w-4 ml-auto" />
+                ) : (
+                  <ChevronDown className="h-4 w-4 ml-auto" />
+                )}
+              </button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="space-y-4 pt-4">
+              {!draftEmail ? (
+                <Button
+                  onClick={generateEmail}
                   variant="outline"
-                  className="flex-1 h-11"
-                  size="lg"
+                  className="w-full"
                 >
-                  <Copy className="h-4 w-4" />
-                  Copy Email
+                  <Sparkles className="h-4 w-4" />
+                  Generate Welcome Email with AI
                 </Button>
-                <Button 
-                  onClick={handleSendEmail}
-                  className="flex-1 h-11"
-                  size="lg"
-                >
-                  <Mail className="h-4 w-4" />
-                  Send Email
-                </Button>
-              </div>
-            </div>
-          )}
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-success" />
+                    <Label className="text-sm font-medium">Email Preview</Label>
+                  </div>
+
+                  <Card className="p-3 bg-muted/50">
+                    <Textarea
+                      value={draftEmail}
+                      onChange={(e) => setDraftEmail(e.target.value)}
+                      className="min-h-[240px] font-mono text-sm bg-background resize-none"
+                    />
+                  </Card>
+
+                  <div className="flex gap-3">
+                    <Button
+                      onClick={copyToClipboard}
+                      variant="outline"
+                      className="flex-1"
+                    >
+                      <Copy className="h-4 w-4" />
+                      Copy
+                    </Button>
+                    <Button
+                      onClick={handleSendEmail}
+                      className="flex-1"
+                    >
+                      <Mail className="h-4 w-4" />
+                      Send Email
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </CollapsibleContent>
+          </Collapsible>
         </div>
       </DialogContent>
     </Dialog>

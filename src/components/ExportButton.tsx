@@ -35,7 +35,7 @@ export const ExportButton = ({ data, filename, sheetName }: ExportButtonProps) =
     });
   };
 
-  const handleExportExcel = () => {
+  const handleExportExcel = async () => {
     if (data.length === 0) {
       toast({
         title: "No data to export",
@@ -44,8 +44,8 @@ export const ExportButton = ({ data, filename, sheetName }: ExportButtonProps) =
       });
       return;
     }
-    
-    exportToExcel(data, filename, sheetName);
+
+    await exportToExcel(data, filename, sheetName);
     toast({
       title: "Export successful",
       description: `${data.length} records exported to Excel.`,

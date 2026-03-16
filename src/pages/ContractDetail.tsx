@@ -162,7 +162,7 @@ const ContractDetail = () => {
               <Building2 className="w-5 h-5 text-muted-foreground mt-0.5" />
               <div>
                 <p className="text-sm text-muted-foreground">Company</p>
-                <Link to={`/companies/${contract.company.id}`} className="font-medium hover:underline">
+                <Link to={`/customers/${contract.company.id}`} className="font-medium hover:underline">
                   {contract.company.name}
                 </Link>
                 <p className="text-xs text-muted-foreground">{contract.company.contact}</p>

@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
-import sharpeiLogo from "@/assets/sharpei-logo.png";
+import sharpeiLogo from "@/assets/sharpei-logo.webp";
 
 const NotFound = () => {
   const location = useLocation();

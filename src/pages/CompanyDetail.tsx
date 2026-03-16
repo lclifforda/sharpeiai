@@ -1,182 +1,83 @@
 import { useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Mail, Phone, UserPlus, MapPin, Building2, Calendar, Package, DollarSign, CreditCard, FileText, Briefcase, AlertCircle, Landmark } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useParams, Link } from "react-router-dom";
+import {
+  ArrowLeft, Mail, Phone, MapPin, Building2, Calendar, Package,
+  CreditCard, Briefcase, Landmark, FileText, CheckCircle2, Clock,
+  XCircle, User, DollarSign, Shield, Sparkles, TrendingUp,
+  Download, Eye, ChevronDown, ScanSearch,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Accordion, AccordionContent, AccordionItem, AccordionTrigger,
+} from "@/components/ui/accordion";
 import { AddRepresentativeDialog } from "@/components/AddRepresentativeDialog";
-
-interface Representative {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  role: string;
-  joinDate: string;
-}
-
-interface Order {
-  id: string;
-  equipment: string;
-  quantity: number;
-  startDate: string;
-  endDate: string;
-  status: 'active' | 'pending' | 'completed';
-  amount: number;
-}
-
-interface Contract {
-  id: string;
-  type: string;
-  startDate: string;
-  endDate: string;
-  status: 'active' | 'expiring' | 'expired';
-  value: number;
-}
+import {
+  COMPANY_DETAILS,
+  type Representative,
+  type Application,
+  type CompanyDocument,
+  type AIHighlight,
+} from "@/data/mockCompanies";
+import { getCustomerById } from "@/lib/customerStorage";
 
 const CompanyDetail = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
+  const storedCustomer = id ? getCustomerById(id) : undefined;
 
-  // Mock data - in production, fetch from API
-  const initialCompanyData: any = {
-    '1': {
-      name: 'TechCorp Industries',
-      industry: 'Manufacturing',
-      location: 'San Francisco, CA',
-      address: '1234 Innovation Drive, San Francisco, CA 94105',
-      founded: '2018',
-      status: 'active',
-      kpis: {
-        totalRevenue: 67500,
-        activeOrders: 3,
-        totalEquipment: 35,
-        contractValue: 125000,
-        paymentStatus: 'current',
-        customerSince: '2023-01-15',
-      },
-      representatives: [
-        {
-          id: '1',
-          name: 'John Martinez',
-          email: 'john.martinez@techcorp.com',
-          phone: '(415) 555-0123',
-          role: 'Operations Manager',
-          joinDate: '2021-03-15',
-        },
-        {
-          id: '2',
-          name: 'Sarah Chen',
-          email: 'sarah.chen@techcorp.com',
-          phone: '(415) 555-0124',
-          role: 'Technical Lead',
-          joinDate: '2022-01-10',
-        },
-      ],
-      orders: [
-        {
-          id: 'ORD-001',
-          equipment: 'IoT Sensor Kit (Model S-400)',
-          quantity: 15,
-          startDate: '2025-01-15',
-          endDate: '2025-07-15',
-          status: 'active',
-          amount: 22500,
-        },
-        {
-          id: 'ORD-008',
-          equipment: 'Edge Computing Device (EC-Pro)',
-          quantity: 12,
-          startDate: '2025-02-01',
-          endDate: '2025-08-01',
-          status: 'active',
-          amount: 28000,
-        },
-        {
-          id: 'ORD-015',
-          equipment: 'Industrial Camera System',
-          quantity: 8,
-          startDate: '2024-11-01',
-          endDate: '2025-05-01',
-          status: 'completed',
-          amount: 17000,
-        },
-      ],
-      contracts: [
-        {
-          id: 'CNT-2025-001',
-          type: 'Annual Equipment Lease',
-          startDate: '2025-01-01',
-          endDate: '2025-12-31',
-          status: 'active',
-          value: 125000,
-        },
-      ],
-    },
-    '2': {
-      name: 'DataFlow Systems',
-      industry: 'Logistics',
-      location: 'Austin, TX',
-      address: '5678 Tech Boulevard, Austin, TX 78701',
-      founded: '2019',
-      status: 'active',
-      kpis: {
-        totalRevenue: 44500,
-        activeOrders: 2,
-        totalEquipment: 18,
-        contractValue: 55000,
-        paymentStatus: 'pending',
-        customerSince: '2023-06-20',
-      },
-      representatives: [
-        {
-          id: '3',
-          name: 'Michael Johnson',
-          email: 'mjohnson@dataflow.com',
-          phone: '(512) 555-0198',
-          role: 'Logistics Director',
-          joinDate: '2020-06-20',
-        },
-      ],
-      orders: [
-        {
-          id: 'ORD-002',
-          equipment: 'Edge Computing Device (EC-Pro)',
-          quantity: 8,
-          startDate: '2025-02-01',
-          endDate: '2025-08-01',
-          status: 'active',
-          amount: 16000,
-        },
-        {
-          id: 'ORD-009',
-          equipment: 'GPS Tracking Module',
-          quantity: 10,
-          startDate: '2025-01-15',
-          endDate: '2025-07-15',
-          status: 'active',
-          amount: 9000,
-        },
-      ],
-      contracts: [
-        {
-          id: 'CNT-2025-002',
-          type: '6-Month Rental Agreement',
-          startDate: '2025-02-01',
-          endDate: '2025-08-01',
-          status: 'active',
-          value: 55000,
-        },
-      ],
-    },
-  };
-
-  // State to manage representatives for the current company
+  const initialCompanyData: Record<string, any> = { ...COMPANY_DETAILS };
   const [companyData, setCompanyData] = useState(initialCompanyData);
-  const company = companyData[id || '1'] || companyData['1'];
 
-  // Handle adding a new representative
+  const company = storedCustomer
+    ? {
+        name: storedCustomer.name,
+        industry: storedCustomer.industry,
+        status: storedCustomer.status,
+        businessInfo: {
+          dba: storedCustomer.formData?.dba,
+          ein: storedCustomer.formData?.ein || "—",
+          entityType: storedCustomer.formData?.entityType || storedCustomer.industry,
+          dateEstablished: storedCustomer.formData?.dateEstablished || "—",
+          industryCode: storedCustomer.industry,
+          numberOfEmployees: parseInt(storedCustomer.formData?.numberOfEmployees || "0", 10) || 0,
+          ownershipPercentage: parseInt(storedCustomer.formData?.ownershipPercentage || "0", 10) || 0,
+          annualRevenue: parseInt(storedCustomer.formData?.annualRevenue || "0", 10) || 0,
+          fiscalYearEnd: storedCustomer.formData?.fiscalYearEnd || "—",
+          streetAddress: storedCustomer.formData?.streetAddress || "—",
+          city: storedCustomer.formData?.city || "—",
+          state: storedCustomer.formData?.state || "—",
+          zipCode: storedCustomer.formData?.zipCode || "—",
+          country: storedCustomer.formData?.country || "United States",
+        },
+        guarantor: {
+          name: storedCustomer.formData?.guarantorName || "—",
+          idNumber: storedCustomer.formData?.guarantorIdNumber || "—",
+          dob: storedCustomer.formData?.guarantorDOB || "—",
+        },
+        aiAssessment: {
+          riskLevel: "medium" as const,
+          summary: `Customer from application. ${storedCustomer.name} — ${storedCustomer.industry}.`,
+          highlights: [],
+          lastUpdated: new Date().toISOString(),
+        },
+        kpis: {
+          totalRevenue: 0,
+          activeApplications: 0,
+          totalEquipment: 0,
+          paymentStatus: "—",
+          customerSince: "—",
+          totalFunded: 0,
+        },
+        representatives: storedCustomer.formData?.contactName
+          ? [{ id: "1", name: storedCustomer.formData.contactName, email: storedCustomer.formData.contactEmail || "", phone: storedCustomer.formData.contactPhone || "", role: "Primary Contact", joinDate: new Date().toISOString().split("T")[0] }]
+          : [],
+        applications: [],
+        contracts: [],
+        documents: [],
+      }
+    : companyData[id || "1"] || companyData["1"];
+
   const handleAddRepresentative = (newRepresentative: Representative) => {
     const companyId = id || '1';
     setCompanyData((prev: any) => ({
@@ -188,19 +89,44 @@ const CompanyDetail = () => {
     }));
   };
 
-  const handleCreateContract = () => {
-    const companyId = id || '1';
-    navigate(`/contracts/new?companyId=${companyId}`);
+  const info = company.businessInfo;
+  const guarantor = company.guarantor;
+  const ai = company.aiAssessment;
+
+  const getAppStatusBadge = (status: string) => {
+    const map: Record<string, { variant: 'default' | 'secondary' | 'destructive' | 'outline'; label: string }> = {
+      unqualified: { variant: 'outline', label: 'Unqualified' },
+      incomplete: { variant: 'secondary', label: 'Incomplete (NIGO)' },
+      completed: { variant: 'secondary', label: 'Completed' },
+      declined: { variant: 'destructive', label: 'Declined' },
+      funded: { variant: 'default', label: 'Funded' },
+    };
+    const s = map[status] || { variant: 'outline' as const, label: status };
+    return <Badge variant={s.variant}>{s.label}</Badge>;
   };
+
+  const getDocStatusIcon = (status: string) => {
+    if (status === 'verified') return <CheckCircle2 className="w-4 h-4 text-green-600" />;
+    if (status === 'pending') return <Clock className="w-4 h-4 text-amber-500" />;
+    return <XCircle className="w-4 h-4 text-red-500" />;
+  };
+
+  const riskColors: Record<string, string> = {
+    low: 'text-green-700 bg-green-500/10 border-green-200',
+    medium: 'text-amber-700 bg-amber-500/10 border-amber-200',
+    high: 'text-red-700 bg-red-500/10 border-red-200',
+  };
+
+  const verifiedDocs = company.documents.filter((d: CompanyDocument) => d.status === 'verified').length;
 
   return (
     <div className="container mx-auto p-6 space-y-6">
-      <Link to="/companies" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground">
+      <Link to="/customers" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground">
         <ArrowLeft className="w-4 h-4 mr-2" />
-        Back to Companies
+        Back to Customers
       </Link>
 
-      {/* Company Header */}
+      {/* Header */}
       <Card>
         <CardContent className="pt-6">
           <div className="flex items-start justify-between mb-6">
@@ -210,36 +136,50 @@ const CompanyDetail = () => {
               </div>
               <div>
                 <h1 className="text-3xl font-bold">{company.name}</h1>
-                <p className="text-muted-foreground">{company.industry}</p>
-                <Badge variant={company.status === 'active' ? 'default' : 'destructive'} className="mt-2">
-                  {company.status}
-                </Badge>
+                <p className="text-muted-foreground">
+                  {info.dba && `DBA: ${info.dba} · `}{info.entityType} · {company.industry}
+                </p>
+                <div className="flex items-center gap-2 mt-2">
+                  <Badge variant={company.status === 'active' ? 'default' : 'destructive'}>
+                    {company.status}
+                  </Badge>
+                  <span className="text-xs text-muted-foreground font-mono">{info.ein}</span>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="flex items-start gap-3">
               <MapPin className="w-5 h-5 text-muted-foreground mt-0.5" />
               <div>
-                <p className="text-sm text-muted-foreground">Location</p>
-                <p className="font-medium">{company.address}</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <Building2 className="w-5 h-5 text-muted-foreground mt-0.5" />
-              <div>
-                <p className="text-sm text-muted-foreground">Industry</p>
-                <p className="font-medium">{company.industry}</p>
+                <p className="text-sm text-muted-foreground">Address</p>
+                <p className="font-medium text-sm">{info.streetAddress}{info.suite && `, ${info.suite}`}</p>
+                <p className="text-sm text-muted-foreground">{info.city}, {info.state} {info.zipCode}</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <Calendar className="w-5 h-5 text-muted-foreground mt-0.5" />
               <div>
-                <p className="text-sm text-muted-foreground">Customer Since</p>
-                <p className="font-medium">
-                  {new Date(company.kpis.customerSince).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}
-                </p>
+                <p className="text-sm text-muted-foreground">Established</p>
+                <p className="font-medium">{new Date(info.dateEstablished).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}</p>
+                <p className="text-xs text-muted-foreground">Client since {new Date(company.kpis.customerSince).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <DollarSign className="w-5 h-5 text-muted-foreground mt-0.5" />
+              <div>
+                <p className="text-sm text-muted-foreground">Annual Revenue</p>
+                <p className="font-medium">${info.annualRevenue.toLocaleString()}</p>
+                <p className="text-xs text-muted-foreground">FY ending {info.fiscalYearEnd}</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <User className="w-5 h-5 text-muted-foreground mt-0.5" />
+              <div>
+                <p className="text-sm text-muted-foreground">Employees</p>
+                <p className="font-medium">{info.numberOfEmployees}</p>
+                <p className="text-xs text-muted-foreground">{info.ownershipPercentage}% ownership</p>
               </div>
             </div>
           </div>
@@ -247,7 +187,7 @@ const CompanyDetail = () => {
       </Card>
 
       {/* KPIs */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
@@ -255,13 +195,12 @@ const CompanyDetail = () => {
                 <Landmark className="w-6 h-6" style={{ color: 'hsl(185, 85%, 50%)' }} />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Total Revenue</p>
-                <p className="text-2xl font-bold">${company.kpis.totalRevenue.toLocaleString()}</p>
+                <p className="text-sm text-muted-foreground">Total Funded</p>
+                <p className="text-2xl font-bold">${company.kpis.totalFunded.toLocaleString()}</p>
               </div>
             </div>
           </CardContent>
         </Card>
-
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
@@ -269,48 +208,34 @@ const CompanyDetail = () => {
                 <Briefcase className="w-6 h-6" style={{ color: 'hsl(220, 90%, 55%)' }} />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Active Orders</p>
-                <p className="text-2xl font-bold">{company.kpis.activeOrders}</p>
+                <p className="text-sm text-muted-foreground">Applications</p>
+                <p className="text-2xl font-bold">{company.applications.length}</p>
+                <p className="text-xs text-muted-foreground">{company.kpis.activeApplications} active</p>
               </div>
             </div>
           </CardContent>
         </Card>
-
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-[hsl(260,85%,60%)]/10">
-                <Package className="w-6 h-6" style={{ color: 'hsl(260, 85%, 60%)' }} />
+                <FileText className="w-6 h-6" style={{ color: 'hsl(260, 85%, 60%)' }} />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Equipment in Use</p>
-                <p className="text-2xl font-bold">{company.kpis.totalEquipment} units</p>
+                <p className="text-sm text-muted-foreground">Documents on File</p>
+                <p className="text-2xl font-bold">{company.documents.length}</p>
+                <p className="text-xs text-muted-foreground">{verifiedDocs} verified</p>
               </div>
             </div>
           </CardContent>
         </Card>
-
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-[hsl(275,80%,65%)]/10">
-                <FileText className="w-6 h-6" style={{ color: 'hsl(275, 80%, 65%)' }} />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Contract Value</p>
-                <p className="text-2xl font-bold">${company.kpis.contractValue.toLocaleString()}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <div className={`p-2 rounded-lg ${company.kpis.paymentStatus === 'current' ? 'bg-[hsl(185,85%,50%)]/10' : 'bg-amber-500/10'}`}>
-                <CreditCard 
-                  className="w-6 h-6" 
-                  style={{ color: company.kpis.paymentStatus === 'current' ? 'hsl(185, 85%, 50%)' : 'hsl(38, 92%, 50%)' }} 
+                <CreditCard
+                  className="w-6 h-6"
+                  style={{ color: company.kpis.paymentStatus === 'current' ? 'hsl(185, 85%, 50%)' : 'hsl(38, 92%, 50%)' }}
                 />
               </div>
               <div>
@@ -324,175 +249,309 @@ const CompanyDetail = () => {
         </Card>
       </div>
 
-      {/* Tabs Section */}
-      <Tabs defaultValue="overview" className="w-full">
-        <TabsList>
-          <TabsTrigger value="overview">
-            <Building2 className="w-4 h-4 mr-2" />
-            Overview
-          </TabsTrigger>
-          <TabsTrigger value="orders">
-            <Briefcase className="w-4 h-4 mr-2" />
-            Orders ({company.orders.length})
-          </TabsTrigger>
-          <TabsTrigger value="contracts">
-            <FileText className="w-4 h-4 mr-2" />
-            Contracts ({company.contracts.length})
-          </TabsTrigger>
-        </TabsList>
+      {/* Accordion sections */}
+      <Card>
+        <CardContent className="pt-2 pb-2">
+          <Accordion type="multiple" defaultValue={["applications"]}>
 
-        <TabsContent value="overview" className="mt-6">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Representatives</CardTitle>
-                <AddRepresentativeDialog onAdd={handleAddRepresentative} />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {company.representatives.map((rep: Representative) => (
-                  <Card key={rep.id}>
-                    <CardContent className="pt-6">
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-white font-semibold">
-                          {rep.name.split(' ').map((n) => n[0]).join('')}
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-semibold">{rep.name}</h3>
-                          <p className="text-sm text-muted-foreground mb-3">{rep.role}</p>
-                          <div className="space-y-2">
-                            <div className="flex items-center gap-2 text-sm">
-                              <Mail className="w-4 h-4 text-muted-foreground" />
-                              <a href={`mailto:${rep.email}`} className="hover:underline">{rep.email}</a>
-                            </div>
-                            <div className="flex items-center gap-2 text-sm">
-                              <Phone className="w-4 h-4 text-muted-foreground" />
-                              <span>{rep.phone}</span>
-                            </div>
+            {/* AI Assessment */}
+            <AccordionItem value="ai-assessment">
+              <AccordionTrigger className="hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-primary" />
+                  <span>AI Client Assessment</span>
+                  <Badge variant="outline" className={`text-[10px] capitalize ml-1 ${riskColors[ai.riskLevel]}`}>
+                    {ai.riskLevel} risk
+                  </Badge>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-foreground leading-relaxed">{ai.summary}</p>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    {ai.highlights.map((h: AIHighlight) => (
+                      <div key={h.label} className="flex items-center gap-2 text-sm">
+                        {h.positive ? (
+                          <CheckCircle2 className="w-3.5 h-3.5 text-green-600 flex-shrink-0" />
+                        ) : (
+                          <XCircle className="w-3.5 h-3.5 text-amber-500 flex-shrink-0" />
+                        )}
+                        <span className="text-muted-foreground">{h.label}:</span>
+                        <span className="font-medium">{h.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-[10px] text-muted-foreground">
+                    Last updated {new Date(ai.lastUpdated).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </p>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* Business Info */}
+            <AccordionItem value="business-info">
+              <AccordionTrigger className="hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <Building2 className="w-4 h-4 text-muted-foreground" />
+                  <span>Identity & Business Info</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+                  {[
+                    { label: 'Company Legal Name', value: company.name },
+                    { label: 'DBA / Trade Name', value: info.dba },
+                    { label: 'EIN / Tax ID', value: info.ein, mono: true },
+                    { label: 'Entity Type', value: info.entityType },
+                    { label: 'Date Established', value: new Date(info.dateEstablished).toLocaleDateString() },
+                    { label: 'Industry / SIC Code', value: info.industryCode },
+                    { label: 'Number of Employees', value: String(info.numberOfEmployees) },
+                    { label: 'Ownership %', value: `${info.ownershipPercentage}%` },
+                    { label: 'Street Address', value: `${info.streetAddress}${info.suite ? `, ${info.suite}` : ''}` },
+                    { label: 'City / State / ZIP', value: `${info.city}, ${info.state} ${info.zipCode}` },
+                  ].filter(f => f.value).map(f => (
+                    <div key={f.label} className="flex items-baseline justify-between py-1 border-b border-border/50">
+                      <span className="text-sm text-muted-foreground">{f.label}</span>
+                      <span className={`text-sm font-medium text-right ${f.mono ? 'font-mono' : ''}`}>{f.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* Financials */}
+            <AccordionItem value="financials">
+              <AccordionTrigger className="hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-muted-foreground" />
+                  <span>Financial Details</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+                  {[
+                    { label: 'Annual Revenue (FY 2024)', value: `$${info.annualRevenue.toLocaleString()}` },
+                    { label: 'Fiscal Year End', value: info.fiscalYearEnd },
+                    { label: 'Total Revenue to Date', value: `$${company.kpis.totalRevenue.toLocaleString()}` },
+                    { label: 'Total Funded', value: `$${company.kpis.totalFunded.toLocaleString()}` },
+                  ].map(f => (
+                    <div key={f.label} className="flex items-baseline justify-between py-1 border-b border-border/50">
+                      <span className="text-sm text-muted-foreground">{f.label}</span>
+                      <span className="text-sm font-medium text-right">{f.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* Guarantor */}
+            <AccordionItem value="guarantor">
+              <AccordionTrigger className="hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-muted-foreground" />
+                  <span>Guarantor</span>
+                  <span className="text-muted-foreground font-normal text-sm ml-1">— {guarantor.name}</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-3">
+                  {[
+                    { label: 'Full Name', value: guarantor.name },
+                    { label: 'ID Number', value: guarantor.idNumber, mono: true },
+                    { label: 'Date of Birth', value: new Date(guarantor.dob).toLocaleDateString() },
+                  ].map(f => (
+                    <div key={f.label} className="flex items-baseline justify-between py-1 border-b border-border/50">
+                      <span className="text-sm text-muted-foreground">{f.label}</span>
+                      <span className={`text-sm font-medium text-right ${f.mono ? 'font-mono' : ''}`}>{f.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* Representatives */}
+            <AccordionItem value="representatives">
+              <AccordionTrigger className="hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <User className="w-4 h-4 text-muted-foreground" />
+                  <span>Representatives ({company.representatives.length})</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="flex items-center justify-end mb-3">
+                  <AddRepresentativeDialog onAdd={handleAddRepresentative} />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {company.representatives.map((rep: Representative) => (
+                    <div key={rep.id} className="flex items-start gap-4 p-4 border rounded-lg">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
+                        {rep.name.split(' ').map((n: string) => n[0]).join('')}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-sm">{rep.name}</h3>
+                        <p className="text-xs text-muted-foreground mb-2">{rep.role}</p>
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2 text-sm">
+                            <Mail className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+                            <a href={`mailto:${rep.email}`} className="hover:underline truncate">{rep.email}</a>
                           </div>
-                          <p className="text-xs text-muted-foreground mt-3">
-                            Joined {new Date(rep.joinDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
-                          </p>
+                          <div className="flex items-center gap-2 text-sm">
+                            <Phone className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+                            <span>{rep.phone}</span>
+                          </div>
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+                    </div>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
 
-        <TabsContent value="orders" className="mt-6">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-left py-3 px-4">Order ID</th>
-                      <th className="text-left py-3 px-4">Equipment</th>
-                      <th className="text-left py-3 px-4">Quantity</th>
-                      <th className="text-left py-3 px-4">Duration</th>
-                      <th className="text-left py-3 px-4">Status</th>
-                      <th className="text-right py-3 px-4">Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {company.orders.map((order: Order) => (
-                      <tr key={order.id} className="border-b hover:bg-muted/50">
-                        <td className="py-3 px-4">
-                          <Link to={`/orders/${order.id}`} className="font-medium hover:underline">{order.id}</Link>
-                        </td>
-                        <td className="py-3 px-4">
-                          <div className="flex items-center gap-2">
-                            <Package className="w-4 h-4 text-muted-foreground" />
-                            <span>{order.equipment}</span>
-                          </div>
-                        </td>
-                        <td className="py-3 px-4">{order.quantity} units</td>
-                        <td className="py-3 px-4">
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Calendar className="w-4 h-4" />
-                            <span>
-                              {new Date(order.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - 
-                              {new Date(order.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="py-3 px-4">
-                          <Badge variant={order.status === 'active' ? 'default' : order.status === 'pending' ? 'secondary' : 'outline'}>
-                            {order.status}
-                          </Badge>
-                        </td>
-                        <td className="py-3 px-4 text-right font-medium">${order.amount.toLocaleString()}</td>
+            {/* Applications */}
+            <AccordionItem value="applications">
+              <AccordionTrigger className="hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <Briefcase className="w-4 h-4 text-muted-foreground" />
+                  <span>Applications ({company.applications.length})</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground">ID</th>
+                        <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground">Type</th>
+                        <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground">Equipment</th>
+                        <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground">Duration</th>
+                        <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground">Status</th>
+                        <th className="text-right py-3 px-4 text-xs font-medium text-muted-foreground">Amount</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+                    </thead>
+                    <tbody>
+                      {company.applications.map((app: Application) => (
+                        <tr key={app.id} className="border-b last:border-0 hover:bg-muted/50">
+                          <td className="py-3 px-4">
+                            <Link to={`/applications/${app.id}`} className="font-medium text-sm hover:underline">{app.id}</Link>
+                          </td>
+                          <td className="py-3 px-4">
+                            <Badge variant="outline" className="text-xs font-normal">{app.type}</Badge>
+                          </td>
+                          <td className="py-3 px-4">
+                            <div className="flex items-center gap-2">
+                              <Package className="w-4 h-4 text-muted-foreground" />
+                              <span className="text-sm">{app.equipment}</span>
+                            </div>
+                            <span className="text-xs text-muted-foreground ml-6">{app.quantity} units</span>
+                          </td>
+                          <td className="py-3 px-4">
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <Calendar className="w-3.5 h-3.5" />
+                              <span>
+                                {new Date(app.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} –{' '}
+                                {new Date(app.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-3 px-4">
+                            {getAppStatusBadge(app.status)}
+                          </td>
+                          <td className="py-3 px-4 text-right font-medium text-sm">${app.amount.toLocaleString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
 
-        <TabsContent value="contracts" className="mt-6">
-          <Card>
-            <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-              <CardTitle>Contracts</CardTitle>
-              <Button onClick={handleCreateContract}>
-                <FileText className="w-4 h-4 mr-2" />
-                Create New Contract
-              </Button>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-left py-3 px-4">Contract ID</th>
-                      <th className="text-left py-3 px-4">Type</th>
-                      <th className="text-left py-3 px-4">Start Date</th>
-                      <th className="text-left py-3 px-4">End Date</th>
-                      <th className="text-left py-3 px-4">Status</th>
-                      <th className="text-right py-3 px-4">Value</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {company.contracts.map((contract: Contract) => (
-                      <tr key={contract.id} className="border-b hover:bg-muted/50">
-                        <td className="py-3 px-4">
-                          <Link to={`/contracts/${contract.id}`} className="font-medium hover:underline">{contract.id}</Link>
-                        </td>
-                        <td className="py-3 px-4">{contract.type}</td>
-                        <td className="py-3 px-4">
-                          <div className="flex items-center gap-2 text-sm">
-                            <Calendar className="w-4 h-4 text-muted-foreground" />
-                            <span>{new Date(contract.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+            {/* Documents */}
+            <AccordionItem value="documents" className="border-b-0">
+              <AccordionTrigger className="hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-muted-foreground" />
+                  <span>Documents ({company.documents.length})</span>
+                  <span className="text-muted-foreground font-normal text-sm ml-1">— {verifiedDocs}/{company.documents.length} verified</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <Accordion type="multiple">
+                  {company.documents.map((doc: CompanyDocument, idx: number) => (
+                    <AccordionItem key={doc.id} value={doc.id} className={idx === company.documents.length - 1 ? 'border-b-0' : ''}>
+                      <AccordionTrigger className="hover:no-underline py-3">
+                        <div className="flex items-center gap-3 flex-1 min-w-0 mr-2">
+                          {getDocStatusIcon(doc.status)}
+                          <div className="flex-1 min-w-0 text-left">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium text-sm">{doc.label}</span>
+                              {doc.ocrConfidence && (
+                                <Badge variant="outline" className="text-[10px] font-normal px-1.5 flex-shrink-0">
+                                  <ScanSearch className="w-3 h-3 mr-0.5" />
+                                  {doc.ocrConfidence}%
+                                </Badge>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
+                              <span>{doc.fileName}</span>
+                              <span>{doc.fileSize}</span>
+                              <span>via <Link to={`/applications/${doc.source}`} className="hover:underline" onClick={e => e.stopPropagation()}>{doc.source}</Link></span>
+                              <span>{new Date(doc.uploadDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                            </div>
                           </div>
-                        </td>
-                        <td className="py-3 px-4">
-                          <div className="flex items-center gap-2 text-sm">
-                            {contract.status === 'expiring' && <AlertCircle className="w-4 h-4 text-yellow-600" />}
-                            {contract.status !== 'expiring' && <Calendar className="w-4 h-4 text-muted-foreground" />}
-                            <span>{new Date(contract.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                          <div className="flex items-center gap-1 flex-shrink-0" onClick={e => e.stopPropagation()}>
+                            <Button variant="ghost" size="sm" className="h-7 px-2 text-xs">
+                              <Eye className="w-3.5 h-3.5 mr-1" />
+                              View
+                            </Button>
+                            <Button variant="ghost" size="sm" className="h-7 px-2 text-xs">
+                              <Download className="w-3.5 h-3.5 mr-1" />
+                              Download
+                            </Button>
                           </div>
-                        </td>
-                        <td className="py-3 px-4">
-                          <Badge variant={contract.status === 'active' ? 'default' : contract.status === 'expiring' ? 'secondary' : 'destructive'}>
-                            {contract.status}
-                          </Badge>
-                        </td>
-                        <td className="py-3 px-4 text-right font-medium">${contract.value.toLocaleString()}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="ml-7 space-y-3">
+                          {/* Extracted data */}
+                          {doc.extractedData && Object.keys(doc.extractedData).length > 0 && (
+                            <div className="bg-muted/50 rounded-lg p-3">
+                              <p className="text-xs font-semibold mb-2 flex items-center gap-1.5">
+                                <ScanSearch className="w-3.5 h-3.5" />
+                                Extracted Data (OCR)
+                              </p>
+                              <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-1.5">
+                                {Object.entries(doc.extractedData).map(([key, value]) => (
+                                  <div key={key} className="text-xs">
+                                    <span className="text-muted-foreground">{key}:</span>
+                                    <span className="ml-1 font-medium">{value}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Verification notes */}
+                          {doc.verificationNotes && doc.verificationNotes.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5">
+                              {doc.verificationNotes.map((note, nIdx) => (
+                                <span key={nIdx} className="text-xs px-2 py-0.5 rounded bg-green-500/10 text-green-700 flex items-center gap-1">
+                                  <CheckCircle2 className="w-3 h-3" />
+                                  {note}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </AccordionContent>
+            </AccordionItem>
+
+          </Accordion>
+        </CardContent>
+      </Card>
     </div>
   );
 };

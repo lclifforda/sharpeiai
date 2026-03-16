@@ -45,9 +45,9 @@ const PaymentDetail = () => {
         id: 'CNT-2025-001',
         name: 'Annual Equipment Lease',
       },
-      relatedOrder: {
-        id: 'ORD-001',
-        name: 'IoT Sensor Kit Order',
+      relatedApplication: {
+        id: 'APP-001',
+        name: 'IoT Sensor Kit Application',
       },
       timeline: [
         {
@@ -189,8 +189,8 @@ const PaymentDetail = () => {
       processingFee: 0,
       dueDate: '2025-11-10',
       paidDate: '2025-11-10',
-      relatedOrder: {
-        id: 'ORD-002',
+      relatedApplication: {
+        id: 'APP-002',
         name: 'Vendor Payment',
       },
       timeline: [
@@ -372,7 +372,7 @@ const PaymentDetail = () => {
               <Building2 className="w-5 h-5 text-muted-foreground mt-0.5" />
               <div>
                 <p className="text-sm text-muted-foreground">Company</p>
-                <Link to={`/companies/${payment.company.id}`} className="font-medium hover:underline">
+                <Link to={`/customers/${payment.company.id}`} className="font-medium hover:underline">
                   {payment.company.name}
                 </Link>
                 <p className="text-xs text-muted-foreground">{payment.company.contact}</p>
@@ -506,7 +506,7 @@ const PaymentDetail = () => {
           </Card>
 
           {/* Related Information */}
-          {(payment.relatedContract || payment.relatedOrder) && (
+          {(payment.relatedContract || payment.relatedApplication) && (
             <Card>
               <CardHeader>
                 <CardTitle>Related Information</CardTitle>
@@ -527,16 +527,16 @@ const PaymentDetail = () => {
                       </Link>
                     </div>
                   )}
-                  {payment.relatedOrder && (
+                  {payment.relatedApplication && (
                     <div className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50">
                       <div className="flex items-center gap-3">
                         <FileText className="w-5 h-5 text-muted-foreground" />
                         <div>
-                          <p className="text-sm font-medium">Related Order</p>
-                          <p className="text-xs text-muted-foreground">{payment.relatedOrder.name}</p>
+                          <p className="text-sm font-medium">Related Application</p>
+                          <p className="text-xs text-muted-foreground">{payment.relatedApplication.name}</p>
                         </div>
                       </div>
-                      <Link to={`/orders/${payment.relatedOrder.id}`}>
+                      <Link to={`/applications/${payment.relatedApplication.id}`}>
                         <Button variant="ghost" size="sm">View</Button>
                       </Link>
                     </div>
@@ -650,9 +650,9 @@ const PaymentDetail = () => {
                     <p className="font-medium">{payment.company.phone}</p>
                   </div>
                 )}
-                <Link to={`/companies/${payment.company.id}`}>
+                <Link to={`/customers/${payment.company.id}`}>
                   <Button variant="outline" size="sm" className="w-full mt-2">
-                    View Company Details
+                    View Client Details
                   </Button>
                 </Link>
               </div>

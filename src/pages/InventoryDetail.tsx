@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 interface Assignment {
   id: string;
-  orderId: string;
+  applicationId: string;
   company: string;
   startDate: string;
   endDate: string;
@@ -48,7 +48,7 @@ const InventoryDetail = () => {
         warranty: '2 years manufacturer warranty',
       },
       currentAssignment: {
-        orderId: 'ORD-001',
+        applicationId: 'APP-001',
         company: 'TechCorp Industries',
         companyId: '1',
         startDate: '2025-01-15',
@@ -58,7 +58,7 @@ const InventoryDetail = () => {
       assignments: [
         {
           id: '1',
-          orderId: 'ORD-001',
+          applicationId: 'APP-001',
           company: 'TechCorp Industries',
           startDate: '2025-01-15',
           endDate: '2025-07-15',
@@ -66,7 +66,7 @@ const InventoryDetail = () => {
         },
         {
           id: '2',
-          orderId: 'ORD-015',
+          applicationId: 'APP-015',
           company: 'DataFlow Systems',
           startDate: '2024-08-01',
           endDate: '2024-12-31',
@@ -74,7 +74,7 @@ const InventoryDetail = () => {
         },
         {
           id: '3',
-          orderId: 'ORD-008',
+          applicationId: 'APP-008',
           company: 'SmartFactory Inc',
           startDate: '2024-03-15',
           endDate: '2024-07-15',
@@ -259,15 +259,15 @@ const InventoryDetail = () => {
                 <div className="space-y-4">
                   <div>
                     <p className="text-sm text-muted-foreground mb-1">Assigned To</p>
-                    <Link to={`/companies/${item.currentAssignment.companyId}`} className="font-semibold text-lg hover:underline">
+                    <Link to={`/customers/${item.currentAssignment.companyId}`} className="font-semibold text-lg hover:underline">
                       {item.currentAssignment.company}
                     </Link>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm text-muted-foreground mb-1">Order ID</p>
-                      <Link to={`/orders/${item.currentAssignment.orderId}`} className="font-medium hover:underline">
-                        {item.currentAssignment.orderId}
+                      <p className="text-sm text-muted-foreground mb-1">Application ID</p>
+                      <Link to={`/applications/${item.currentAssignment.applicationId}`} className="font-medium hover:underline">
+                        {item.currentAssignment.applicationId}
                       </Link>
                     </div>
                     <div>
@@ -306,7 +306,7 @@ const InventoryDetail = () => {
                   <div key={assignment.id} className="flex items-center justify-between p-4 border rounded-lg">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <Link to={`/companies/${assignment.id}`} className="font-medium hover:underline">
+                        <Link to={`/customers/${assignment.id}`} className="font-medium hover:underline">
                           {assignment.company}
                         </Link>
                         <Badge variant={
@@ -322,8 +322,8 @@ const InventoryDetail = () => {
                           <Calendar className="w-4 h-4" />
                           <span>{new Date(assignment.startDate).toLocaleDateString()} - {new Date(assignment.endDate).toLocaleDateString()}</span>
                         </div>
-                        <Link to={`/orders/${assignment.orderId}`} className="hover:underline">
-                          {assignment.orderId}
+                        <Link to={`/applications/${assignment.applicationId}`} className="hover:underline">
+                          {assignment.applicationId}
                         </Link>
                       </div>
                     </div>
@@ -429,7 +429,7 @@ const InventoryDetail = () => {
               </Button>
               <Button variant="outline" className="w-full justify-start">
                 <Building2 className="w-4 h-4 mr-2" />
-                Assign to Order
+                Assign to Application
               </Button>
             </CardContent>
           </Card>

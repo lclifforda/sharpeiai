@@ -17,12 +17,14 @@ import {
   Play,
   Settings,
   Trash2,
+  Pencil,
   Calendar,
   TrendingUp,
   AlertTriangle,
   Mail,
   MessageSquare,
   Webhook,
+  Server,
   Users,
   ChevronDown,
   ChevronRight,
@@ -40,6 +42,7 @@ const ACTION_ICON_MAP: Record<string, any> = {
   slack: MessageSquare,
   email: Mail,
   webhook: Webhook,
+  lender_api: Server,
   crm_update: Users,
 };
 
@@ -155,6 +158,14 @@ const AutomationDetail = () => {
                 </span>
                 <Switch checked={isActive} onCheckedChange={handleToggle} />
               </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate(`/automations/${automation.pid}/edit`)}
+              >
+                <Pencil className="w-4 h-4 mr-2" />
+                Edit
+              </Button>
               <Button variant="outline" size="sm" onClick={handleTest}>
                 <Play className="w-4 h-4 mr-2" />
                 Test
@@ -279,6 +290,8 @@ const AutomationDetail = () => {
                       ? "bg-blue-500/10 border-blue-500/20"
                       : automation.actionType === "webhook"
                       ? "bg-orange-500/10 border-orange-500/20"
+                      : automation.actionType === "lender_api"
+                      ? "bg-cyan-500/10 border-cyan-500/20"
                       : "bg-purple-500/10 border-purple-500/20"
                   }`}>
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
@@ -288,6 +301,8 @@ const AutomationDetail = () => {
                         ? "bg-blue-500"
                         : automation.actionType === "webhook"
                         ? "bg-orange-500"
+                        : automation.actionType === "lender_api"
+                        ? "bg-cyan-500"
                         : "bg-purple-500"
                     }`}>
                       <ActionIcon className="w-4 h-4 text-white" />
@@ -300,6 +315,8 @@ const AutomationDetail = () => {
                           ? "text-blue-700"
                           : automation.actionType === "webhook"
                           ? "text-orange-700"
+                          : automation.actionType === "lender_api"
+                          ? "text-cyan-700"
                           : "text-purple-700"
                       }`}>
                         Action

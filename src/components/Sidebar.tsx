@@ -1,12 +1,12 @@
 import { NavLink } from "@/components/NavLink";
-import { MessageSquare, LayoutDashboard, Building2, ShoppingCart, FileText, CreditCard, Package, Sun } from "lucide-react";
-import sharpeiLogo from "@/assets/sharpei-logo.png";
+import { MessageSquare, LayoutDashboard, Building2, FileCheck, FileText, CreditCard, Package, Sun } from "lucide-react";
+import sharpeiLogo from "@/assets/sharpei-logo.webp";
 
 const navigationItems = [
   { name: "AI Assistant", path: "/", icon: MessageSquare },
   { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-  { name: "Companies", path: "/companies", icon: Building2 },
-  { name: "Orders", path: "/orders", icon: ShoppingCart },
+  { name: "Customers", path: "/customers", icon: Building2 },
+  { name: "Applications", path: "/applications", icon: FileCheck },
   { name: "Contracts", path: "/contracts", icon: FileText },
   { name: "Payments", path: "/payments", icon: CreditCard },
   { name: "Inventory", path: "/inventory", icon: Package },

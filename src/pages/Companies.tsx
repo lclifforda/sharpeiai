@@ -2,86 +2,135 @@ import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Building2, Search, Plus, MapPin, Users, FileText, TrendingUp } from "lucide-react";
+import { Building2, Search, Plus, MapPin, Users, FileText, TrendingUp, Upload } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import TableFilters from "@/components/TableFilters";
 import { ExportButton } from "@/components/ExportButton";
-import techcorpLogo from "@/assets/techcorp-logo.png";
+import { ImportCompaniesDialog, type ImportedCompany } from "@/components/ImportCompaniesDialog";
+import { getStoredCustomers } from "@/lib/customerStorage";
+import techcorpLogo from "@/assets/techcorp-logo.webp";
+
+const DEFAULT_CUSTOMERS = [
+  {
+    id: "1",
+    name: "TechCorp Industries",
+    industry: "Manufacturing",
+    location: "San Francisco, CA",
+    representatives: 2,
+    activeContracts: 3,
+    revenue: "$45,000",
+    status: "active",
+    logo: techcorpLogo as string | undefined,
+  },
+  {
+    id: "2",
+    name: "DataFlow Systems",
+    industry: "Logistics",
+    location: "Austin, TX",
+    representatives: 1,
+    activeContracts: 2,
+    revenue: "$28,500",
+    status: "active",
+    logo: undefined,
+  },
+  {
+    id: "3",
+    name: "SmartFactory Inc",
+    industry: "Manufacturing",
+    location: "Detroit, MI",
+    representatives: 3,
+    activeContracts: 4,
+    revenue: "$62,000",
+    status: "active",
+    logo: undefined,
+  },
+  {
+    id: "4",
+    name: "AutoMotive Solutions",
+    industry: "Automotive",
+    location: "Chicago, IL",
+    representatives: 1,
+    activeContracts: 1,
+    revenue: "$18,000",
+    status: "inactive",
+    logo: undefined,
+  },
+  {
+    id: "5",
+    name: "AgriTech Farms",
+    industry: "Agriculture",
+    location: "Des Moines, IA",
+    representatives: 2,
+    activeContracts: 2,
+    revenue: "$35,000",
+    status: "active",
+    logo: undefined,
+  },
+];
 
 const Companies = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const [importOpen, setImportOpen] = useState(false);
+  const storedCustomers = useMemo(() => getStoredCustomers(), []);
+  const defaultCustomers = useMemo(
+    () =>
+      DEFAULT_CUSTOMERS.filter(
+        (c) =>
+          !storedCustomers.some(
+            (s) => s.id === c.id || s.name.toLowerCase() === c.name.toLowerCase()
+          )
+      ),
+    [storedCustomers]
+  );
+  const [allCompanies, setAllCompanies] = useState(() => [
+    ...storedCustomers.map((s) => ({
+      id: s.id,
+      name: s.name,
+      industry: s.industry,
+      location: s.location,
+      representatives: s.representatives,
+      activeContracts: s.activeContracts,
+      revenue: s.revenue,
+      status: s.status,
+      logo: s.logo as string | undefined,
+    })),
+    ...defaultCustomers,
+  ]);
   const [filters, setFilters] = useState({
     industry: [] as string[],
     status: [] as string[],
   });
-  const allCompanies = [
-    { 
-      id: "1",
-      name: "TechCorp Industries", 
-      industry: "Manufacturing", 
-      location: "San Francisco, CA",
-      representatives: 2,
-      activeContracts: 3,
-      revenue: "$45,000",
-      status: "active",
-      logo: techcorpLogo,
-    },
-    { 
-      id: "2",
-      name: "DataFlow Systems", 
-      industry: "Logistics", 
-      location: "Austin, TX",
-      representatives: 1,
-      activeContracts: 2,
-      revenue: "$28,500",
-      status: "active",
+
+  const handleImport = (imported: ImportedCompany[]) => {
+    const nextId = allCompanies.length + 1;
+    const newCompanies = imported.map((c, i) => ({
+      id: String(nextId + i),
+      name: c.name,
+      industry: c.industry,
+      location: c.location,
+      representatives: c.contactName ? 1 : 0,
+      activeContracts: 0,
+      revenue: "$0",
+      status: c.status || "active",
       logo: undefined,
-    },
-    { 
-      id: "3",
-      name: "SmartFactory Inc", 
-      industry: "Manufacturing", 
-      location: "Detroit, MI",
-      representatives: 3,
-      activeContracts: 4,
-      revenue: "$62,000",
-      status: "active",
-      logo: undefined,
-    },
-    { 
-      id: "4",
-      name: "AutoMotive Solutions", 
-      industry: "Automotive", 
-      location: "Chicago, IL",
-      representatives: 1,
-      activeContracts: 1,
-      revenue: "$18,000",
-      status: "inactive",
-      logo: undefined,
-    },
-    { 
-      id: "5",
-      name: "AgriTech Farms", 
-      industry: "Agriculture", 
-      location: "Des Moines, IA",
-      representatives: 2,
-      activeContracts: 2,
-      revenue: "$35,000",
-      status: "active",
-      logo: undefined,
-    },
-  ];
+    }));
+    setAllCompanies((prev) => [...prev, ...newCompanies]);
+  };
+
+  const uniqueIndustries = useMemo(
+    () => [...new Set(allCompanies.map((c) => c.industry))].sort(),
+    [allCompanies]
+  );
 
   const filterGroups = [
     {
       label: "Industry",
-      options: [
-        { label: "Manufacturing", value: "Manufacturing", checked: filters.industry.includes("Manufacturing") },
-        { label: "Logistics", value: "Logistics", checked: filters.industry.includes("Logistics") },
-        { label: "Automotive", value: "Automotive", checked: filters.industry.includes("Automotive") },
-        { label: "Agriculture", value: "Agriculture", checked: filters.industry.includes("Agriculture") },
-      ]
+      options: uniqueIndustries.map((ind) => ({
+        label: ind,
+        value: ind,
+        checked: filters.industry.includes(ind),
+      })),
     },
     {
       label: "Status",
@@ -126,7 +175,7 @@ const Companies = () => {
       
       return matchesSearch && matchesIndustry && matchesStatus;
     });
-  }, [searchQuery, filters]);
+  }, [searchQuery, filters, allCompanies]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -135,18 +184,22 @@ const Companies = () => {
         <div className="px-6 py-5">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-semibold text-foreground">Companies</h1>
-              <p className="text-sm text-muted-foreground mt-1">Manage your clients and their representatives</p>
+              <h1 className="text-2xl font-semibold text-foreground">Customers</h1>
+              <p className="text-sm text-muted-foreground mt-1">Manage your customers and their representatives</p>
             </div>
             <div className="flex gap-2">
-              <ExportButton 
-                data={companies} 
-                filename="companies" 
+              <Button variant="outline" size="sm" onClick={() => setImportOpen(true)}>
+                <Upload className="w-4 h-4 mr-2" />
+                Import
+              </Button>
+              <ExportButton
+                data={companies}
+                filename="companies"
                 sheetName="Companies"
               />
-              <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+              <Button className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => navigate("/customers/new")}>
                 <Plus className="w-4 h-4 mr-2" />
-                Add Company
+                Add Customer
               </Button>
             </div>
           </div>
@@ -159,7 +212,7 @@ const Companies = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="p-4 rounded-xl border bg-card">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-muted-foreground">Total Companies</span>
+              <span className="text-sm text-muted-foreground">Total Customers</span>
               <Building2 className="h-4 w-4 text-muted-foreground" />
             </div>
             <div className="text-2xl font-semibold text-foreground">{totalCompanies}</div>
@@ -190,7 +243,7 @@ const Companies = () => {
               <FileText className="h-4 w-4 text-muted-foreground" />
             </div>
             <div className="text-2xl font-semibold text-foreground">{companiesWithContracts}</div>
-            <p className="text-xs text-muted-foreground mt-1">Companies with active deals</p>
+            <p className="text-xs text-muted-foreground mt-1">Customers with active deals</p>
           </div>
         </div>
 
@@ -199,7 +252,7 @@ const Companies = () => {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <Input
-              placeholder="Search companies..."
+              placeholder="Search customers..."
               className="pl-10 bg-card border-border"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -218,7 +271,7 @@ const Companies = () => {
         <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-float">
           {/* Table Header */}
           <div className="grid grid-cols-[2fr_1.2fr_1.8fr_1fr_1.2fr_1fr_0.8fr] gap-6 px-6 py-4 border-b border-border bg-muted/50">
-            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Company</div>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Customer</div>
             <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Industry</div>
             <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Location</div>
             <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Reps</div>
@@ -232,7 +285,7 @@ const Companies = () => {
             {companies.map((company) => (
               <div 
                 key={company.id} 
-                onClick={() => navigate(`/companies/${company.id}`)}
+                onClick={() => navigate(`/customers/${company.id}`)}
                 className="grid grid-cols-[2fr_1.2fr_1.8fr_1fr_1.2fr_1fr_0.8fr] gap-6 px-6 py-5 hover:bg-gradient-to-r hover:from-gradient-start/5 hover:to-gradient-purple/5 transition-colors cursor-pointer"
               >
                 <div className="flex items-center gap-3">
@@ -288,6 +341,12 @@ const Companies = () => {
           </div>
         </div>
       </div>
+
+      <ImportCompaniesDialog
+        open={importOpen}
+        onOpenChange={setImportOpen}
+        onImport={handleImport}
+      />
     </div>
   );
 };

@@ -8,8 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CheckCircle2, RotateCcw, ArrowUpCircle, Plus, Minus } from "lucide-react";
-import robotImage from "@/assets/humanoid-robot.png";
-import sharpeiLogo from "@/assets/sharpei-logo.png";
+import robotImage from "@/assets/humanoid-robot.webp";
+import sharpeiLogo from "@/assets/sharpei-logo.webp";
 
 const CheckoutV2 = () => {
   const navigate = useNavigate();

@@ -14,7 +14,8 @@ export type DocumentType =
   | 'personal_tax_return'
   | 'insurance_cert'
   | 'personal_id'
-  | 'ucc_filing';
+  | 'ucc_filing'
+  | 'equipment_spec_sheet';
 
 export type ProductType = 'lease' | 'financing';
 
@@ -51,6 +52,7 @@ export const DOCUMENT_LABELS: Record<DocumentType, string> = {
   insurance_cert: 'Insurance Certificate',
   personal_id: 'Government-Issued ID',
   ucc_filing: 'UCC-1 Filing Authorization',
+  equipment_spec_sheet: 'Equipment Tech Spec Sheet',
 };
 
 export const DOCUMENT_CATEGORIES: Record<string, string> = {

@@ -3,7 +3,7 @@ import { agentAPI } from '../services/ai/agentAPI';
 import type { AiMessage } from '../services/ai/types';
 
 interface UseAiAgentReturn {
-  sendMessage: (message: string, context?: any) => Promise<void>;
+  sendMessage: (message: string, context?: any) => Promise<AiMessage | null>;
   isLoading: boolean;
   isConnected: boolean;
   lastMessage: AiMessage | null;
@@ -30,7 +30,6 @@ export const useAiAgent = (sessionId: string): UseAiAgentReturn => {
       setConnectionStatus('connected');
     } catch (error) {
       console.error('Failed to initialize AI agent connection:', error);
-      // In demo mode, still allow connections even if initialization fails
       if (import.meta.env.VITE_DEMO_MODE === 'true') {
         setIsConnected(true);
         setConnectionStatus('connected');
@@ -41,33 +40,35 @@ export const useAiAgent = (sessionId: string): UseAiAgentReturn => {
     }
   };
 
-  const sendMessage = useCallback(async (message: string, context?: any) => {
-    if (isLoading) return;
+  const sendMessage = useCallback(async (message: string, context?: any): Promise<AiMessage | null> => {
+    if (isLoading) return null;
 
-    // In demo mode, allow sending messages even if not "connected" yet
-    // The API will handle demo mode responses
     if (!isConnected && import.meta.env.VITE_DEMO_MODE !== 'true') {
       console.warn('AI agent not connected yet');
-      return;
+      return null;
     }
 
     setIsLoading(true);
     try {
       const response = await agentAPI.sendMessage(sessionId, message, context);
-      
-      setLastMessage({
+
+      const aiMessage: AiMessage = {
         text: response.message,
         type: response.type || 'text',
         qualification: response.qualification,
         suggestions: response.suggestions
-      });
+      };
+      setLastMessage(aiMessage);
+      return aiMessage;
 
     } catch (error) {
       console.error('Failed to send message to AI agent:', error);
-      setLastMessage({
+      const errorMessage: AiMessage = {
         text: 'Sorry, I encountered an error processing your message. Please try again.',
         type: 'text'
-      });
+      };
+      setLastMessage(errorMessage);
+      return errorMessage;
     } finally {
       setIsLoading(false);
     }
