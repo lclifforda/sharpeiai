@@ -14,7 +14,7 @@ import {
   type Representative,
 } from "@/data/mockCompanies";
 
-import type { ChatMessage, ChatPhase, FormSectionData } from "./helpers";
+import type { ChatMessage, ChatPhase, FormSectionData, DocumentVerificationResult } from "./helpers";
 import { computeMonthly } from "./helpers";
 import {
   type ChatSectionId,
