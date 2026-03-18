@@ -50,9 +50,9 @@ resource "aws_amplify_app" "web" {
     VITE_SUPABASE_ANON_KEY  = var.supabase_anon_key
   }
 
-  # SPA rewrite: send all paths to index.html so client-side routing works
+  # Serve actual files (js, css, images, etc.) as-is
   custom_rule {
-    source = "/<*>"
+    source = "</^[^.]+$|\\.(?!(css|gif|ico|jpg|jpeg|js|png|txt|svg|woff|woff2|ttf|map|json|webp)$)([^.]+$)/>"
     target = "/index.html"
     status = "200"
   }
