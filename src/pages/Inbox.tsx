@@ -9,16 +9,16 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import {
   Mail, Paperclip, Clock, Search, Sparkles, ArrowRight,
-  CheckCircle2, Loader2, AlertCircle, FileText, Eye,
-} from "lucide-react";
+  CheckCircle2, Loader2, AlertCircle, FileText, Eye } from
+"lucide-react";
 import { DEMO_EMAILS, type InboxEmail, type EmailStatus } from "@/data/mockInboxData";
 import { formatDistanceToNow } from "date-fns";
 
-const STATUS_CONFIG: Record<EmailStatus, { label: string; variant: "default" | "secondary" | "destructive" | "outline"; icon: React.ReactNode }> = {
+const STATUS_CONFIG: Record<EmailStatus, {label: string;variant: "default" | "secondary" | "destructive" | "outline";icon: React.ReactNode;}> = {
   new: { label: "New", variant: "default", icon: <Mail className="w-3 h-3" /> },
   processing: { label: "Processing", variant: "secondary", icon: <Loader2 className="w-3 h-3 animate-spin" /> },
   converted: { label: "Converted", variant: "outline", icon: <CheckCircle2 className="w-3 h-3 text-emerald-600" /> },
-  failed: { label: "Failed", variant: "destructive", icon: <AlertCircle className="w-3 h-3" /> },
+  failed: { label: "Failed", variant: "destructive", icon: <AlertCircle className="w-3 h-3" /> }
 };
 
 function formatFileSize(bytes: number) {
@@ -54,53 +54,29 @@ export default function Inbox() {
             Incoming leasing requests are automatically processed by AI
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          {/* Connected accounts */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border bg-background">
-            <span className="text-xs text-muted-foreground mr-1">Connected:</span>
-            <div className="flex items-center gap-1.5">
-              <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
-                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
-                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                </svg>
-                <span className="text-[10px] font-medium text-emerald-700 dark:text-emerald-400">Gmail</span>
-              </div>
-              <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-500/10 border border-blue-500/20">
-                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
-                  <path d="M24 7.387v10.478c0 .23-.08.424-.238.58a.793.793 0 01-.58.239h-2.554V11.27L12 17.057 3.372 11.27v7.414H.818a.793.793 0 01-.58-.24A.793.793 0 010 17.866V7.387c0-.29.1-.53.298-.716.199-.186.43-.257.693-.213l.2.042L12 13.5l10.81-7 .199-.042c.264-.044.494.027.693.213.198.186.298.425.298.716z" fill="#0078D4"/>
-                </svg>
-                <span className="text-[10px] font-medium text-blue-700 dark:text-blue-400">Outlook</span>
-              </div>
-            </div>
-            <div className="border-l border-border h-4 mx-1" />
-            <div className="flex items-center gap-1">
-              <Mail className="w-3 h-3 text-muted-foreground" />
-              <span className="text-[10px] text-muted-foreground">luciaclifford@gosharpei.com</span>
-            </div>
-          </div>
+        <div className="flex items-center gap-2">
+          <Badge variant="secondary" className="gap-1">
+            <Sparkles className="w-3 h-3" />
+            AI Processing Active
+          </Badge>
         </div>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4">
         {[
-          { label: "New Emails", value: emails.filter((e) => e.status === "new").length, color: "text-primary" },
-          { label: "Processing", value: emails.filter((e) => e.status === "processing").length, color: "text-muted-foreground" },
-          { label: "Converted", value: emails.filter((e) => e.status === "converted").length, color: "text-emerald-600" },
-          { label: "Total Today", value: emails.length, color: "text-foreground" },
-        ].map((s) => (
-          <Card key={s.label}>
+        { label: "New Emails", value: emails.filter((e) => e.status === "new").length, color: "text-primary" },
+        { label: "Processing", value: emails.filter((e) => e.status === "processing").length, color: "text-muted-foreground" },
+        { label: "Converted", value: emails.filter((e) => e.status === "converted").length, color: "text-emerald-600" },
+        { label: "Total Today", value: emails.length, color: "text-foreground" }].
+        map((s) =>
+        <Card key={s.label}>
             <CardContent className="p-4">
               <p className="text-xs text-muted-foreground">{s.label}</p>
               <p className={`text-2xl font-semibold ${s.color}`}>{s.value}</p>
             </CardContent>
           </Card>
-        ))}
+        )}
       </div>
 
       {/* Main Content */}
@@ -115,13 +91,13 @@ export default function Inbox() {
                   placeholder="Search emails..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="pl-9 h-9"
-                />
+                  className="pl-9 h-9" />
+                
               </div>
               <Tabs value={statusFilter} onValueChange={setStatusFilter} className="mt-2">
                 <TabsList className="w-full grid grid-cols-4 h-8">
-                  <TabsTrigger value="all" className="text-xs">All</TabsTrigger>
-                  <TabsTrigger value="new" className="text-xs">New</TabsTrigger>
+                  <TabsTrigger value="all" className="text-xs">Completed Applications</TabsTrigger>
+                  <TabsTrigger value="new" className="text-xs">10</TabsTrigger>
                   <TabsTrigger value="processing" className="text-xs">Processing</TabsTrigger>
                   <TabsTrigger value="converted" className="text-xs">Converted</TabsTrigger>
                 </TabsList>
@@ -136,9 +112,9 @@ export default function Inbox() {
                       key={email.id}
                       onClick={() => setSelectedId(email.id)}
                       className={`px-4 py-3 cursor-pointer border-b transition-colors hover:bg-muted/50 ${
-                        selectedId === email.id ? "bg-accent" : ""
-                      }`}
-                    >
+                      selectedId === email.id ? "bg-accent" : ""}`
+                      }>
+                      
                       <div className="flex items-start justify-between gap-2 mb-1">
                         <p className="text-sm font-medium truncate">{email.fromName}</p>
                         <Badge variant={cfg.variant} className="gap-1 text-[10px] flex-shrink-0">
@@ -152,22 +128,22 @@ export default function Inbox() {
                           <Clock className="w-3 h-3" />
                           {formatDistanceToNow(email.receivedAt, { addSuffix: true })}
                         </span>
-                        {email.attachments.length > 0 && (
-                          <span className="flex items-center gap-1">
+                        {email.attachments.length > 0 &&
+                        <span className="flex items-center gap-1">
                             <Paperclip className="w-3 h-3" />
                             {email.attachments.length}
                           </span>
-                        )}
+                        }
                       </div>
-                    </div>
-                  );
+                    </div>);
+
                 })}
-                {filtered.length === 0 && (
-                  <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                {filtered.length === 0 &&
+                <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
                     <Mail className="w-8 h-8 mb-2 opacity-40" />
                     <p className="text-sm">No emails found</p>
                   </div>
-                )}
+                }
               </ScrollArea>
             </CardContent>
           </Card>
@@ -175,8 +151,8 @@ export default function Inbox() {
 
         {/* Email Preview */}
         <div className="col-span-8">
-          {selected ? (
-            <Card className="h-full">
+          {selected ?
+          <Card className="h-full">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div>
@@ -189,37 +165,37 @@ export default function Inbox() {
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    {selected.status === "new" && (
-                      <Button
-                        size="sm"
-                        onClick={() => navigate(`/inbox/${selected.id}/extract`)}
-                        className="gap-1"
-                      >
+                    {selected.status === "new" &&
+                  <Button
+                    size="sm"
+                    onClick={() => navigate(`/inbox/${selected.id}/extract`)}
+                    className="gap-1">
+                    
                         <Sparkles className="w-4 h-4" />
                         Extract & Process
                       </Button>
-                    )}
-                    {selected.status === "processing" && (
-                      <Button
-                        size="sm"
-                        onClick={() => navigate(`/inbox/${selected.id}/extract`)}
-                        className="gap-1"
-                      >
+                  }
+                    {selected.status === "processing" &&
+                  <Button
+                    size="sm"
+                    onClick={() => navigate(`/inbox/${selected.id}/extract`)}
+                    className="gap-1">
+                    
                         <Eye className="w-4 h-4" />
                         View Extraction
                       </Button>
-                    )}
-                    {selected.applicationId && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => navigate(`/inbox/application/${selected.applicationId}`)}
-                        className="gap-1"
-                      >
+                  }
+                    {selected.applicationId &&
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => navigate(`/inbox/application/${selected.applicationId}`)}
+                    className="gap-1">
+                    
                         <ArrowRight className="w-4 h-4" />
                         View Application
                       </Button>
-                    )}
+                  }
                   </div>
                 </div>
               </CardHeader>
@@ -233,18 +209,18 @@ export default function Inbox() {
                 </div>
 
                 {/* Attachments */}
-                {selected.attachments.length > 0 && (
-                  <div>
+                {selected.attachments.length > 0 &&
+              <div>
                     <h3 className="text-sm font-medium mb-2 flex items-center gap-1.5">
                       <Paperclip className="w-4 h-4" />
                       Attachments ({selected.attachments.length})
                     </h3>
                     <div className="grid grid-cols-2 gap-2">
-                      {selected.attachments.map((att) => (
-                        <div
-                          key={att.id}
-                          className="flex items-center gap-3 p-3 rounded-lg border bg-background"
-                        >
+                      {selected.attachments.map((att) =>
+                  <div
+                    key={att.id}
+                    className="flex items-center gap-3 p-3 rounded-lg border bg-background">
+                    
                           <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
                             <FileText className="w-5 h-5 text-muted-foreground" />
                           </div>
@@ -252,53 +228,53 @@ export default function Inbox() {
                             <p className="text-sm font-medium truncate">{att.fileName}</p>
                             <p className="text-xs text-muted-foreground">{formatFileSize(att.fileSize)}</p>
                           </div>
-                          {att.classification && (
-                            <Badge variant="secondary" className="text-[10px] capitalize">
+                          {att.classification &&
+                    <Badge variant="secondary" className="text-[10px] capitalize">
                               {att.classification.replace('_', ' ')}
                             </Badge>
-                          )}
+                    }
                         </div>
-                      ))}
+                  )}
                     </div>
                   </div>
-                )}
+              }
 
                 {/* Extracted Data Preview */}
-                {selected.extractedData && (
-                  <div className="mt-4">
+                {selected.extractedData &&
+              <div className="mt-4">
                     <h3 className="text-sm font-medium mb-2 flex items-center gap-1.5">
                       <Sparkles className="w-4 h-4" />
                       AI Extracted Fields
                     </h3>
                     <div className="grid grid-cols-2 gap-2">
-                      {Object.entries(selected.extractedData).map(([key, { value, confidence }]) => (
-                        <div key={key} className="flex items-center justify-between p-2 rounded border bg-background">
+                      {Object.entries(selected.extractedData).map(([key, { value, confidence }]) =>
+                  <div key={key} className="flex items-center justify-between p-2 rounded border bg-background">
                           <div>
                             <p className="text-xs text-muted-foreground capitalize">{key.replace(/_/g, ' ')}</p>
                             <p className="text-sm font-medium">{value || '—'}</p>
                           </div>
-                          {confidence > 0 && (
-                            <Badge variant={confidence >= 90 ? "outline" : "secondary"} className="text-[10px]">
+                          {confidence > 0 &&
+                    <Badge variant={confidence >= 90 ? "outline" : "secondary"} className="text-[10px]">
                               {confidence}%
                             </Badge>
-                          )}
+                    }
                         </div>
-                      ))}
+                  )}
                     </div>
                   </div>
-                )}
+              }
               </CardContent>
-            </Card>
-          ) : (
-            <Card className="h-full flex items-center justify-center">
+            </Card> :
+
+          <Card className="h-full flex items-center justify-center">
               <div className="text-center text-muted-foreground">
                 <Mail className="w-12 h-12 mx-auto mb-3 opacity-30" />
                 <p>Select an email to preview</p>
               </div>
             </Card>
-          )}
+          }
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }
