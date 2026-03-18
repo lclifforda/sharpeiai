@@ -75,7 +75,7 @@ module "lambda" {
   supabase_service_key = var.supabase_service_key
   supabase_anon_key    = var.supabase_anon_key
   database_url         = var.database_url
-  cors_origins         = "https://${local.domain},https://www.${local.domain}"
+  cors_origins         = "https://${local.domain},https://www.${local.domain},https://main.${module.amplify.default_domain}"
 
   depends_on = [module.secrets]
 }

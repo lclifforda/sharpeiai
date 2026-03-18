@@ -38,7 +38,7 @@ export const useAiAgent = (sessionId: string): UseAiAgentReturn => {
   const sendMessage = useCallback(async (message: string, context?: any): Promise<AiMessage | null> => {
     if (isLoading) return null;
 
-    if (!isConnected && import.meta.env.VITE_DEMO_MODE !== 'true') {
+    if (!isConnected) {
       console.warn('AI agent not connected yet');
       return null;
     }

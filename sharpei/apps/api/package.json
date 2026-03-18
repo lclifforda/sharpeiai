@@ -12,6 +12,7 @@
     "build:lambda": "pnpm build && npx ncc build dist/main.js -o lambda-bundle --minify && cd lambda-bundle && zip -r ../lambda.zip . -q"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.80.0",
     "@codegenie/serverless-express": "^4.17.1",
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",

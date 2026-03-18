@@ -8,3 +8,14 @@ dist
 .DS_Store
 coverage
 .vite
+
+# Terraform
+.terraform/
+*.tfplan
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+
+# Lambda build artifacts
+lambda.zip
+lambda-bundle/

@@ -12,6 +12,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { AutomationsModule } from './modules/automations/automations.module';
 import { PlatformConfigModule } from './modules/platform-config/platform-config.module';
 import { KnowledgeBaseModule } from './modules/knowledge-base/knowledge-base.module';
+import { AiModule } from './modules/ai/ai.module';
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { KnowledgeBaseModule } from './modules/knowledge-base/knowledge-base.mod
     AutomationsModule,
     PlatformConfigModule,
     KnowledgeBaseModule,
-    // Phase 4: AIModule
+    AiModule,
   ],
 })
 export class AppModule {}
