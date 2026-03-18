@@ -41,6 +41,11 @@ const navigationItems: { name: string; path: string; icon: React.FC<{ className?
   icon: Zap,
   resource: "automations",
 }, {
+  name: "Email Inbox",
+  path: "/inbox",
+  icon: Inbox,
+  resource: "inbox",
+}, {
   name: "AI Setup",
   path: "/settings",
   icon: Settings,
