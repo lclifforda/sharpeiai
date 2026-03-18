@@ -552,7 +552,7 @@ const ApplicationDetail = () => {
   // Which docs haven't been uploaded by the customer yet
   const missingDocs = useMemo(() => {
     const uploadedTypes = new Set(application.customerDocuments.map(d => d.type));
-    return enabledDocs.filter(d => !uploadedTypes.has(d.id));
+    return enabledDocs.filter(d => !uploadedTypes.has(d.id as DocumentType));
   }, [application.customerDocuments, enabledDocs]);
 
   const fields = editing ? editFields : application.fields;
