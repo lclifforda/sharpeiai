@@ -1,5 +1,5 @@
 import { NavLink } from "@/components/NavLink";
-import { MessageSquare, LayoutDashboard, Building2, FileCheck, Settings, Store, BookOpen, HelpCircle, Smartphone, Zap } from "lucide-react";
+import { MessageSquare, LayoutDashboard, Building2, FileCheck, Settings, Store, BookOpen, HelpCircle, Smartphone, Zap, Inbox } from "lucide-react";
 import sharpeiLogo from "@/assets/sharpei-logo.webp";
 import { useBranding } from "@/contexts/BrandingContext";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, SidebarHeader, useSidebar } from "@/components/ui/sidebar";
