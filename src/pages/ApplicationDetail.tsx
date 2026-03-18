@@ -21,7 +21,7 @@ import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { UploadedDocument, DOCUMENT_LABELS, DOCUMENT_CATEGORIES } from "@/types/documents";
+import { UploadedDocument, DOCUMENT_LABELS, DOCUMENT_CATEGORIES, type DocumentType } from "@/types/documents";
 import {
   FIELD_CATEGORY_LABELS,
   US_STATES,
