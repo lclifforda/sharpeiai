@@ -63,6 +63,7 @@ export default function Inbox() {
             </span>
             <span className="text-xs font-medium text-emerald-600 tracking-wide">Connected</span>
             <Separator orientation="vertical" className="h-3 bg-emerald-200/60" />
+            <img src={gmailLogo} alt="Gmail" className="h-4 w-4" />
             <span className="text-xs font-semibold text-foreground/70">Gmail</span>
           </div>
           <Separator orientation="vertical" className="h-5" />
