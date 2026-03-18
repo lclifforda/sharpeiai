@@ -10,6 +10,7 @@ const ALL_RESOURCES: Resource[] = [
   "assets",
   "merchants",
   "automations",
+  "inbox",
   "settings",
   "checkout",
   "team",
