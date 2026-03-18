@@ -82,8 +82,8 @@ export function AppSidebar() {
             ) : (
               <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0 overflow-hidden p-1">
                 <img
-                  src={bbvaLogo}
-                  alt="BBVA"
+                  src={logoSrc}
+                  alt={branding.companyName || "Company"}
                   className="w-full h-full object-contain"
                 />
               </div>

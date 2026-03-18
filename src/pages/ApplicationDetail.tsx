@@ -63,7 +63,7 @@ function transformStoredToDetail(stored: StoredApplication) {
   const appType = DEFAULT_PLATFORM_CONFIG.applicationTypes.find((t) => t.id === stored.type);
   const customerDocuments: UploadedDocument[] = (stored.documents || []).map((d, i) => ({
     id: `cd-${i + 1}`,
-    type: d.type,
+    type: d.type as DocumentType,
     fileName: d.fileName,
     uploadDate: new Date(stored.date),
     status: d.status as "verified" | "pending" | "rejected",
