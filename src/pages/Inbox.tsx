@@ -83,10 +83,6 @@ export default function Inbox() {
               <span className="text-[10px] text-muted-foreground">luciaclifford@gosharpei.com</span>
             </div>
           </div>
-          <Badge variant="secondary" className="gap-1">
-            <Sparkles className="w-3 h-3" />
-            AI Processing Active
-          </Badge>
         </div>
       </div>
 
