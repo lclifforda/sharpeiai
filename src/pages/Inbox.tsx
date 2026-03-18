@@ -54,11 +54,13 @@ export default function Inbox() {
             Incoming leasing requests are automatically processed by AI
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="secondary" className="gap-1">
-            <Sparkles className="w-3 h-3" />
-            AI Processing Active
+        <div className="flex items-center gap-3">
+          <Badge variant="secondary" className="gap-1.5 bg-red-500/10 text-red-600 border-red-200 hover:bg-red-500/15">
+            <Mail className="w-3 h-3" />
+            Gmail
           </Badge>
+          <Separator orientation="vertical" className="h-5" />
+          <span className="text-sm text-muted-foreground">luciaclifford@gosharpei.com</span>
         </div>
       </div>
 
