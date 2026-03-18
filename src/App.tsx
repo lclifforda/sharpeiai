@@ -91,6 +91,10 @@ const App = () => (
           <Route element={<PageLayout><ProtectedRoute resource="automations"><AutomationCreate /></ProtectedRoute></PageLayout>} path="/automations/new" />
           <Route element={<PageLayout><ProtectedRoute resource="automations"><AutomationEdit /></ProtectedRoute></PageLayout>} path="/automations/:id/edit" />
           <Route element={<PageLayout><ProtectedRoute resource="automations"><AutomationDetail /></ProtectedRoute></PageLayout>} path="/automations/:id" />
+          <Route element={<PageLayout><ProtectedRoute resource="inbox"><InboxPage /></ProtectedRoute></PageLayout>} path="/inbox" />
+          <Route element={<PageLayout><ProtectedRoute resource="inbox"><InboxExtract /></ProtectedRoute></PageLayout>} path="/inbox/:emailId/extract" />
+          <Route element={<PageLayout><ProtectedRoute resource="inbox"><InboxApplicationPage /></ProtectedRoute></PageLayout>} path="/inbox/application/:applicationId" />
+          <Route element={<InboxUploadPortal />} path="/inbox/upload/:applicationId" />
           <Route element={<PageLayout><ProtectedRoute resource="settings"><Settings /></ProtectedRoute></PageLayout>} path="/settings" />
           <Route element={<PageLayout><ProtectedRoute resource="team"><Account /></ProtectedRoute></PageLayout>} path="/account" />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
