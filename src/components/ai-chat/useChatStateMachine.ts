@@ -110,7 +110,7 @@ export function useChatStateMachine(config: ChatStateMachineConfig): ChatStateMa
 
   // Documents
   const [uploadedDocs, setUploadedDocs] = useState<Record<string, File | null>>({});
-  const [documentVerification, setDocumentVerification] = useState<Record<string, any>>({});
+  const [documentVerification, setDocumentVerification] = useState<Record<string, DocumentVerificationResult>>({});
   const [uploadAttempts, setUploadAttempts] = useState<Record<string, number>>({});
   const requiredDocuments = useMemo(() => getEnabledDocuments(applicationType), [applicationType]);
 
