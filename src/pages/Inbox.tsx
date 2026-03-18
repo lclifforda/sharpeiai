@@ -55,9 +55,12 @@ export default function Inbox() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Badge variant="secondary" className="gap-1.5 bg-red-500/10 text-red-600 border-red-200 hover:bg-red-500/15">
-            <Mail className="w-3 h-3" />
-            Gmail
+          <Badge variant="outline" className="gap-1.5 border-emerald-300 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/15">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+            Gmail Connected
           </Badge>
           <Separator orientation="vertical" className="h-5" />
           <span className="text-sm text-muted-foreground">luciaclifford@gosharpei.com</span>
