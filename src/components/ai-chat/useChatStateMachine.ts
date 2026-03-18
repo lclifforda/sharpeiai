@@ -14,7 +14,7 @@ import {
   type Representative,
 } from "@/data/mockCompanies";
 
-import type { ChatMessage, ChatPhase, FormSectionData } from "./helpers";
+import type { ChatMessage, ChatPhase, FormSectionData, DocumentVerificationResult } from "./helpers";
 import { computeMonthly } from "./helpers";
 import {
   type ChatSectionId,
@@ -110,7 +110,7 @@ export function useChatStateMachine(config: ChatStateMachineConfig): ChatStateMa
 
   // Documents
   const [uploadedDocs, setUploadedDocs] = useState<Record<string, File | null>>({});
-  const [documentVerification, setDocumentVerification] = useState<Record<string, any>>({});
+  const [documentVerification, setDocumentVerification] = useState<Record<string, DocumentVerificationResult>>({});
   const [uploadAttempts, setUploadAttempts] = useState<Record<string, number>>({});
   const requiredDocuments = useMemo(() => getEnabledDocuments(applicationType), [applicationType]);
 

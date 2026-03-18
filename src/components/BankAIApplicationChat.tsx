@@ -72,7 +72,7 @@ const BankAIApplicationChat = ({ applicationType: initialType }: BankAIApplicati
                         <DocumentUploadCards
                           documents={sm.requiredDocuments}
                           uploadedDocs={sm.uploadedDocs}
-                          documentVerification={sm.documentVerification}
+                          documentVerification={sm.documentVerification as any}
                           onUpload={sm.handleFileUpload}
                           onRemove={sm.handleRemoveFile}
                         />

@@ -11,7 +11,8 @@ export type Resource =
   | "settings"
   | "checkout"
   | "team"
-  | "roles";
+  | "roles"
+  | "inbox";
 
 export type Action = "view" | "create" | "edit" | "delete" | "export";
 

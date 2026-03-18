@@ -686,7 +686,7 @@ export const AUTOMATION_TEMPLATES: AutomationTemplate[] = [
 
 // --- Connections (saved credentials) ---
 
-export type PlatformType = "slack" | "teams" | "email" | "webhook" | "hubspot" | "salesforce" | "pipedrive" | "zoho" | "monday" | "dynamics";
+export type PlatformType = "slack" | "teams" | "email" | "webhook" | "hubspot" | "salesforce" | "pipedrive" | "zoho" | "monday" | "dynamics" | "oracle";
 
 export interface Connection {
   id: string;

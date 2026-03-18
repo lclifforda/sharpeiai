@@ -13,6 +13,7 @@ const RESOURCE_LABELS: Record<Resource, string> = {
   assets: "Assets",
   merchants: "Vendors",
   automations: "Automations",
+  inbox: "Email Inbox",
   settings: "Settings",
   checkout: "Checkout",
   team: "Team Members",

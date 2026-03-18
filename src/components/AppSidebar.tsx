@@ -1,5 +1,5 @@
 import { NavLink } from "@/components/NavLink";
-import { MessageSquare, LayoutDashboard, Building2, FileCheck, Settings, Store, BookOpen, HelpCircle, Smartphone, Zap } from "lucide-react";
+import { MessageSquare, LayoutDashboard, Building2, FileCheck, Settings, Store, BookOpen, HelpCircle, Smartphone, Zap, Inbox } from "lucide-react";
 import sharpeiLogo from "@/assets/sharpei-logo.webp";
 import { useBranding } from "@/contexts/BrandingContext";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarFooter, SidebarHeader, useSidebar } from "@/components/ui/sidebar";
@@ -40,6 +40,11 @@ const navigationItems: { name: string; path: string; icon: React.FC<{ className?
   path: "/automations",
   icon: Zap,
   resource: "automations",
+}, {
+  name: "Email Inbox",
+  path: "/inbox",
+  icon: Inbox,
+  resource: "inbox",
 }, {
   name: "AI Setup",
   path: "/settings",
@@ -82,8 +87,8 @@ export function AppSidebar() {
             ) : (
               <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0 overflow-hidden p-1">
                 <img
-                  src={bbvaLogo}
-                  alt="BBVA"
+                  src={logoSrc}
+                  alt={branding.companyName || "Company"}
                   className="w-full h-full object-contain"
                 />
               </div>

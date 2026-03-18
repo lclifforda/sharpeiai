@@ -21,7 +21,7 @@ import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { UploadedDocument, DOCUMENT_LABELS, DOCUMENT_CATEGORIES } from "@/types/documents";
+import { UploadedDocument, DOCUMENT_LABELS, DOCUMENT_CATEGORIES, type DocumentType } from "@/types/documents";
 import {
   FIELD_CATEGORY_LABELS,
   US_STATES,
@@ -63,7 +63,7 @@ function transformStoredToDetail(stored: StoredApplication) {
   const appType = DEFAULT_PLATFORM_CONFIG.applicationTypes.find((t) => t.id === stored.type);
   const customerDocuments: UploadedDocument[] = (stored.documents || []).map((d, i) => ({
     id: `cd-${i + 1}`,
-    type: d.type,
+    type: d.type as DocumentType,
     fileName: d.fileName,
     uploadDate: new Date(stored.date),
     status: d.status as "verified" | "pending" | "rejected",
@@ -552,7 +552,7 @@ const ApplicationDetail = () => {
   // Which docs haven't been uploaded by the customer yet
   const missingDocs = useMemo(() => {
     const uploadedTypes = new Set(application.customerDocuments.map(d => d.type));
-    return enabledDocs.filter(d => !uploadedTypes.has(d.id));
+    return enabledDocs.filter(d => !uploadedTypes.has(d.id as DocumentType));
   }, [application.customerDocuments, enabledDocs]);
 
   const fields = editing ? editFields : application.fields;
