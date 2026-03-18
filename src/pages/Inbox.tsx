@@ -12,6 +12,7 @@ import {
   CheckCircle2, Loader2, AlertCircle, FileText, Eye } from
 "lucide-react";
 import { DEMO_EMAILS, type InboxEmail, type EmailStatus } from "@/data/mockInboxData";
+import gmailLogo from "@/assets/gmail-logo.png";
 import { formatDistanceToNow } from "date-fns";
 
 const STATUS_CONFIG: Record<EmailStatus, {label: string;variant: "default" | "secondary" | "destructive" | "outline";icon: React.ReactNode;}> = {
