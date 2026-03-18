@@ -825,7 +825,7 @@ const ApplicationDetail = () => {
                             </div>
                           ))}
                         </div>
-                        <div className="flex items-center justify-between pt-4">
+                         <div className="flex items-center justify-between pt-4">
                           <span className="text-sm font-medium text-muted-foreground">Total Equipment Cost</span>
                           <span className="text-lg font-semibold">${equipmentTotal.toLocaleString()}</span>
                         </div>
@@ -835,6 +835,109 @@ const ApplicationDetail = () => {
                     )}
                   </CardContent>
                 </Card>
+
+                {/* Asset Memo */}
+                {hasEquipment && currentEquipment.length > 0 && !editing && (
+                  <Card className="mt-4">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center gap-2">
+                        <div className="h-7 w-7 rounded-md bg-primary/10 flex items-center justify-center">
+                          <FileText className="w-4 h-4 text-primary" />
+                        </div>
+                        <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Asset Memo</CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-5">
+                      {currentEquipment.map((item, idx) => {
+                        const totalCost = item.quantity * item.unitCost;
+                        const usefulLifeYears = 5;
+                        const residualPct = 15;
+                        const residualValue = Math.round(totalCost * (residualPct / 100));
+                        const depreciationAnnual = Math.round((totalCost - residualValue) / usefulLifeYears);
+                        return (
+                          <div key={idx} className="rounded-lg border overflow-hidden">
+                            {/* Header */}
+                            <div className="px-4 py-3 bg-muted/40 border-b">
+                              <div className="flex items-center justify-between">
+                                <h4 className="font-semibold text-sm">{item.description}</h4>
+                                <span className="text-xs font-mono bg-muted px-2 py-0.5 rounded text-muted-foreground">ASSET-{String(idx + 1).padStart(3, '0')}</span>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-0.5">Vendor: {item.vendor || '—'}</p>
+                            </div>
+
+                            {/* Specifications */}
+                            <div className="p-4 space-y-4">
+                              <div>
+                                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Specifications</p>
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                  {[
+                                    { label: 'Model', value: item.description.split(' ').pop() || '—' },
+                                    { label: 'Category', value: 'Industrial Equipment' },
+                                    { label: 'Condition', value: 'New' },
+                                    { label: 'Quantity', value: String(item.quantity) },
+                                  ].map(spec => (
+                                    <div key={spec.label} className="rounded-md bg-muted/30 px-3 py-2">
+                                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{spec.label}</p>
+                                      <p className="text-sm font-medium mt-0.5">{spec.value}</p>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+
+                              {/* Valuation */}
+                              <div>
+                                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Valuation & Residual</p>
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                  {[
+                                    { label: 'Total Cost', value: `$${totalCost.toLocaleString()}` },
+                                    { label: 'Residual Value', value: `$${residualValue.toLocaleString()}` },
+                                    { label: 'Residual %', value: `${residualPct}%` },
+                                    { label: 'Useful Life', value: `${usefulLifeYears} years` },
+                                  ].map(val => (
+                                    <div key={val.label} className="rounded-md bg-muted/30 px-3 py-2">
+                                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{val.label}</p>
+                                      <p className="text-sm font-medium mt-0.5">{val.value}</p>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+
+                              {/* Depreciation */}
+                              <div>
+                                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Depreciation Schedule (Straight-Line)</p>
+                                <div className="rounded-lg border overflow-hidden">
+                                  <div className="grid grid-cols-4 gap-4 px-4 py-2 bg-muted/50 border-b text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+                                    <div>Year</div><div className="text-right">Depreciation</div><div className="text-right">Accumulated</div><div className="text-right">Book Value</div>
+                                  </div>
+                                  {Array.from({ length: usefulLifeYears }, (_, y) => {
+                                    const accumulated = depreciationAnnual * (y + 1);
+                                    const bookValue = totalCost - accumulated;
+                                    return (
+                                      <div key={y} className="grid grid-cols-4 gap-4 px-4 py-2 border-b last:border-b-0 text-sm">
+                                        <div className="text-muted-foreground">Year {y + 1}</div>
+                                        <div className="text-right">${depreciationAnnual.toLocaleString()}</div>
+                                        <div className="text-right">${accumulated.toLocaleString()}</div>
+                                        <div className="text-right font-medium">${Math.max(bookValue, residualValue).toLocaleString()}</div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+
+                              {/* Market Notes */}
+                              <div className="rounded-md bg-primary/5 border border-primary/10 px-4 py-3">
+                                <p className="text-xs font-semibold text-primary mb-1">Market Intelligence</p>
+                                <p className="text-xs text-muted-foreground leading-relaxed">
+                                  Strong secondary market demand for {item.description}. Average resale value for similar assets at {usefulLifeYears}-year mark is 12–18% of original cost. Vendor ({item.vendor || 'N/A'}) offers certified refurbishment program, supporting residual assumptions.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </CardContent>
+                  </Card>
+                )}
               </TabsContent>
 
               {/* Documents tab */}
