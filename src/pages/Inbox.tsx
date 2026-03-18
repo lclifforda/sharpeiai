@@ -105,8 +105,8 @@ export default function Inbox() {
               </div>
               <Tabs value={statusFilter} onValueChange={setStatusFilter} className="mt-2">
                 <TabsList className="w-full grid grid-cols-4 h-8">
-                  <TabsTrigger value="all" className="text-xs">Completed Applications</TabsTrigger>
-                  <TabsTrigger value="new" className="text-xs">10</TabsTrigger>
+                  <TabsTrigger value="all" className="text-xs">All</TabsTrigger>
+                  <TabsTrigger value="new" className="text-xs">New</TabsTrigger>
                   <TabsTrigger value="processing" className="text-xs">Processing</TabsTrigger>
                   <TabsTrigger value="converted" className="text-xs">Converted</TabsTrigger>
                 </TabsList>
