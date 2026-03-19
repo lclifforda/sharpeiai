@@ -22,7 +22,7 @@ export interface ChatSectionDef {
 }
 
 interface SectionContext {
-  flowType: "merchant" | "bank";
+  flowType: "vendor" | "bank";
   applicationType: string;
   formData: Record<string, string>;
   equipmentValue: number;
@@ -112,7 +112,7 @@ export interface ResolvedSection {
 }
 
 export function getSectionsForFlow(
-  flowType: "merchant" | "bank",
+  flowType: "vendor" | "bank",
   applicationType: string,
   formData: Record<string, string>,
   equipmentValue: number

@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import FieldRenderer from "../FieldRenderer";
-import CompanyRecognitionCard from "@/components/CompanyRecognitionCard";
+import CustomerRecognitionCard from "@/components/CustomerRecognitionCard";
 import type { AuthState } from "../types";
 import type { EnabledField } from "@/services/platformConfigMockData";
 
@@ -51,7 +51,7 @@ export default function CompanyNameSection({
           />
         </div>
         {authState.status === "recognized" && (
-          <CompanyRecognitionCard
+          <CustomerRecognitionCard
             companyName={formData.companyName || ""}
             email={formData.contactEmail || ""}
             onVerified={onVerified}

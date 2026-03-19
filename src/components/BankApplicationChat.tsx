@@ -7,11 +7,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MessageCircle, Send, Shield, Clock, Sparkles } from "lucide-react";
 import { useBranding } from "@/contexts/BrandingContext";
-import { findCompanyByName, findCompanyByRepEmail } from "@/data/mockCompanies";
+import { findCompanyByName, findCompanyByRepEmail } from "@/data/mockCustomers";
 import { agentAPI } from "@/services/ai/agentAPI";
 import { generateCryptoId } from "@/lib/idGenerator";
 import { MarkdownText } from "@/components/MarkdownText";
-import CompanyRecognitionCard from "@/components/CompanyRecognitionCard";
+import CustomerRecognitionCard from "@/components/CustomerRecognitionCard";
 import { TypingIndicator } from "@/components/chat";
 
 interface Message {
@@ -35,7 +35,7 @@ const BankApplicationChat = () => {
     ownershipPercentage: "",
   });
 
-  // ── Auth state (for CompanyRecognitionCard) ──
+  // ── Auth state (for CustomerRecognitionCard) ──
   const [authState, setAuthState] = useState<{
     status: "none" | "recognized" | "verified";
   }>({ status: "none" });
@@ -272,7 +272,7 @@ const BankApplicationChat = () => {
 
           {/* Company Recognition Card */}
           {authState.status !== "none" && (
-            <CompanyRecognitionCard
+            <CustomerRecognitionCard
               companyName={formData.companyName}
               email={formData.email}
               onVerified={handleVerified}

@@ -70,9 +70,9 @@ export type ChatPhase =
   | 'company_auth'    // sub-phases: recognized, rep_select, otp
   | 'section_form'    // inline form card for current section
   | 'document_upload'
-  | 'offers'          // merchant: offer type, term selection, offer display
-  | 'contract'        // merchant: contract signature
-  | 'complete'        // merchant: done
+  | 'offers'          // vendor: offer type, term selection, offer display
+  | 'contract'        // vendor: contract signature
+  | 'complete'        // vendor: done
   | 'submitted'       // bank: done
   | 'disqualified';
 

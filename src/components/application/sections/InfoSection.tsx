@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Upload, FileCheck, X, File } from "lucide-react";
 import FieldRenderer from "../FieldRenderer";
-import CompanyRecognitionCard from "@/components/CompanyRecognitionCard";
+import CustomerRecognitionCard from "@/components/CustomerRecognitionCard";
 import { FIELD_CATEGORY_LABELS, type EnabledField } from "@/services/platformConfigMockData";
 import type { AuthState } from "../types";
 
@@ -82,7 +82,7 @@ export default function InfoSection({
 
       {/* Company Recognition Card — only show when recognized but not yet verified */}
       {authState.status === "recognized" && (
-        <CompanyRecognitionCard
+        <CustomerRecognitionCard
           companyName={formData.companyName || ""}
           email={formData.contactEmail || ""}
           onVerified={onVerified}

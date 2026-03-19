@@ -85,7 +85,7 @@ Would you like me to provide details on a specific equipment category or help yo
 - Resale vs Forecast: 104% (exceeding expectations)
 - Circularity/Reuse Rate: 68%
 
-Would you like to drill down into specific merchants, view the full financial dashboard, or analyze payment patterns?`;
+Would you like to drill down into specific vendors, view the full financial dashboard, or analyze payment patterns?`;
   }
 
   // Flow 3: Active Leases
@@ -380,9 +380,9 @@ Would you like to explore any specific area \u2014 risk analysis, vendor details
 Would you like to look at a specific vendor's risk profile, payment patterns, or residual value tracking?`;
   }
 
-  // Flow 8: Vendor / Merchant performance
+  // Flow 8: Vendor / Vendor performance
   if (
-    (lowerMessage.includes('vendor') || lowerMessage.includes('merchant') || lowerMessage.includes('supplier')) &&
+    (lowerMessage.includes('vendor') || lowerMessage.includes('vendor') || lowerMessage.includes('supplier')) &&
     (lowerMessage.includes('performance') || lowerMessage.includes('top') || lowerMessage.includes('best') || lowerMessage.includes('show') || lowerMessage.includes('list') || lowerMessage.includes('how'))
   ) {
     return `Here's your vendor performance breakdown:

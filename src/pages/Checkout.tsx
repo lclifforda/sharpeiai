@@ -44,7 +44,7 @@ const Checkout = () => {
   const [selectedImage, setSelectedImage] = useState(0);
 
   // View mode
-  const [viewMode, setViewMode] = useState<"merchant" | "bank">("merchant");
+  const [viewMode, setViewMode] = useState<"vendor" | "bank">("vendor");
 
   // Bank view state
   const [bankMethod, setBankMethod] = useState<"ai" | "traditional" | null>(null);
@@ -55,7 +55,7 @@ const Checkout = () => {
     updateContext({
       page: 'checkout',
       viewMode,
-      ...(viewMode === 'merchant' ? {
+      ...(viewMode === 'vendor' ? {
         equipmentSummary: 'Humanoid Robot',
         equipmentTotal: productPrice,
       } : {}),
@@ -139,18 +139,18 @@ const Checkout = () => {
       <div className="max-w-7xl mx-auto">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-3xl font-bold text-foreground">
-            {viewMode === "merchant" ? "Merchant Checkout Preview" : "Bank Application Preview"}
+            {viewMode === "vendor" ? "Vendor Checkout Preview" : "Bank Application Preview"}
           </h1>
           <div className="flex items-center gap-1 p-1 bg-muted rounded-lg">
             <button
-              onClick={() => { setViewMode("merchant"); setBankMethod(null); }}
+              onClick={() => { setViewMode("vendor"); setBankMethod(null); }}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                viewMode === "merchant"
+                viewMode === "vendor"
                   ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              Merchant View
+              Vendor View
             </button>
             <button
               onClick={() => setViewMode("bank")}
@@ -165,13 +165,13 @@ const Checkout = () => {
           </div>
         </div>
 
-        {viewMode === "merchant" ? (
+        {viewMode === "vendor" ? (
         <div className="max-w-6xl mx-auto">
             <div className="space-y-6">
               {/* Product Card */}
               <Card>
                 <CardContent className="p-6">
-                  {/* Merchant header inside checkout preview */}
+                  {/* Vendor header inside checkout preview */}
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
                       <div className="h-9 w-9 rounded-md bg-background flex items-center justify-center border border-border overflow-hidden">

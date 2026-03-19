@@ -6,7 +6,7 @@ export type Resource =
   | "contracts"
   | "payments"
   | "assets"
-  | "merchants"
+  | "vendors"
   | "automations"
   | "settings"
   | "checkout"

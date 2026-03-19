@@ -8,21 +8,21 @@ interface UseFlowConfigParams {
 
 export function useFlowConfig({ embedded, orderDetails }: UseFlowConfigParams): FlowConfig {
   return useMemo(() => {
-    // If product context exists (quantity, term, etc.) → merchant flow
+    // If product context exists (quantity, term, etc.) → vendor flow
     // If embedded with no product context → bank flow
-    const flowType: FlowType = orderDetails ? "merchant" : "bank";
+    const flowType: FlowType = orderDetails ? "vendor" : "bank";
 
-    if (flowType === "merchant") {
+    if (flowType === "vendor") {
       return {
-        flowType: "merchant",
+        flowType: "vendor",
         embedded: !!embedded,
         features: {
-          splitSections: false,       // merchant keeps combined info+docs step
+          splitSections: false,       // vendor keeps combined info+docs step
           enableOCR: true,            // OCR verification on upload
           enableOffers: true,         // offer generation after form
           enableContract: true,       // contract signature
           enableEquipmentChat: false, // equipment from checkout context
-          enablePreQual: true,        // pre-qual added to merchant flow
+          enablePreQual: true,        // pre-qual added to vendor flow
           enableLightweightDocs: false,
           enableOrderSummary: true,   // right sidebar
         },

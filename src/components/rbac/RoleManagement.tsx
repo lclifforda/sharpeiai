@@ -11,7 +11,7 @@ const RESOURCE_LABELS: Record<Resource, string> = {
   contracts: "Contracts",
   payments: "Payments",
   assets: "Assets",
-  merchants: "Vendors",
+  vendors: "Vendors",
   automations: "Automations",
   inbox: "Email Inbox",
   settings: "Settings",

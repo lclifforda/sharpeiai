@@ -237,7 +237,7 @@ export const EVENT_CATEGORIES: EventCategory[] = [
     label: "Customers",
     events: [
       { value: "customer_created", label: "Customer Created" },
-      { value: "vendor_created", label: "Vendor / Merchant Created" },
+      { value: "vendor_created", label: "Vendor / Vendor Created" },
     ],
   },
   {
@@ -417,7 +417,7 @@ export const AUTOMATION_TEMPLATES: AutomationTemplate[] = [
   {
     slug: "crm-sync-vendor",
     name: "Sync Vendor to CRM",
-    description: "Upload vendor/merchant contact & company information to your CRM",
+    description: "Upload vendor/vendor contact & company information to your CRM",
     category: "crm",
     icon: "Cloud",
     eventType: "vendor_created",

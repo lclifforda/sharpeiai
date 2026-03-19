@@ -16,8 +16,8 @@ import {
   getEnabledApplicationTypes,
   type EnabledField,
 } from "@/services/platformConfigMockData";
-import CompanyRecognitionCard from "@/components/CompanyRecognitionCard";
-import { findCompanyByName, findCompanyByRepEmail } from "@/data/mockCompanies";
+import CustomerRecognitionCard from "@/components/CustomerRecognitionCard";
+import { findCompanyByName, findCompanyByRepEmail } from "@/data/mockCustomers";
 
 const ENTITY_TYPE_OPTIONS = ["LLC", "Corporation", "S-Corporation", "Sole Proprietor", "Partnership", "Non-Profit"];
 
@@ -437,7 +437,7 @@ const ApplicationCreate = () => {
 
       {/* Company Recognition Card */}
       {(authState.status === 'recognized' || authState.status === 'verified') && (
-        <CompanyRecognitionCard
+        <CustomerRecognitionCard
           companyName={formData.companyName || ""}
           email={formData.contactEmail || ""}
           onVerified={handleVerified}

@@ -10,9 +10,9 @@ import {
   findCompanyByName,
   maskEmail,
   DEMO_BUSINESS_DATA,
-  type CompanyDetail,
+  type CustomerDetail,
   type Representative,
-} from "@/data/mockCompanies";
+} from "@/data/mockCustomers";
 
 import type { ChatMessage, ChatPhase, FormSectionData, DocumentVerificationResult } from "./helpers";
 import { computeMonthly } from "./helpers";
@@ -26,7 +26,7 @@ import {
 // ── Config ───────────────────────────────────────────────────────────────
 
 export interface ChatStateMachineConfig {
-  flowType: "merchant" | "bank";
+  flowType: "vendor" | "bank";
   applicationType: string;
   orderDetails?: {
     quantity: number;
@@ -67,7 +67,7 @@ export interface ChatStateMachineReturn {
   // Resolved application type (may be set conversationally in bank flow)
   applicationType: string;
 
-  // Merchant-specific
+  // Vendor-specific
   lastOffer: { lender: string; rate: number; term: number; down: number; estMonthly: number } | null;
   applicationStep: string;
 }
@@ -93,8 +93,8 @@ export function useChatStateMachine(config: ChatStateMachineConfig): ChatStateMa
   // Form data (flat key-value)
   const [formData, setFormData] = useState<Record<string, string>>(() => {
     const initial: Record<string, string> = {};
-    // Merchant: pre-fill equipmentCost from cart
-    if (flowType === "merchant" && cartTotal > 0) {
+    // Vendor: pre-fill equipmentCost from cart
+    if (flowType === "vendor" && cartTotal > 0) {
       initial.equipmentCost = String(cartTotal);
     }
     return initial;
@@ -105,7 +105,7 @@ export function useChatStateMachine(config: ChatStateMachineConfig): ChatStateMa
   const equipmentValueRef = useRef(0);
 
   // Company auth refs
-  const matchedCompanyRef = useRef<{ id: string; company: CompanyDetail } | null>(null);
+  const matchedCompanyRef = useRef<{ id: string; company: CustomerDetail } | null>(null);
   const selectedRepRef = useRef<Representative | null>(null);
 
   // Documents
@@ -114,7 +114,7 @@ export function useChatStateMachine(config: ChatStateMachineConfig): ChatStateMa
   const [uploadAttempts, setUploadAttempts] = useState<Record<string, number>>({});
   const requiredDocuments = useMemo(() => getEnabledDocuments(applicationType), [applicationType]);
 
-  // Merchant offer state
+  // Vendor offer state
   const [lastOffer, setLastOffer] = useState<ChatStateMachineReturn["lastOffer"]>(null);
   const [applicationStep, setApplicationStep] = useState("info");
   const [offerSubPhase, setOfferSubPhase] = useState<"choose_type" | "choose_term" | "display" | "ready_for_docs">("choose_type");
@@ -198,7 +198,7 @@ export function useChatStateMachine(config: ChatStateMachineConfig): ChatStateMa
   // ── Init: greeting ─────────────────────────────────────────────────────
 
   useEffect(() => {
-    if (flowType === "merchant") {
+    if (flowType === "vendor") {
       pushAI(`Hi! I'm your AI lending assistant. I'll guide you through your application.\n\nI'll present a few short forms — fill them in and click **Continue**. You can ask me questions at any time.\n\nLet's get started!`);
       setTimeout(() => {
         setPhase("company_name");
@@ -340,7 +340,7 @@ export function useChatStateMachine(config: ChatStateMachineConfig): ChatStateMa
     pushMessage({
       type: "document_upload",
       content: "Please upload the required documents below. You can upload them one by one.",
-      suggestions: flowType === "merchant" ? ["Continue to contract", "What documents do I need?"] : ["Submit application", "What documents do I need?"],
+      suggestions: flowType === "vendor" ? ["Continue to contract", "What documents do I need?"] : ["Submit application", "What documents do I need?"],
     });
     setTimeout(() => pushAI("Upload at least one document, then proceed when ready."), 500);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -392,7 +392,7 @@ export function useChatStateMachine(config: ChatStateMachineConfig): ChatStateMa
     setUploadedDocs((prev) => ({ ...prev, [docId]: null }));
   }, []);
 
-  // ── Merchant: offer logic ──────────────────────────────────────────────
+  // ── Vendor: offer logic ──────────────────────────────────────────────
 
   const proposeOffers = useCallback(() => {
     setPhase("offers");
@@ -579,7 +579,7 @@ export function useChatStateMachine(config: ChatStateMachineConfig): ChatStateMa
           if (phase === "section_form") {
             ctaSuggestions = ["\u2190 Back to application"];
           } else if (phase === "document_upload") {
-            ctaSuggestions = flowType === "merchant" ? ["Continue to contract"] : ["Submit application"];
+            ctaSuggestions = flowType === "vendor" ? ["Continue to contract"] : ["Submit application"];
           } else if (phase !== "disqualified" && phase !== "submitted" && phase !== "complete") {
             ctaSuggestions = response.suggestions || [];
           }
@@ -827,7 +827,7 @@ export function useChatStateMachine(config: ChatStateMachineConfig): ChatStateMa
             return;
           }
 
-          if (flowType === "merchant") {
+          if (flowType === "vendor") {
             if (!lastOffer) {
               // Show offers first
               proposeOffers();
@@ -841,7 +841,7 @@ export function useChatStateMachine(config: ChatStateMachineConfig): ChatStateMa
           return;
         }
         if (lower.includes("yes") && (lower.includes("proceed") || lower.includes("submit") || lower.includes("anyway"))) {
-          if (flowType === "merchant") {
+          if (flowType === "vendor") {
             if (!lastOffer) proposeOffers();
             else initiateContractSignature();
           } else {
@@ -851,13 +851,13 @@ export function useChatStateMachine(config: ChatStateMachineConfig): ChatStateMa
         }
         if (lower.includes("what") && lower.includes("document")) {
           const docList = requiredDocuments.map((doc, i) => `${i + 1}. **${doc.name}** - ${doc.description}`).join("\n");
-          pushAI(`Here are the documents we need:\n\n${docList}\n\nUpload at least one to proceed.`, flowType === "merchant" ? ["Continue to contract"] : ["Submit application"]);
+          pushAI(`Here are the documents we need:\n\n${docList}\n\nUpload at least one to proceed.`, flowType === "vendor" ? ["Continue to contract"] : ["Submit application"]);
           return;
         }
         return;
       }
 
-      // OFFERS (merchant)
+      // OFFERS (vendor)
       if (phase === "offers") {
         if (offerSubPhase === "choose_type") {
           if (lower.includes("compare") || lower.includes("side-by-side")) {
@@ -917,7 +917,7 @@ export function useChatStateMachine(config: ChatStateMachineConfig): ChatStateMa
         return;
       }
 
-      // CONTRACT (merchant)
+      // CONTRACT (vendor)
       if (phase === "contract") {
         if (lower.includes("sign") || lower.includes("agree") || lower.includes("accept")) {
           setIsTyping(true);

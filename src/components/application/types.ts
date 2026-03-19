@@ -4,33 +4,33 @@ import type { QualificationResult } from "@/lib/qualificationCheck";
 
 // ── Flow types ───────────────────────────────────────────────────────
 
-export type FlowType = "merchant" | "bank";
+export type FlowType = "vendor" | "bank";
 
 export type SectionId =
   | "company_name"
   | "prequal"
   | "docs_lightweight"
-  | "info"        // merchant combined: all fields + docs in one step
+  | "info"        // vendor combined: all fields + docs in one step
   | "identity"
   | "contact"
   | "financial"
   | "equipment"
   | "guarantor"
   | "documents"
-  | "offers"      // merchant only
-  | "contract"    // merchant only
-  | "complete"    // merchant post-signature
+  | "offers"      // vendor only
+  | "contract"    // vendor only
+  | "complete"    // vendor post-signature
   | "submitted"   // bank submission confirmation
   | "disqualified";
 
 export interface FlowFeatures {
-  /** Merchant keeps all fields + docs in a single step */
+  /** Vendor keeps all fields + docs in a single step */
   splitSections: boolean;
   /** Bank uses OCR verification on document upload */
   enableOCR: boolean;
-  /** Merchant generates offers after form submission */
+  /** Vendor generates offers after form submission */
   enableOffers: boolean;
-  /** Merchant has contract signature step */
+  /** Vendor has contract signature step */
   enableContract: boolean;
   /** Bank uses equipment chat */
   enableEquipmentChat: boolean;
@@ -38,7 +38,7 @@ export interface FlowFeatures {
   enablePreQual: boolean;
   /** Bank uses lightweight doc step before full form */
   enableLightweightDocs: boolean;
-  /** Merchant shows order summary sidebar */
+  /** Vendor shows order summary sidebar */
   enableOrderSummary: boolean;
 }
 
@@ -73,7 +73,7 @@ export interface FormState {
   applicationType: string;
   equipmentItems: EquipmentItem[];
   equipmentTotalValue: number;
-  // Merchant-specific
+  // Vendor-specific
   selectedOffer: any | null;
   generatedOffers: any[];
   isGeneratingOffers: boolean;
@@ -95,7 +95,7 @@ export interface SectionProgressionState {
   activeSections: SectionId[];
 }
 
-// ── Order details (merchant flow from Checkout) ──────────────────────
+// ── Order details (vendor flow from Checkout) ──────────────────────
 
 export interface OrderDetails {
   quantity: number;

@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
-export function EnrollMerchantDialog() {
+export function EnrollVendorDialog() {
   const [open, setOpen] = useState(false);
   const [vendorName, setVendorName] = useState("");
   const [contactName, setContactName] = useState("");

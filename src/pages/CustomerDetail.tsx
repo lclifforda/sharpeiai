@@ -19,10 +19,10 @@ import {
   type Application,
   type CompanyDocument,
   type AIHighlight,
-} from "@/data/mockCompanies";
+} from "@/data/mockCustomers";
 import { getCustomerById } from "@/lib/customerStorage";
 
-const CompanyDetail = () => {
+const CustomerDetail = () => {
   const { id } = useParams();
   const storedCustomer = id ? getCustomerById(id) : undefined;
 
@@ -556,4 +556,4 @@ const CompanyDetail = () => {
   );
 };
 
-export default CompanyDetail;
+export default CustomerDetail;

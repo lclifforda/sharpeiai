@@ -207,9 +207,9 @@ export function buildPortalSessionContext(sessionContext: any): string {
 
   if (sessionContext.currentPage) {
     const pageDescriptions: Record<string, string> = {
-      '/dashboard': 'The user is on the Dashboard, viewing their merchant overview, recent orders, and key metrics.',
+      '/dashboard': 'The user is on the Dashboard, viewing their vendor overview, recent orders, and key metrics.',
       '/applications': 'The user is on the Applications page, viewing their list of financing applications.',
-      '/merchants': 'The user is on the Merchants page, browsing enrolled merchants.',
+      '/vendors': 'The user is on the Vendors page, browsing enrolled vendors.',
       '/settings': 'The user is on the Settings page, managing their account and platform configuration.',
     };
     const page = sessionContext.currentPage;
@@ -234,7 +234,7 @@ export function getPortalSuggestions(question: string): string[] {
   if (q.includes('portfolio') || q.includes('overview') || q.includes('dashboard')) {
     return ['Drill into risk metrics', 'Show vendor breakdown', 'Application pipeline'];
   }
-  if (q.includes('vendor') || q.includes('merchant')) {
+  if (q.includes('vendor') || q.includes('vendor')) {
     return ['Compare top vendors', 'Show risk flags', 'Asset distribution'];
   }
   if (q.includes('risk') || q.includes('delinquen') || q.includes('default')) {

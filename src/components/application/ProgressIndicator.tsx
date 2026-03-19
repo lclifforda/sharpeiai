@@ -7,7 +7,7 @@ interface ProgressIndicatorProps {
   completedSections: Set<SectionId>;
 }
 
-const MERCHANT_STEP_LABELS: Partial<Record<SectionId, string>> = {
+const VENDOR_STEP_LABELS: Partial<Record<SectionId, string>> = {
   company_name: "Company",
   prequal: "Pre-Qual",
   info: "Info & Docs",
@@ -21,9 +21,9 @@ export default function ProgressIndicator({
   currentSection,
   completedSections,
 }: ProgressIndicatorProps) {
-  if (flowType === "merchant") {
+  if (flowType === "vendor") {
     // Steps mode: numbered circles with labels
-    const steps = activeSections.filter((s) => MERCHANT_STEP_LABELS[s]);
+    const steps = activeSections.filter((s) => VENDOR_STEP_LABELS[s]);
     return (
       <div className="mb-8 bg-card rounded-lg p-4 shadow-sm">
         <div className="flex items-center justify-between max-w-4xl mx-auto">
@@ -55,7 +55,7 @@ export default function ProgressIndicator({
                       isCurrent ? "text-foreground" : "text-muted-foreground"
                     }`}
                   >
-                    {MERCHANT_STEP_LABELS[step]}
+                    {VENDOR_STEP_LABELS[step]}
                   </span>
                 </div>
                 {idx < steps.length - 1 && <div className="h-px flex-1 bg-border mx-2" />}

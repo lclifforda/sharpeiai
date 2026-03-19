@@ -1,6 +1,6 @@
 /**
  * Simulate OCR processing and document verification.
- * Extracted from AIApplicationChat so both merchant and bank flows can share it.
+ * Extracted from AIApplicationChat so both vendor and bank flows can share it.
  * Without real OCR, we validate by filename to catch wrong document types.
  */
 

@@ -17,14 +17,14 @@ export interface AgentInitResponse {
 }
 
 export interface UserProfile {
-  customerType?: 'individual' | 'business';
+  customerType?: 'business';
   age?: number;
   ssn?: string;
   fullName?: string;
   representativeName?: string;
   income?: number;
   creditScore?: number;
-  employmentStatus?: 'employed' | 'self-employed' | 'unemployed' | 'retired';
+  employmentStatus?: 'employed' | 'self-employed';
   employer?: string;
   email?: string;
   phone?: string;
@@ -61,7 +61,7 @@ export interface UserProfile {
 }
 
 export interface RoutingDecision {
-  recommendedPath: 'individual' | 'business';
+  recommendedPath: 'business';
   confidence: number;
   reasons: string[];
   suggestedQuestions: string[];

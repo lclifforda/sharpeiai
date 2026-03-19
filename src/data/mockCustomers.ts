@@ -78,7 +78,7 @@ export interface AIAssessment {
   lastUpdated: string;
 }
 
-export interface CompanyDetail {
+export interface CustomerDetail {
   name: string;
   industry: string;
   location: string;
@@ -102,7 +102,7 @@ export interface CompanyDetail {
   documents: CompanyDocument[];
 }
 
-export const COMPANY_DETAILS: Record<string, CompanyDetail> = {
+export const COMPANY_DETAILS: Record<string, CustomerDetail> = {
   '1': {
     name: 'TechCorp Industries',
     industry: 'Manufacturing',
@@ -486,7 +486,7 @@ export const DEMO_BUSINESS_DATA: Record<string, DemoBusinessData> = {
   },
 };
 
-export function findCompanyByName(name: string): { id: string; company: CompanyDetail } | null {
+export function findCompanyByName(name: string): { id: string; company: CustomerDetail } | null {
   const lower = name.toLowerCase().trim();
   for (const [id, company] of Object.entries(COMPANY_DETAILS)) {
     // Exact match or partial match (e.g. "techcorp" matches "TechCorp Industries")
@@ -497,7 +497,7 @@ export function findCompanyByName(name: string): { id: string; company: CompanyD
   return null;
 }
 
-export function findCompanyByRepEmail(email: string): { id: string; company: CompanyDetail } | null {
+export function findCompanyByRepEmail(email: string): { id: string; company: CustomerDetail } | null {
   const lower = email.toLowerCase().trim();
   for (const [id, company] of Object.entries(COMPANY_DETAILS)) {
     if (company.representatives.some(rep => rep.email.toLowerCase() === lower)) {

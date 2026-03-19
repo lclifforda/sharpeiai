@@ -19,8 +19,8 @@ export function useSectionProgression({
   const [completedSections, setCompletedSections] = useState<Set<SectionId>>(new Set());
 
   const activeSections = useMemo(() => {
-    if (flowConfig.flowType === "merchant") {
-      // Merchant: company_name → prequal → info → offers → contract
+    if (flowConfig.flowType === "vendor") {
+      // Vendor: company_name → prequal → info → offers → contract
       const sections: SectionId[] = ["company_name", "prequal", "info"];
       if (flowConfig.features.enableOffers) sections.push("offers");
       if (flowConfig.features.enableContract) sections.push("contract");

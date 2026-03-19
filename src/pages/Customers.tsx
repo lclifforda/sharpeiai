@@ -6,7 +6,7 @@ import { Building2, Search, Plus, MapPin, Users, FileText, TrendingUp, Upload } 
 import { Badge } from "@/components/ui/badge";
 import TableFilters from "@/components/TableFilters";
 import { ExportButton } from "@/components/ExportButton";
-import { ImportCompaniesDialog, type ImportedCompany } from "@/components/ImportCompaniesDialog";
+import { ImportCustomersDialog, type ImportedCompany } from "@/components/ImportCustomersDialog";
 import { getStoredCustomers } from "@/lib/customerStorage";
 import techcorpLogo from "@/assets/techcorp-logo.webp";
 
@@ -68,7 +68,7 @@ const DEFAULT_CUSTOMERS = [
   },
 ];
 
-const Companies = () => {
+const Customers = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [importOpen, setImportOpen] = useState(false);
@@ -83,7 +83,7 @@ const Companies = () => {
       ),
     [storedCustomers]
   );
-  const [allCompanies, setAllCompanies] = useState(() => [
+  const [allCustomers, setAllCustomers] = useState(() => [
     ...storedCustomers.map((s) => ({
       id: s.id,
       name: s.name,
@@ -103,8 +103,8 @@ const Companies = () => {
   });
 
   const handleImport = (imported: ImportedCompany[]) => {
-    const nextId = allCompanies.length + 1;
-    const newCompanies = imported.map((c, i) => ({
+    const nextId = allCustomers.length + 1;
+    const newCustomers = imported.map((c, i) => ({
       id: String(nextId + i),
       name: c.name,
       industry: c.industry,
@@ -115,12 +115,12 @@ const Companies = () => {
       status: c.status || "active",
       logo: undefined,
     }));
-    setAllCompanies((prev) => [...prev, ...newCompanies]);
+    setAllCustomers((prev) => [...prev, ...newCustomers]);
   };
 
   const uniqueIndustries = useMemo(
-    () => [...new Set(allCompanies.map((c) => c.industry))].sort(),
-    [allCompanies]
+    () => [...new Set(allCustomers.map((c) => c.industry))].sort(),
+    [allCustomers]
   );
 
   const filterGroups = [
@@ -157,17 +157,17 @@ const Companies = () => {
 
   const activeFilterCount = filters.industry.length + filters.status.length;
 
-  const totalCompanies = allCompanies.length;
-  const activeCompanies = allCompanies.filter((c) => c.status === "active").length;
-  const totalMonthlyRevenue = allCompanies.reduce((sum, company) => {
+  const totalCustomers = allCustomers.length;
+  const activeCustomers = allCustomers.filter((c) => c.status === "active").length;
+  const totalMonthlyRevenue = allCustomers.reduce((sum, company) => {
     const numeric = parseInt(company.revenue.replace(/[^0-9]/g, ""), 10) || 0;
     return sum + numeric;
   }, 0);
   const formattedMonthlyRevenue = `$${totalMonthlyRevenue.toLocaleString()}`;
-  const companiesWithContracts = allCompanies.filter((c) => c.activeContracts > 0).length;
+  const companiesWithContracts = allCustomers.filter((c) => c.activeContracts > 0).length;
 
   const companies = useMemo(() => {
-    return allCompanies.filter(company => {
+    return allCustomers.filter(company => {
       const matchesSearch = company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                            company.location.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesIndustry = filters.industry.length === 0 || filters.industry.includes(company.industry);
@@ -175,7 +175,7 @@ const Companies = () => {
       
       return matchesSearch && matchesIndustry && matchesStatus;
     });
-  }, [searchQuery, filters, allCompanies]);
+  }, [searchQuery, filters, allCustomers]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -195,7 +195,7 @@ const Companies = () => {
               <ExportButton
                 data={companies}
                 filename="companies"
-                sheetName="Companies"
+                sheetName="Customers"
               />
               <Button className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => navigate("/customers/new")}>
                 <Plus className="w-4 h-4 mr-2" />
@@ -215,7 +215,7 @@ const Companies = () => {
               <span className="text-sm text-muted-foreground">Total Customers</span>
               <Building2 className="h-4 w-4 text-muted-foreground" />
             </div>
-            <div className="text-2xl font-semibold text-foreground">{totalCompanies}</div>
+            <div className="text-2xl font-semibold text-foreground">{totalCustomers}</div>
             <p className="text-xs text-muted-foreground mt-1">In your portfolio</p>
           </div>
 
@@ -224,7 +224,7 @@ const Companies = () => {
               <span className="text-sm text-muted-foreground">Active</span>
               <Users className="h-4 w-4 text-muted-foreground" />
             </div>
-            <div className="text-2xl font-semibold text-foreground">{activeCompanies}</div>
+            <div className="text-2xl font-semibold text-foreground">{activeCustomers}</div>
             <p className="text-xs text-muted-foreground mt-1">Currently active customers</p>
           </div>
 
@@ -267,7 +267,7 @@ const Companies = () => {
           />
         </div>
 
-        {/* Companies Table */}
+        {/* Customers Table */}
         <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-float">
           {/* Table Header */}
           <div className="grid grid-cols-[2fr_1.2fr_1.8fr_1fr_1.2fr_1fr_0.8fr] gap-6 px-6 py-4 border-b border-border bg-muted/50">
@@ -342,7 +342,7 @@ const Companies = () => {
         </div>
       </div>
 
-      <ImportCompaniesDialog
+      <ImportCustomersDialog
         open={importOpen}
         onOpenChange={setImportOpen}
         onImport={handleImport}
@@ -351,4 +351,4 @@ const Companies = () => {
   );
 };
 
-export default Companies;
+export default Customers;

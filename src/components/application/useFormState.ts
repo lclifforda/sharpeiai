@@ -8,7 +8,7 @@ import { generateCryptoId } from "@/lib/idGenerator";
 import { saveApplication } from "@/lib/applicationStorage";
 import { getOrCreateCustomerFromApplication } from "@/lib/customerStorage";
 import { agentAPI } from "@/services/ai/agentAPI";
-import { findCompanyByName, findCompanyByRepEmail, DEMO_BUSINESS_DATA, COMPANY_DETAILS } from "@/data/mockCompanies";
+import { findCompanyByName, findCompanyByRepEmail, DEMO_BUSINESS_DATA, COMPANY_DETAILS } from "@/data/mockCustomers";
 import { getEnabledFields, getEnabledDocuments, getPreQualDocuments, US_STATES, type EnabledField } from "@/services/platformConfigMockData";
 import type { AuthState, DocumentVerificationState, FlowConfig, OrderDetails } from "./types";
 
@@ -30,7 +30,7 @@ export function useFormState(flowConfig: FlowConfig, orderDetails: OrderDetails 
   const [equipmentItems, setEquipmentItems] = useState<EquipmentItem[]>([]);
   const [equipmentTotalValue, setEquipmentTotalValue] = useState(0);
 
-  // Offers (merchant)
+  // Offers (vendor)
   const [selectedOffer, setSelectedOffer] = useState<any | null>(null);
   const [generatedOffers, setGeneratedOffers] = useState<any[]>([]);
   const [isGeneratingOffers, setIsGeneratingOffers] = useState(false);
@@ -157,7 +157,7 @@ export function useFormState(flowConfig: FlowConfig, orderDetails: OrderDetails 
       }
       setFormData((prev) => ({ ...prev, ...newData }));
     } else {
-      // Merchant: lighter pre-fill
+      // Vendor: lighter pre-fill
       const addressParts = company.address.split(",").map((s: string) => s.trim());
       const streetAddress = addressParts[0] || "";
       const cityPart = addressParts[1] || "";
@@ -249,7 +249,7 @@ export function useFormState(flowConfig: FlowConfig, orderDetails: OrderDetails 
     if (file) handleFileUpload(docId, file);
   }, [handleFileUpload]);
 
-  // ── Merchant: offer generation ─────────────────────────────────────
+  // ── Vendor: offer generation ─────────────────────────────────────
 
   const equipmentPurchasePrice = 350;
   const equipmentTotal = equipmentPurchasePrice * (orderDetails?.quantity || 1);
@@ -314,9 +314,9 @@ export function useFormState(flowConfig: FlowConfig, orderDetails: OrderDetails 
     }, 1500);
   }, [revenue, equipmentTotal]);
 
-  // ── Merchant: validate + submit → generate offers ──────────────────
+  // ── Vendor: validate + submit → generate offers ──────────────────
 
-  const handleMerchantSubmit = useCallback(() => {
+  const handleVendorSubmit = useCallback(() => {
     const newErrors: Record<string, string> = {};
     for (const field of enabledFields) {
       if (field.required && !(formData[field.id] || "").trim()) {
@@ -465,7 +465,7 @@ export function useFormState(flowConfig: FlowConfig, orderDetails: OrderDetails 
     handleEquipmentChange,
     handleFileUpload, handleRemoveFile,
     handleDragOver, handleDragLeave, handleDrop,
-    handleMerchantSubmit,
+    handleVendorSubmit,
     handlePreQualCheck,
     handleBankSubmit,
     handleDisqualifiedSubmit,

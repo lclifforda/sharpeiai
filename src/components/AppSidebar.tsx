@@ -32,9 +32,9 @@ const navigationItems: { name: string; path: string; icon: React.FC<{ className?
   resource: "customers",
 }, {
   name: "Vendors",
-  path: "/merchants",
+  path: "/vendors",
   icon: Store,
-  resource: "merchants",
+  resource: "vendors",
 }, {
   name: "Automations",
   path: "/automations",

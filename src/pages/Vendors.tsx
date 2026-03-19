@@ -4,10 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Store, Search, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import TableFilters from "@/components/TableFilters";
-import { EnrollMerchantDialog } from "@/components/EnrollMerchantDialog";
+import { EnrollVendorDialog } from "@/components/EnrollVendorDialog";
 import { ExportButton } from "@/components/ExportButton";
 
-const Merchants = () => {
+const Vendors = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
@@ -186,7 +186,7 @@ const Merchants = () => {
                 filename="vendors"
                 sheetName="Vendors"
               />
-              <EnrollMerchantDialog />
+              <EnrollVendorDialog />
             </div>
           </div>
         </div>
@@ -260,7 +260,7 @@ const Merchants = () => {
                 <div
                   key={vendor.id}
                   className="grid grid-cols-[2fr_1fr_1.5fr_1fr_1fr_0.8fr_0.8fr] gap-6 px-6 py-5 hover:bg-gradient-to-r hover:from-gradient-start/5 hover:to-gradient-purple/5 transition-colors cursor-pointer"
-                  onClick={() => navigate(`/merchants/${vendor.id}`)}
+                  onClick={() => navigate(`/vendors/${vendor.id}`)}
                 >
                   <div>
                     <p className="font-semibold gradient-sharpei-text text-base">{vendor.name}</p>
@@ -293,4 +293,4 @@ const Merchants = () => {
       </div>
     </div>;
 };
-export default Merchants;
+export default Vendors;

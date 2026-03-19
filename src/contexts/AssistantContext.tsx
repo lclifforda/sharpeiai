@@ -26,7 +26,7 @@ export interface AssistantPageContext {
   offersCount?: number;
   /** Form completion progress (0-1) */
   formProgress?: number;
-  /** View mode (merchant or bank) */
+  /** View mode (vendor or bank) */
   viewMode?: string;
   /** Any extra key-value pairs pages want to share */
   [key: string]: unknown;

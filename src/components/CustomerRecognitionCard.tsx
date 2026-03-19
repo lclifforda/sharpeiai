@@ -9,19 +9,19 @@ import {
   findCompanyByName,
   findCompanyByRepEmail,
   maskEmail,
-  type CompanyDetail,
+  type CustomerDetail,
   type Representative,
-} from "@/data/mockCompanies";
+} from "@/data/mockCustomers";
 
 type CardStep = "recognized" | "selectRep" | "otp" | "verified";
 
 interface VerifiedData {
   companyId: string;
-  company: CompanyDetail;
+  company: CustomerDetail;
   representative: Representative;
 }
 
-interface CompanyRecognitionCardProps {
+interface CustomerRecognitionCardProps {
   companyName: string;
   email: string;
   onVerified: (data: VerifiedData) => void;
@@ -34,15 +34,15 @@ function formatRepName(name: string): string {
   return `${parts[0]} ${parts[parts.length - 1][0]}.`;
 }
 
-const CompanyRecognitionCard = ({
+const CustomerRecognitionCard = ({
   companyName,
   email,
   onVerified,
   onDismiss,
-}: CompanyRecognitionCardProps) => {
+}: CustomerRecognitionCardProps) => {
   const [step, setStep] = useState<CardStep>("recognized");
   const [matchedCompanyId, setMatchedCompanyId] = useState<string | null>(null);
-  const [matchedCompany, setMatchedCompany] = useState<CompanyDetail | null>(null);
+  const [matchedCompany, setMatchedCompany] = useState<CustomerDetail | null>(null);
   const [selectedRepId, setSelectedRepId] = useState<string>("");
   const [otpValue, setOtpValue] = useState("");
   const [verifiedRep, setVerifiedRep] = useState<Representative | null>(null);
@@ -264,4 +264,4 @@ const CompanyRecognitionCard = ({
   );
 };
 
-export default CompanyRecognitionCard;
+export default CustomerRecognitionCard;

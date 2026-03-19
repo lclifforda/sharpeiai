@@ -49,7 +49,7 @@ interface CompanyFormData {
   notes: string;
 }
 
-const CompanyCreate = () => {
+const CustomerCreate = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -469,4 +469,4 @@ const CompanyCreate = () => {
   );
 };
 
-export default CompanyCreate;
+export default CustomerCreate;

@@ -9,9 +9,9 @@ import { ArrowLeft, FileCheck, FileText, Truck, DollarSign } from "lucide-react"
 import ApplicationMethodSelector from "@/components/ApplicationMethodSelector";
 import AIApplicationChat from "@/components/AIApplicationChat";
 import BankAIApplicationChat from "@/components/BankAIApplicationChat";
-import CompanyRecognitionCard from "@/components/CompanyRecognitionCard";
+import CustomerRecognitionCard from "@/components/CustomerRecognitionCard";
 import { DEFAULT_PLATFORM_CONFIG, FIELD_CATEGORY_LABELS, getPreQualDocuments } from "@/services/platformConfigMockData";
-import { COMPANY_DETAILS } from "@/data/mockCompanies";
+import { COMPANY_DETAILS } from "@/data/mockCustomers";
 import { useAssistantContext } from "@/contexts/AssistantContext";
 
 import type { OrderDetails, SectionId } from "@/components/application/types";
@@ -55,7 +55,7 @@ const UnifiedApplicationForm = ({
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Determine order details from navigation state (merchant flow)
+  // Determine order details from navigation state (vendor flow)
   const orderDetails: OrderDetails | null = useMemo(() => {
     if (embedded) return null;
     const s = location.state;
@@ -97,7 +97,7 @@ const UnifiedApplicationForm = ({
     handleEquipmentChange,
     handleFileUpload, handleRemoveFile,
     handleDragOver, handleDragLeave, handleDrop,
-    handleMerchantSubmit,
+    handleVendorSubmit,
     handlePreQualCheck,
     handleBankSubmit,
     handleDisqualifiedSubmit,
@@ -132,7 +132,7 @@ const UnifiedApplicationForm = ({
   const { updateContext } = useAssistantContext();
   useEffect(() => {
     updateContext({
-      page: flowConfig.flowType === "merchant" ? "merchant-application-form" : "bank-application-form",
+      page: flowConfig.flowType === "vendor" ? "vendor-application-form" : "bank-application-form",
       applicationType,
       currentStep: currentSection,
       companyName: formData.companyName || undefined,
@@ -159,8 +159,8 @@ const UnifiedApplicationForm = ({
     }
 
     if (sectionId === "info") {
-      // Merchant combined info+docs: validate, then generate offers
-      const success = handleMerchantSubmit();
+      // Vendor combined info+docs: validate, then generate offers
+      const success = handleVendorSubmit();
       if (success) {
         markCompleted("info");
         setCurrentSection("offers");
@@ -280,17 +280,17 @@ const UnifiedApplicationForm = ({
   // ── Main render ────────────────────────────────────────────────────
 
   return (
-    <div className={flowConfig.flowType === "merchant" ? "min-h-screen bg-background p-6" : ""}>
-      <div className={flowConfig.flowType === "merchant" ? "max-w-7xl mx-auto" : ""}>
-        {/* Back Button (merchant standalone) */}
-        {flowConfig.flowType === "merchant" && !embedded && (
+    <div className={flowConfig.flowType === "vendor" ? "min-h-screen bg-background p-6" : ""}>
+      <div className={flowConfig.flowType === "vendor" ? "max-w-7xl mx-auto" : ""}>
+        {/* Back Button (vendor standalone) */}
+        {flowConfig.flowType === "vendor" && !embedded && (
           <Button variant="ghost" onClick={() => navigate("/checkout")} className="mb-6">
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Checkout
           </Button>
         )}
 
         {/* Application Type Selector (embedded bank flow) */}
-        {embedded && flowConfig.flowType === "merchant" && (
+        {embedded && flowConfig.flowType === "vendor" && (
           <div className="flex gap-2 flex-wrap mb-6">
             {DEFAULT_PLATFORM_CONFIG.applicationTypes.filter((t) => t.enabled).map((appType) => {
               const Icon = iconMap[appType.icon] || FileText;
@@ -328,7 +328,7 @@ const UnifiedApplicationForm = ({
           />
         )}
 
-        {/* Layout: 2-column (merchant with order details) or single-column */}
+        {/* Layout: 2-column (vendor with order details) or single-column */}
         <div className={hasOrderDetails ? "grid lg:grid-cols-3 gap-6" : flowConfig.flowType === "bank" ? "max-w-4xl mx-auto space-y-4" : "max-w-4xl mx-auto"}>
           <div className={`${hasOrderDetails ? "lg:col-span-2" : ""} space-y-6`}>
 
@@ -415,8 +415,8 @@ const UnifiedApplicationForm = ({
                       }}
                     />
                   </>
-                ) : flowConfig.flowType === "merchant" ? (
-                  /* ── Merchant form ── */
+                ) : flowConfig.flowType === "vendor" ? (
+                  /* ── Vendor form ── */
                   <>
                     {(currentSection === "company_name") && (
                       <CompanyNameSection
@@ -654,7 +654,7 @@ const UnifiedApplicationForm = ({
             )}
           </div>
 
-          {/* Right sidebar: Order Summary (merchant with order details only) */}
+          {/* Right sidebar: Order Summary (vendor with order details only) */}
           {hasOrderDetails && orderDetails && (
             <div className="lg:col-span-1">
               <OrderSummary orderDetails={orderDetails} />

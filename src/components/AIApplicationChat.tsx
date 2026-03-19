@@ -45,7 +45,7 @@ const AIApplicationChat = ({ applicationType: propApplicationType }: AIApplicati
   );
 
   const sm = useChatStateMachine({
-    flowType: "merchant",
+    flowType: "vendor",
     applicationType,
     orderDetails,
     cartTotal,
@@ -246,7 +246,7 @@ const AIApplicationChat = ({ applicationType: propApplicationType }: AIApplicati
             </Card>
           </div>
 
-          {/* Order Summary sidebar — only for merchant with order context */}
+          {/* Order Summary sidebar — only for vendor with order context */}
           {hasOrderDetails && orderDetails && (
             <div className="lg:col-span-1">
               <Card className="sticky top-6">

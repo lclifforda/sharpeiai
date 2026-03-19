@@ -142,13 +142,13 @@ function validateRow(cells: string[], rowNumber: number): ParsedRow {
 
 type Step = "upload" | "preview" | "importing" | "done";
 
-interface ImportCompaniesDialogProps {
+interface ImportCustomersDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onImport: (companies: ImportedCompany[]) => void;
 }
 
-export function ImportCompaniesDialog({ open, onOpenChange, onImport }: ImportCompaniesDialogProps) {
+export function ImportCustomersDialog({ open, onOpenChange, onImport }: ImportCustomersDialogProps) {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState<Step>("upload");

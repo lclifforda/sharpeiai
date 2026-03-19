@@ -13,22 +13,22 @@ import ProtectedRoute from "./components/rbac/ProtectedRoute";
 // Lazy-loaded page components for code splitting
 const Index = lazy(() => import("./pages/Index"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
-const Companies = lazy(() => import("./pages/Companies"));
-const CompanyDetail = lazy(() => import("./pages/CompanyDetail"));
+const Customers = lazy(() => import("./pages/Customers"));
+const CustomerDetail = lazy(() => import("./pages/CustomerDetail"));
 const Applications = lazy(() => import("./pages/Applications"));
 const ApplicationDetail = lazy(() => import("./pages/ApplicationDetail"));
 const Contracts = lazy(() => import("./pages/Contracts"));
 const ContractDetail = lazy(() => import("./pages/ContractDetail"));
 const ContractCreate = lazy(() => import("./pages/ContractCreate"));
-const CompanyCreate = lazy(() => import("./pages/CompanyCreate"));
+const CustomerCreate = lazy(() => import("./pages/CustomerCreate"));
 const ApplicationCreate = lazy(() => import("./pages/ApplicationCreate"));
 const Payments = lazy(() => import("./pages/Payments"));
 const PaymentDetail = lazy(() => import("./pages/PaymentDetail"));
 const Inventory = lazy(() => import("./pages/Inventory"));
 const AssetDetail = lazy(() => import("./pages/AssetDetail"));
 const InventoryDetail = lazy(() => import("./pages/InventoryDetail"));
-const Merchants = lazy(() => import("./pages/Merchants"));
-const MerchantDetail = lazy(() => import("./pages/MerchantDetail"));
+const Vendors = lazy(() => import("./pages/Vendors"));
+const VendorDetail = lazy(() => import("./pages/VendorDetail"));
 const Checkout = lazy(() => import("./pages/Checkout"));
 const CheckoutV2 = lazy(() => import("./pages/CheckoutV2"));
 const ApplicationForm = lazy(() => import("./pages/UnifiedApplicationForm"));
@@ -68,9 +68,9 @@ const App = () => (
         <Routes>
           <Route element={<PageLayout><ProtectedRoute resource="ai_assistant"><Index /></ProtectedRoute></PageLayout>} path="/" />
           <Route element={<PageLayout><ProtectedRoute resource="dashboard"><Dashboard /></ProtectedRoute></PageLayout>} path="/dashboard" />
-          <Route element={<PageLayout><ProtectedRoute resource="customers"><Companies /></ProtectedRoute></PageLayout>} path="/customers" />
-          <Route element={<PageLayout><ProtectedRoute resource="customers"><CompanyCreate /></ProtectedRoute></PageLayout>} path="/customers/new" />
-          <Route element={<PageLayout><ProtectedRoute resource="customers"><CompanyDetail /></ProtectedRoute></PageLayout>} path="/customers/:id" />
+          <Route element={<PageLayout><ProtectedRoute resource="customers"><Customers /></ProtectedRoute></PageLayout>} path="/customers" />
+          <Route element={<PageLayout><ProtectedRoute resource="customers"><CustomerCreate /></ProtectedRoute></PageLayout>} path="/customers/new" />
+          <Route element={<PageLayout><ProtectedRoute resource="customers"><CustomerDetail /></ProtectedRoute></PageLayout>} path="/customers/:id" />
           <Route element={<PageLayout><ProtectedRoute resource="applications"><Applications /></ProtectedRoute></PageLayout>} path="/applications" />
           <Route element={<PageLayout><ProtectedRoute resource="applications"><ApplicationCreate /></ProtectedRoute></PageLayout>} path="/applications/new" />
           <Route element={<PageLayout><ProtectedRoute resource="applications"><ApplicationDetail /></ProtectedRoute></PageLayout>} path="/applications/:id" />
@@ -82,8 +82,8 @@ const App = () => (
           <Route element={<PageLayout><ProtectedRoute resource="assets"><Inventory /></ProtectedRoute></PageLayout>} path="/assets" />
           <Route element={<PageLayout><ProtectedRoute resource="assets"><AssetDetail /></ProtectedRoute></PageLayout>} path="/assets/:id" />
           <Route element={<PageLayout><ProtectedRoute resource="assets"><InventoryDetail /></ProtectedRoute></PageLayout>} path="/inventory/:id" />
-          <Route element={<PageLayout><ProtectedRoute resource="merchants"><Merchants /></ProtectedRoute></PageLayout>} path="/merchants" />
-          <Route element={<PageLayout><ProtectedRoute resource="merchants"><MerchantDetail /></ProtectedRoute></PageLayout>} path="/merchants/:id" />
+          <Route element={<PageLayout><ProtectedRoute resource="vendors"><Vendors /></ProtectedRoute></PageLayout>} path="/vendors" />
+          <Route element={<PageLayout><ProtectedRoute resource="vendors"><VendorDetail /></ProtectedRoute></PageLayout>} path="/vendors/:id" />
           <Route element={<PageLayout><ProtectedRoute resource="checkout"><Checkout /></ProtectedRoute></PageLayout>} path="/checkout" />
           <Route element={<PageLayout><ProtectedRoute resource="checkout"><CheckoutV2 /></ProtectedRoute></PageLayout>} path="/checkout-v2" />
           <Route element={<PageLayout><ProtectedRoute resource="applications"><ApplicationForm /></ProtectedRoute></PageLayout>} path="/application" />

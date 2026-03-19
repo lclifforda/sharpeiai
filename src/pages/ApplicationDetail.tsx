@@ -1301,7 +1301,7 @@ const ApplicationDetail = () => {
 
             {/* Vendor */}
             {application.vendor && (
-              <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => navigate(`/merchants/${application.vendorId}`)}>
+              <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => navigate(`/vendors/${application.vendorId}`)}>
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Referring Vendor</CardTitle>
                 </CardHeader>

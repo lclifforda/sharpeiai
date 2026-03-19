@@ -19,7 +19,7 @@ function isPortalContext(context?: any): boolean {
 
   // Heuristic: page-based
   const page = context.currentPage || '';
-  if (page.startsWith('/dashboard') || page.startsWith('/merchants') || page.startsWith('/applications') || page.startsWith('/settings')) {
+  if (page.startsWith('/dashboard') || page.startsWith('/vendors') || page.startsWith('/applications') || page.startsWith('/settings')) {
     return true;
   }
 

@@ -39,7 +39,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 
-const MerchantDetail = () => {
+const VendorDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -146,13 +146,13 @@ const MerchantDetail = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/merchants")}>
+          <Button variant="ghost" size="icon" onClick={() => navigate("/vendors")}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink onClick={() => navigate("/merchants")} className="cursor-pointer">
+                <BreadcrumbLink onClick={() => navigate("/vendors")} className="cursor-pointer">
                   Vendors
                 </BreadcrumbLink>
               </BreadcrumbItem>
@@ -446,4 +446,4 @@ const MerchantDetail = () => {
   );
 };
 
-export default MerchantDetail;
+export default VendorDetail;

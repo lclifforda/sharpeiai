@@ -8,7 +8,7 @@ const ALL_RESOURCES: Resource[] = [
   "contracts",
   "payments",
   "assets",
-  "merchants",
+  "vendors",
   "automations",
   "inbox",
   "settings",
@@ -62,10 +62,10 @@ export const DEFAULT_ROLES: Role[] = [
   {
     id: "vendor_portal",
     name: "Vendor Portal",
-    description: "External vendor partner — only their own merchant data, applications, checkout",
+    description: "External vendor partner — only their own vendor data, applications, checkout",
     isSystem: true,
     permissions: [
-      { resource: "merchants", actions: ["view", "edit"], scope: "vendor" },
+      { resource: "vendors", actions: ["view", "edit"], scope: "vendor" },
       { resource: "applications", actions: ["view", "create"], scope: "vendor" },
       { resource: "checkout", actions: ["view"], scope: "vendor" },
       { resource: "dashboard", actions: ["view"], scope: "vendor" },

@@ -17,7 +17,7 @@ import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { format } from "date-fns";
 
 // Mock data - in production, fetch from API
-const allCompanies = [
+const allCustomers = [
   { 
     id: "1",
     name: "TechCorp Industries", 
@@ -144,10 +144,10 @@ const ContractCreate = () => {
   const [isCompanyPopoverOpen, setIsCompanyPopoverOpen] = useState(false);
 
   // Filter companies based on search query
-  const filteredCompanies = useMemo(() => {
-    if (!companySearchQuery.trim()) return allCompanies;
+  const filteredCustomers = useMemo(() => {
+    if (!companySearchQuery.trim()) return allCustomers;
     const query = companySearchQuery.toLowerCase();
-    return allCompanies.filter(
+    return allCustomers.filter(
       company =>
         company.name.toLowerCase().includes(query) ||
         company.industry.toLowerCase().includes(query) ||
@@ -164,7 +164,7 @@ const ContractCreate = () => {
   }, [formData.startDate, formData.termMonths]);
 
   const selectedCompany = useMemo(() => {
-    return allCompanies.find(c => c.id === formData.companyId);
+    return allCustomers.find(c => c.id === formData.companyId);
   }, [formData.companyId]);
 
   const totalMonthlyRate = useMemo(() => {
@@ -478,13 +478,13 @@ const ContractCreate = () => {
                     />
                   </div>
                   <div className="max-h-[300px] overflow-y-auto">
-                    {filteredCompanies.length === 0 ? (
+                    {filteredCustomers.length === 0 ? (
                       <div className="p-6 text-center text-sm text-muted-foreground">
                         No companies found.
                       </div>
                     ) : (
                       <div className="p-1">
-                        {filteredCompanies.map((company) => (
+                        {filteredCustomers.map((company) => (
                           <button
                             key={company.id}
                             onClick={() => {

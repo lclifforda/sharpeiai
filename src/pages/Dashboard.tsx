@@ -461,7 +461,7 @@ const Dashboard = () => {
           </Card>
         ) : (
         <>
-        {/* 4. MERCHANT PERFORMANCE (equipment-only) */}
+        {/* 4. VENDOR PERFORMANCE (equipment-only) */}
         {showEquipmentSections && (
         <section>
           <h2 className="text-sm font-medium text-foreground mb-3 uppercase tracking-wide">Top Vendors</h2>

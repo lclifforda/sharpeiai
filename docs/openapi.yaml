@@ -1,0 +1,1781 @@
+openapi: 3.1.0
+info:
+  title: Sharpei API
+  version: 1.0.0
+  description: |
+    # Sharpei API
+
+    The intelligence layer for equipment financing. Sharpei connects lenders, vendors, and customers
+    through AI-powered application flows, real-time qualification, and portfolio analytics.
+
+    ---
+
+    ## Getting Started
+
+    **1. Authenticate** — `POST /api/auth/login` returns a Bearer token.
+
+    **2. Explore** — Use the sandbox to test endpoints without affecting production data.
+
+    **3. Integrate** — Embed our checkout widget, go white-label, or build your own UX with the API.
+
+    ---
+
+    ## Environments
+
+    | Environment | Base URL |
+    |-------------|----------|
+    | Production | `https://api.prod.sharpei.ai` |
+    | Sandbox | `https://api.sandbox.sharpei.ai` |
+    | Local | `http://localhost:8000` |
+
+    ## Authentication
+
+    All endpoints require a Bearer token in the `Authorization` header:
+    ```
+    Authorization: Bearer <your-token>
+    ```
+
+    ## Rate Limits
+
+    | Endpoint Type | Limit |
+    |---------------|-------|
+    | Standard | 100 req/min |
+    | AI Agent | 20 req/min |
+    | Webhooks | Best-effort, 3 retries with exponential backoff |
+
+    ## Need Help?
+
+    Reach out to your integration partner or contact `engineering@sharpei.ai`.
+  contact:
+    name: Sharpei Engineering
+    email: engineering@sharpei.ai
+    url: https://sharpei.ai
+  license:
+    name: Proprietary
+servers:
+  - url: https://api.prod.sharpei.ai
+    description: Production
+  - url: https://api.sandbox.sharpei.ai
+    description: Sandbox
+  - url: http://localhost:8000
+    description: Local development
+
+tags:
+  - name: Authentication
+    description: |
+      Manage access tokens for the Sharpei platform. Every API call (except login) requires a valid
+      Bearer token. Tokens are scoped by role — lenders see portfolio data, vendors see their own
+      customers and applications.
+  - name: AI Agent
+    description: |
+      Sharpei's conversational AI guides customers through the financing application process.
+      Instead of filling out a traditional form, customers chat with an AI agent that collects
+      their information naturally, qualifies them in real-time, and explains financing options.
+
+      A typical flow: initialize a session → exchange messages → the agent collects income,
+      credit, and business data → a qualification score builds up → the customer is ready to
+      apply. The agent can also answer off-script questions about APR, leasing vs. financing,
+      and what factors affect their rate.
+  - name: Applications
+    description: |
+      The core of Sharpei. An application represents a customer requesting equipment financing
+      or a lease. Applications can be created two ways:
+
+      1. **AI-assisted** — the AI Agent collects data conversationally, then auto-generates an application.
+      2. **Traditional form** — the customer fills out a standard form with their business info, uploads documents, and submits.
+
+      Applications move through a lifecycle: `draft` → `submitted` → `under_review` → `approved` or `declined` → `funded`.
+      Each application can have supporting documents attached (business license, tax returns, bank statements, etc.).
+  - name: Vendors
+    description: |
+      Vendors are the equipment sellers whose customers use Sharpei to finance purchases.
+      Think of a robotics company, an office equipment supplier, or a medical device manufacturer.
+
+      Vendors are onboarded onto the platform, connected via an embeddable checkout widget or
+      white-label integration, and then their customers can apply for financing at the point of sale.
+      The vendor dashboard shows their application volume, approval rates, and risk scores.
+  - name: Customers
+    description: |
+      Customers are the businesses that apply for equipment financing through a vendor's
+      Sharpei-powered checkout. Each customer record tracks their industry, location,
+      active applications, and revenue — giving lenders a portfolio-level view of who is borrowing.
+  - name: Dashboard
+    description: |
+      Portfolio intelligence for lenders. These endpoints power the lender dashboard with real-time
+      analytics: portfolio KPIs, credit risk distribution, delinquency tracking, vintage performance
+      curves, underwriting funnel metrics, cash flow projections, and residual value tracking.
+
+      The dashboard also surfaces AI-detected alerts — anomalies like delinquency spikes,
+      unusual concentration risk, or residual value divergence that need attention.
+  - name: Documents
+    description: |
+      Document management for applications and vendor onboarding. Supports upload, retrieval,
+      and deletion of business documents required during the financing process.
+
+      Typical application documents: business license, articles of incorporation, tax returns,
+      P&L statements, 6 months of bank statements, equipment quotes, personal guarantees, and
+      insurance certificates. Max 10MB per file, accepted formats: PDF, DOC, DOCX, JPG, PNG.
+  - name: Webhooks
+    description: |
+      Real-time event notifications. Register URLs to receive POST requests when key events
+      happen in the platform — applications submitted, approved, funded, vendors onboarded, etc.
+
+      Use webhooks to sync Sharpei events with your LOS, CRM, or internal systems.
+      Payloads are signed with an HMAC secret for verification. Failed deliveries are retried
+      up to 3 times with exponential backoff.
+
+security:
+  - BearerAuth: []
+
+paths:
+  # ── Authentication ─────────────────────────────────────────────
+  /api/auth/login:
+    post:
+      tags: [Authentication]
+      summary: Authenticate and obtain access token
+      description: |
+        Exchange email and password for a Bearer token. The returned token includes
+        the user's role (admin, lender, or vendor) which determines what data they
+        can access. Tokens expire after 24 hours — use the refresh endpoint to extend.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: admin@tamarack.com
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Bearer token for subsequent requests
+                  expiresAt:
+                    type: string
+                    format: date-time
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/auth/refresh:
+    post:
+      tags: [Authentication]
+      summary: Refresh an expiring access token
+      description: |
+        Call this before your current token expires to get a new one without
+        re-authenticating. Send the current (still valid) token in the Authorization header.
+      responses:
+        '200':
+          description: New token issued
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  expiresAt:
+                    type: string
+                    format: date-time
+
+  # ── AI Agent ───────────────────────────────────────────────────
+  /api/ai/initialize:
+    post:
+      tags: [AI Agent]
+      summary: Initialize an AI agent session
+      description: |
+        Start a new AI-guided financing conversation. This creates a session that
+        tracks the entire customer interaction — from first message through qualification.
+
+        The client generates a unique `sessionId` (UUID) and passes it here. The agent
+        responds with a welcome message and is ready to start collecting customer data
+        through natural conversation.
+
+        **When to use:** Call this when a customer clicks "Apply with AI Assistant" on
+        the vendor's checkout page, or when embedding the Sharpei chat widget.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [sessionId]
+              properties:
+                sessionId:
+                  type: string
+                  format: uuid
+                  description: Unique session identifier (client-generated)
+                timestamp:
+                  type: string
+                  format: date-time
+      responses:
+        '200':
+          description: Session initialized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentInitResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/ai/message:
+    post:
+      tags: [AI Agent]
+      summary: Send a message to the AI agent
+      description: |
+        Send the customer's message and get the AI agent's response. The agent
+        maintains full conversation history within the session.
+
+        The response includes:
+        - **`message`** — the agent's text reply
+        - **`suggestions`** — clickable quick-reply options for the customer
+        - **`type`** — what kind of response this is (`text`, `suggestion`, or `qualification_update`)
+        - **`qualification`** — updated score if the agent collected qualifying data
+
+        You can optionally pass `context` with the customer's current cart, profile data,
+        or last offer to give the agent more to work with. The agent uses this to give
+        specific, personalized answers (e.g., "Your 10.99% APR is based on your income tier").
+
+        **Timeout:** AI responses have a 30-second limit. If the agent can't respond in time,
+        you'll get a 408.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [sessionId, message]
+              properties:
+                sessionId:
+                  type: string
+                  format: uuid
+                message:
+                  type: string
+                  maxLength: 2000
+                  example: "I need to lease equipment for my restaurant"
+                context:
+                  $ref: '#/components/schemas/SessionContext'
+                timestamp:
+                  type: string
+                  format: date-time
+      responses:
+        '200':
+          description: Agent response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentResponse'
+        '408':
+          description: AI response timeout (30s limit)
+
+  /api/ai/qualification/{sessionId}:
+    get:
+      tags: [AI Agent]
+      summary: Get customer qualification status
+      description: |
+        Check how qualified a customer is based on what the AI agent has collected so far.
+        The score (0-100) updates in real-time as the conversation progresses.
+
+        **Factors scored independently:**
+        - `creditScore` — based on reported or pulled credit
+        - `income` — annual income relative to the financing amount
+        - `employmentHistory` — stability and duration
+        - `existingRelationship` — prior history with the lender
+
+        Also returns `recommendations` — actionable suggestions like "Set up direct deposit
+        to improve your relationship score" that the agent can relay to the customer.
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      responses:
+        '200':
+          description: Qualification status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QualificationStatus'
+
+  # ── Sessions ───────────────────────────────────────────────────
+  /api/sessions/{sessionId}/customer:
+    put:
+      tags: [AI Agent]
+      summary: Update customer data for a session
+      description: |
+        Push customer data into an AI session from outside the chat flow. Use this when
+        you already have customer information (from your CRM, a pre-filled form, or a
+        previous session) and want the AI agent to have it without re-asking.
+
+        For example, if you know the customer's income and credit score from a prior
+        application, send it here so the agent can skip those questions and jump straight
+        to financing options.
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+      responses:
+        '204':
+          description: Customer data updated
+        '404':
+          description: Session not found
+
+  # ── Applications ───────────────────────────────────────────────
+  /api/applications:
+    get:
+      tags: [Applications]
+      summary: List applications
+      description: |
+        Retrieve all financing and leasing applications. Filter by status to see what's
+        in the pipeline — `submitted` applications awaiting review, `approved` ones ready
+        for funding, or `declined` ones that didn't qualify.
+
+        Lenders use this to manage their underwriting queue. Vendors see only applications
+        from their own customers.
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [draft, submitted, under_review, approved, declined, funded]
+        - name: applicantType
+          in: query
+          schema:
+            type: string
+            enum: [company]
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/SortBy'
+      responses:
+        '200':
+          description: Paginated list of applications
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedApplications'
+
+    post:
+      tags: [Applications]
+      summary: Create a new application
+      description: |
+        Submit a new lease or financing application. There are two typical origins:
+
+        1. **From the AI chat flow** — include the `sessionId` to link this application to
+           the conversation history and qualification data the agent collected.
+        2. **From a traditional form** — the customer filled out their info manually.
+
+        The application starts in `draft` status. Include `equipmentItems` to specify what
+        the customer is financing (name, price, quantity). The applicant's business details,
+        contact info, and shipping address are required.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationCreate'
+      responses:
+        '201':
+          description: Application created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+
+  /api/applications/{applicationId}:
+    get:
+      tags: [Applications]
+      summary: Get application details
+      description: |
+        Retrieve the full application record including applicant info, address, current status,
+        qualification score, linked AI session, and all uploaded documents.
+      parameters:
+        - $ref: '#/components/parameters/ApplicationId'
+      responses:
+        '200':
+          description: Application details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+
+    patch:
+      tags: [Applications]
+      summary: Update application
+      description: |
+        Update an application's status or add internal notes. Typically used by lenders
+        to move applications through the underwriting pipeline — e.g., from `submitted`
+        to `under_review`, then to `approved` or `declined`, and finally `funded`.
+      parameters:
+        - $ref: '#/components/parameters/ApplicationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationUpdate'
+      responses:
+        '200':
+          description: Application updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+
+  /api/applications/{applicationId}/documents:
+    post:
+      tags: [Applications, Documents]
+      summary: Upload a document for an application
+      description: |
+        Attach a supporting document to an application. Each document has a type that
+        identifies what it is — the application flow requires 8 document types for
+        a complete submission:
+
+        1. Business license
+        2. Articles of incorporation
+        3. Most recent business tax return
+        4. Profit & loss statement
+        5. 6 months of bank statements
+        6. Equipment quote or invoice
+        7. Personal guarantee form
+        8. Insurance certificate
+
+        Files are validated on upload. Max 10MB, accepted formats: PDF, DOC, DOCX, JPG, PNG.
+      parameters:
+        - $ref: '#/components/parameters/ApplicationId'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file, documentType]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: "Max 10MB. Accepted: PDF, DOC, DOCX, JPG, PNG"
+                documentType:
+                  type: string
+                  enum:
+                    - business_license
+                    - articles_of_incorporation
+                    - tax_return
+                    - profit_loss_statement
+                    - bank_statements
+                    - equipment_quote
+                    - personal_guarantee
+                    - insurance_certificate
+      responses:
+        '201':
+          description: Document uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        '413':
+          description: File too large (max 10MB)
+        '415':
+          description: Unsupported file type
+
+  /api/applications/{applicationId}/documents/{documentId}:
+    delete:
+      tags: [Applications, Documents]
+      summary: Remove an uploaded document
+      description: |
+        Delete a document from an application. The customer may need to replace an
+        incorrect upload or remove a duplicate. Only works while the application is
+        still in `draft` or `submitted` status.
+      parameters:
+        - $ref: '#/components/parameters/ApplicationId'
+        - name: documentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Document removed
+
+  # ── Vendors ───────────────────────────────────────────────────
+  /api/vendors:
+    get:
+      tags: [Vendors]
+      summary: List vendors
+      description: |
+        Retrieve all vendors on the platform. Filter by `status` (active, pending onboarding,
+        or inactive), `category` (e.g., Technology, Healthcare, Manufacturing), or `riskLevel`
+        to focus on vendors that need attention.
+
+        Lenders use this to monitor their vendor network. Each vendor record includes
+        monthly application volume and a risk score.
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, pending, inactive]
+        - name: category
+          in: query
+          schema:
+            type: string
+            example: Technology
+        - name: riskLevel
+          in: query
+          schema:
+            type: string
+            enum: [low, medium, high]
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Paginated list of vendors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedVendors'
+
+    post:
+      tags: [Vendors]
+      summary: Enroll a new vendor
+      description: |
+        Start the vendor onboarding process. Creates a new vendor record in `pending`
+        status and sends an automated onboarding email to the vendor's contact requesting
+        required documentation:
+
+        - Certificate of incorporation
+        - Tax ID verification
+        - Proof of business address
+        - Government-issued ID
+        - Recent financial statements
+        - Bank account verification
+        - Product catalog
+        - Return and warranty policies
+
+        Once the vendor submits their documents and they're verified, their status
+        moves to `active` and they can start processing customer applications.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VendorCreate'
+      responses:
+        '201':
+          description: Vendor enrolled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vendor'
+
+  /api/vendors/{vendorId}:
+    get:
+      tags: [Vendors]
+      summary: Get vendor details
+      description: |
+        Returns the full vendor profile including contact info, business
+        overview, financials, Sharpei integration details, risk assessment,
+        and associated documents.
+      parameters:
+        - $ref: '#/components/parameters/VendorId'
+      responses:
+        '200':
+          description: Vendor details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendorDetail'
+
+    patch:
+      tags: [Vendors]
+      summary: Update vendor details
+      description: |
+        Update a vendor's status, risk level, or category. Commonly used to activate
+        a vendor after onboarding is complete, flag a vendor with elevated risk, or
+        deactivate a vendor that's no longer in the program.
+      parameters:
+        - $ref: '#/components/parameters/VendorId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VendorUpdate'
+      responses:
+        '200':
+          description: Vendor updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VendorDetail'
+
+  /api/vendors/{vendorId}/documents:
+    get:
+      tags: [Vendors, Documents]
+      summary: List vendor documents
+      description: |
+        Retrieve all documents associated with a vendor — their onboarding paperwork,
+        master agreements, pricing addendums, and buy-back agreements. Use this to
+        check onboarding completeness or pull documents for compliance review.
+      parameters:
+        - $ref: '#/components/parameters/VendorId'
+      responses:
+        '200':
+          description: Vendor documents
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  documents:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Document'
+
+  # ── Customers ──────────────────────────────────────────────────
+  /api/customers:
+    get:
+      tags: [Customers]
+      summary: List business customers
+      description: |
+        Retrieve all business customers that have applied for financing through the
+        platform. Filter by industry or status to segment your portfolio.
+
+        Each customer record aggregates their activity across the platform — how many
+        active applications they have, their revenue, and their current status.
+      parameters:
+        - name: industry
+          in: query
+          schema:
+            type: string
+            example: Manufacturing
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, inactive]
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Paginated list of customers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCustomers'
+
+  /api/customers/{customerId}:
+    get:
+      tags: [Customers]
+      summary: Get customer details
+      description: |
+        Retrieve the full profile for a specific customer including their industry,
+        location, number of representatives, active applications, and revenue.
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Customer details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+
+  # ── Dashboard / Analytics ──────────────────────────────────────
+  /api/dashboard/summary:
+    get:
+      tags: [Dashboard]
+      summary: Get portfolio summary KPIs
+      description: |
+        Returns top-level portfolio metrics: total leases, active vendors,
+        portfolio yield, 12-month ROI, and default rate.
+      responses:
+        '200':
+          description: Portfolio KPIs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardSummary'
+
+  /api/dashboard/alerts:
+    get:
+      tags: [Dashboard]
+      summary: Get AI-detected portfolio alerts
+      description: |
+        Returns AI-generated alerts that flag anomalies in the portfolio. These are
+        automatically detected patterns that need human attention — things like:
+
+        - Delinquency spikes in a specific vintage or vendor
+        - Unusual concentration risk in an industry
+        - Residual values diverging from expected curves
+        - Approval rate drops in the underwriting funnel
+
+        Each alert has a severity level: `warning`, `alert`, or `info`.
+      responses:
+        '200':
+          description: Active alerts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  alerts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Alert'
+
+  /api/dashboard/credit-risk:
+    get:
+      tags: [Dashboard]
+      summary: Get credit risk breakdown
+      description: |
+        Returns the distribution of credit risk across the portfolio, categorized by
+        trend direction — how many accounts have declining risk, stable risk, or rising risk.
+        Used in the lender dashboard's risk visualization panel.
+      responses:
+        '200':
+          description: Risk distribution
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        category:
+                          type: string
+                          example: "Low"
+                        count:
+                          type: integer
+
+  /api/dashboard/delinquency:
+    get:
+      tags: [Dashboard]
+      summary: Get delinquency buckets
+      description: |
+        Returns the count of delinquent accounts grouped by aging bucket:
+        0-30 days, 31-60 days, and 60+ days past due. Powers the delinquency
+        pie chart on the lender dashboard.
+      responses:
+        '200':
+          description: Delinquency distribution
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        bucket:
+                          type: string
+                          enum: ["0-30 days", "31-60 days", "60+ days"]
+                        value:
+                          type: integer
+
+  /api/dashboard/vintage-curves:
+    get:
+      tags: [Dashboard]
+      summary: Get vintage performance curves
+      description: |
+        Returns month-over-month delinquency curves grouped by origination vintage.
+        Compare how the 2024 vintage is performing against the 2025 vintage at the
+        same point in their lifecycle. This is a standard portfolio analytics tool
+        for spotting early deterioration in newer originations.
+      parameters:
+        - name: vintages
+          in: query
+          description: Comma-separated vintage years
+          schema:
+            type: string
+            example: "2024,2025"
+      responses:
+        '200':
+          description: Vintage curve data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        month:
+                          type: string
+                        vintage2024:
+                          type: number
+                        vintage2025:
+                          type: number
+
+  /api/dashboard/underwriting:
+    get:
+      tags: [Dashboard]
+      summary: Get underwriting funnel metrics
+      description: |
+        Returns the underwriting pipeline as a funnel — how many applications are at
+        each stage (submitted → pre-approved → approved → funded) plus performance
+        metrics: overall approval rate, average decision time in minutes, and what
+        percentage of approvals were automated vs. manual review.
+      responses:
+        '200':
+          description: Underwriting funnel
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  funnel:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        stage:
+                          type: string
+                          enum: [applications, pre_approved, approved, funded]
+                        count:
+                          type: integer
+                  metrics:
+                    type: object
+                    properties:
+                      approvalRate:
+                        type: number
+                        example: 56
+                      avgDecisionTimeMinutes:
+                        type: number
+                        example: 2.3
+                      autoApprovalRate:
+                        type: number
+                        example: 78
+
+  /api/dashboard/cashflow:
+    get:
+      tags: [Dashboard]
+      summary: Get cash flow projections vs actuals
+      description: |
+        Compare scheduled (expected) cash inflows against actual received amounts,
+        broken down by month or quarter. Helps lenders identify collection issues
+        early — if actual consistently lags scheduled, something needs attention.
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [monthly, quarterly]
+            default: monthly
+      responses:
+        '200':
+          description: Cash flow data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        period:
+                          type: string
+                        scheduled:
+                          type: number
+                        actual:
+                          type: number
+
+  /api/dashboard/residual-curves:
+    get:
+      tags: [Dashboard]
+      summary: Get residual value curves (expected vs actual)
+      description: |
+        Track how actual residual values compare to what was projected at origination.
+        Residual value is what leased equipment is worth at the end of the lease term.
+        If actual residuals are falling below expected, it means the portfolio's end-of-lease
+        buyout revenue may underperform — a key risk metric for lease portfolios.
+      responses:
+        '200':
+          description: Residual value tracking
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        month:
+                          type: string
+                        expected:
+                          type: number
+                        actual:
+                          type: number
+
+  /api/dashboard/top-vendors:
+    get:
+      tags: [Dashboard]
+      summary: Get top-performing vendors
+      description: |
+        Returns the top vendors ranked by a composite performance score that factors in
+        application volume, approval rate, and delinquency rate. Use this to identify
+        your best vendor relationships and spot vendors that may need support.
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 5
+      responses:
+        '200':
+          description: Top vendors by performance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  vendors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        volume:
+                          type: number
+                        approvalRate:
+                          type: number
+                        delinquencyRate:
+                          type: number
+                        score:
+                          type: number
+
+  # ── Webhooks ───────────────────────────────────────────────────
+  /api/webhooks:
+    get:
+      tags: [Webhooks]
+      summary: List configured webhook endpoints
+      description: |
+        Returns all webhook endpoints registered for your organization, including
+        which events each one is subscribed to and whether it's currently active.
+      responses:
+        '200':
+          description: Webhook configurations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  webhooks:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/WebhookConfig'
+
+    post:
+      tags: [Webhooks]
+      summary: Register a new webhook endpoint
+      description: |
+        Register a URL to receive event notifications. Sharpei will POST
+        JSON payloads to this URL when subscribed events occur.
+
+        Available events:
+        - `application.submitted` — New application received
+        - `application.approved` — Application approved by underwriting
+        - `application.declined` — Application declined
+        - `application.funded` — Application funded
+        - `vendor.enrolled` — New vendor onboarded
+        - `vendor.status_changed` — Vendor status updated
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookCreate'
+      responses:
+        '201':
+          description: Webhook registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookConfig'
+
+  /api/webhooks/{webhookId}:
+    delete:
+      tags: [Webhooks]
+      summary: Remove a webhook endpoint
+      description: |
+        Unregister a webhook. Sharpei will immediately stop sending events to this URL.
+        Any in-flight deliveries may still arrive but no new events will be queued.
+      parameters:
+        - name: webhookId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Webhook removed
+
+  # ── Data Export ────────────────────────────────────────────────
+  /api/export/{resource}:
+    get:
+      tags: [Dashboard]
+      summary: Export data as XLSX or CSV
+      description: |
+        Download a full data export for vendors, applications, or customers. Returns
+        an Excel (.xlsx) or CSV file depending on the `format` parameter.
+
+        Use this for offline analysis, compliance reporting, or importing data into
+        your own BI tools.
+      parameters:
+        - name: resource
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [vendors, applications, customers]
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [xlsx, csv]
+            default: xlsx
+      responses:
+        '200':
+          description: File download
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+            text/csv:
+              schema:
+                type: string
+
+# ── Components ─────────────────────────────────────────────────────
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    SessionId:
+      name: sessionId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    ApplicationId:
+      name: applicationId
+      in: path
+      required: true
+      schema:
+        type: string
+    VendorId:
+      name: vendorId
+      in: path
+      required: true
+      schema:
+        type: string
+    Page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 25
+    SortBy:
+      name: sortBy
+      in: query
+      schema:
+        type: string
+        example: "-createdAt"
+        description: "Field to sort by. Prefix with - for descending."
+
+  responses:
+    Unauthorized:
+      description: Invalid or expired authentication token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: unauthorized
+              message:
+                type: string
+                example: Invalid or expired token
+
+  schemas:
+    # ── Auth ─────────────────────────────────────────────────────
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        role:
+          type: string
+          enum: [admin, lender, vendor]
+        organization:
+          type: string
+
+    # ── AI Agent ─────────────────────────────────────────────────
+    AgentInitResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        sessionId:
+          type: string
+          format: uuid
+        initialMessage:
+          type: string
+          example: "Hello! I'm your AI qualification assistant. I'll help you find the best financing options based on your needs."
+
+    AgentResponse:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+        type:
+          type: string
+          enum: [text, suggestion, qualification_update]
+        qualification:
+          $ref: '#/components/schemas/QualificationStatus'
+        suggestions:
+          type: array
+          items:
+            type: string
+          example: ["Tell me about leasing", "What rates do I qualify for?", "Continue with application"]
+        nextStep:
+          type: string
+
+    SessionContext:
+      type: object
+      description: Optional context to enrich AI responses
+      properties:
+        customerData:
+          $ref: '#/components/schemas/UserProfile'
+        cartTotal:
+          type: number
+
+    QualificationStatus:
+      type: object
+      properties:
+        score:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 75
+        factors:
+          type: object
+          properties:
+            creditScore:
+              type: integer
+            income:
+              type: integer
+            employmentHistory:
+              type: integer
+            existingRelationship:
+              type: integer
+        recommendations:
+          type: array
+          items:
+            type: string
+
+    # ── User Profile ─────────────────────────────────────────────
+    UserProfile:
+      type: object
+      properties:
+        customerType:
+          type: string
+          enum: [business]
+          description: Sharpei is B2B only
+        fullName:
+          type: string
+        representativeName:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        dob:
+          type: string
+          format: date
+        age:
+          type: integer
+        ssn:
+          type: string
+          description: Encrypted at rest, masked in responses
+        income:
+          type: number
+        creditScore:
+          type: integer
+          minimum: 300
+          maximum: 850
+        housingCost:
+          type: number
+        employmentStatus:
+          type: string
+          enum: [employed, self-employed]
+          description: Employment status of the business representative / guarantor
+        employer:
+          type: string
+        location:
+          type: object
+          properties:
+            country:
+              type: string
+            state:
+              type: string
+            city:
+              type: string
+        businessInfo:
+          $ref: '#/components/schemas/BusinessInfo'
+        guarantorInfo:
+          $ref: '#/components/schemas/GuarantorInfo'
+        selectedTerm:
+          type: integer
+          enum: [12, 24, 36, 48]
+        financingType:
+          type: string
+          enum: [financing, lease]
+        tradeInEstimate:
+          type: number
+        revenueRange:
+          type: string
+
+    BusinessInfo:
+      type: object
+      properties:
+        companyName:
+          type: string
+        nif:
+          type: string
+          description: Tax identification number
+        industry:
+          type: string
+        revenue:
+          type: number
+        businessType:
+          type: string
+          enum: [llc, corporation, sole_proprietorship, partnership, s_corp, c_corp]
+        stateOfIncorporation:
+          type: string
+        yearsInBusiness:
+          type: integer
+        ownershipPercentage:
+          type: number
+          minimum: 0
+          maximum: 100
+
+    GuarantorInfo:
+      type: object
+      properties:
+        ssn:
+          type: string
+          description: Encrypted at rest
+        personalIncome:
+          type: number
+        personalNetWorth:
+          type: number
+        address:
+          type: string
+        driversLicenseState:
+          type: string
+
+    # ── Applications ─────────────────────────────────────────────
+    ApplicationCreate:
+      type: object
+      required: [applicantType, companyName, representativeName, email, mobile, addressLine1, city, country, postalCode]
+      properties:
+        applicantType:
+          type: string
+          enum: [company]
+          description: B2B only — all applicants are businesses
+        companyName:
+          type: string
+          maxLength: 100
+        representativeName:
+          type: string
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        mobile:
+          type: string
+          minLength: 10
+          maxLength: 20
+        vatNumber:
+          type: string
+          maxLength: 200
+        addressLine1:
+          type: string
+          maxLength: 200
+        addressLine2:
+          type: string
+          maxLength: 200
+        city:
+          type: string
+          maxLength: 100
+        country:
+          type: string
+        postalCode:
+          type: string
+          maxLength: 20
+        billingMatchesShipping:
+          type: boolean
+          default: true
+        sessionId:
+          type: string
+          format: uuid
+          description: Link to an AI agent session if application originated from chat flow
+        equipmentItems:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              price:
+                type: number
+              quantity:
+                type: integer
+
+    ApplicationUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [draft, submitted, under_review, approved, declined, funded]
+        notes:
+          type: string
+
+    Application:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "APP-2026-001"
+        applicantType:
+          type: string
+          enum: [company]
+        companyName:
+          type: string
+        representativeName:
+          type: string
+        email:
+          type: string
+          format: email
+        mobile:
+          type: string
+        vatNumber:
+          type: string
+        address:
+          type: object
+          properties:
+            line1:
+              type: string
+            line2:
+              type: string
+            city:
+              type: string
+            country:
+              type: string
+            postalCode:
+              type: string
+        status:
+          type: string
+          enum: [draft, submitted, under_review, approved, declined, funded]
+        qualificationScore:
+          type: integer
+        sessionId:
+          type: string
+          format: uuid
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    PaginatedApplications:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Application'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    # ── Vendors ──────────────────────────────────────────────────
+    VendorCreate:
+      type: object
+      required: [name, legalName, category, contactEmail]
+      properties:
+        name:
+          type: string
+        legalName:
+          type: string
+        category:
+          type: string
+          example: Technology
+        website:
+          type: string
+          format: uri
+        contactEmail:
+          type: string
+          format: email
+        contactPerson:
+          type: string
+        contactPhone:
+          type: string
+
+    VendorUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [active, pending, inactive]
+        riskLevel:
+          type: string
+          enum: [low, medium, high]
+        category:
+          type: string
+
+    Vendor:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        legalName:
+          type: string
+        category:
+          type: string
+        website:
+          type: string
+          format: uri
+        accountNumber:
+          type: string
+        enrolledDate:
+          type: string
+          format: date
+        status:
+          type: string
+          enum: [active, pending, inactive]
+        monthlyVolume:
+          type: number
+        riskLevel:
+          type: string
+          enum: [low, medium, high]
+
+    VendorDetail:
+      allOf:
+        - $ref: '#/components/schemas/Vendor'
+        - type: object
+          properties:
+            registeredAddress:
+              type: string
+            contactPerson:
+              type: object
+              properties:
+                name:
+                  type: string
+                role:
+                  type: string
+                phone:
+                  type: string
+                email:
+                  type: string
+                  format: email
+            taxId:
+              type: string
+            businessModel:
+              type: string
+            geography:
+              type: string
+            channels:
+              type: array
+              items:
+                type: string
+            financials:
+              type: object
+              properties:
+                annualRevenue:
+                  type: number
+                quarterlyGrowthRate:
+                  type: number
+                avgTransactionSize:
+                  type: number
+                monthlyTransactionVolume:
+                  type: number
+                defaultRate:
+                  type: number
+                netMargin:
+                  type: string
+            sharpeiIntegration:
+              type: object
+              properties:
+                onboardingDate:
+                  type: string
+                  format: date
+                contractDate:
+                  type: string
+                  format: date
+                expectedVolume:
+                  type: number
+                leasingCheckoutShare:
+                  type: number
+                  description: Percentage of checkout using leasing
+                integratedServices:
+                  type: array
+                  items:
+                    type: string
+            riskAssessment:
+              type: object
+              properties:
+                creditStatus:
+                  type: string
+                  enum: [low, medium, high]
+                paymentPerformance:
+                  type: object
+                  properties:
+                    pastDueInvoices:
+                      type: integer
+                    paymentHistory:
+                      type: string
+                returnPolicy:
+                  type: string
+                residualValue:
+                  type: string
+            documents:
+              type: array
+              items:
+                $ref: '#/components/schemas/Document'
+
+    PaginatedVendors:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Vendor'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    # ── Customers ────────────────────────────────────────────────
+    Customer:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        industry:
+          type: string
+        location:
+          type: string
+        representatives:
+          type: integer
+        activeApplications:
+          type: integer
+        revenue:
+          type: number
+        status:
+          type: string
+          enum: [active, inactive]
+
+    PaginatedCustomers:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Customer'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    # ── Dashboard ────────────────────────────────────────────────
+    DashboardSummary:
+      type: object
+      properties:
+        totalLeases:
+          type: integer
+          example: 1247
+        activeVendors:
+          type: integer
+          example: 89
+        portfolioYield:
+          type: number
+          description: Percentage
+          example: 8.4
+        roi12Month:
+          type: number
+          description: Percentage
+          example: 12.3
+        defaultRate:
+          type: number
+          description: Percentage
+          example: 2.1
+
+    Alert:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [warning, alert, info]
+        title:
+          type: string
+        message:
+          type: string
+          example: "Delinquency spike detected in Q1 vintage"
+        createdAt:
+          type: string
+          format: date-time
+
+    # ── Documents ────────────────────────────────────────────────
+    Document:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          example: "Business License"
+        type:
+          type: string
+          enum:
+            - business_license
+            - articles_of_incorporation
+            - tax_return
+            - profit_loss_statement
+            - bank_statements
+            - equipment_quote
+            - personal_guarantee
+            - insurance_certificate
+            - master_agreement
+            - pricing_addendum
+            - buyback_agreement
+        fileName:
+          type: string
+        fileSize:
+          type: integer
+          description: Size in bytes
+        mimeType:
+          type: string
+        uploadedAt:
+          type: string
+          format: date-time
+        downloadUrl:
+          type: string
+          format: uri
+
+    # ── Webhooks ─────────────────────────────────────────────────
+    WebhookConfig:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+          format: uri
+        events:
+          type: array
+          items:
+            type: string
+            enum:
+              - application.submitted
+              - application.approved
+              - application.declined
+              - application.funded
+              - vendor.enrolled
+              - vendor.status_changed
+        active:
+          type: boolean
+        secret:
+          type: string
+          description: HMAC secret for payload verification
+        createdAt:
+          type: string
+          format: date-time
+
+    WebhookCreate:
+      type: object
+      required: [url, events]
+      properties:
+        url:
+          type: string
+          format: uri
+          example: "https://your-system.com/webhooks/sharpei"
+        events:
+          type: array
+          items:
+            type: string
+          example: ["application.submitted", "application.funded", "vendor.enrolled"]
+
+    # ── Shared ───────────────────────────────────────────────────
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        totalPages:
+          type: integer
